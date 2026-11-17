@@ -9,6 +9,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- `@metreeca/tile-widgets` — new package collecting the widgets bound to the collection shared across a screen: the
+  `Frame`, `Sheet` and `Table` lenses, the `Search`, `Tally` and `Range` facets gathered by `Facets`, the `Clear`
+  collection reset and the `Count` collection counter; glyphs are drawn with `lucide-preact`, a peer dependency the
+  app installs, and an app distributing a build ships the Lucide licence notices the package README names
 - `@metreeca/tile/types` — shape-driven value types, showing a stored value to a reader, handing it to a native input
   and reading back what the input yields, with `toType` picking the default type for a shape and `as()` showing a
   value as another type, as `instant.as(date)` shows and bounds instants by day
@@ -19,38 +23,33 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   binding shows, searches and sorts text in one language; it defaults to the languages the browser reports
 - `@metreeca/tile` — `scope` criteria on `useCollection`, fixing which items a collection holds beyond the
   reach of the reader: every widget retrieves under them, and clearing the collection keeps them in place
-- `@metreeca/tile-widgets` — `Frame` resource frame, `Table` collection table, `Search`, `Tally` and `Range` facets,
-  `Clear` collection reset and `Count` collection counter, all bound to the collection shared across a screen
 
 ### Changed
 
-- Upgrade `@metreeca/blue` to `^0.13.1`
-- Upgrade `@metreeca/keep` and `@metreeca/keep-rest` to `^0.12.2`
-- `@metreeca/tile-data` — **breaking**: split in two. The app contexts and the `asset`, `board`, `fetch`, `model`,
+- **Breaking**: Upgrade `@metreeca/blue`, `@metreeca/core` and `@metreeca/qest` to `^0.14.0`, `@metreeca/http` to
+  `^0.6.0`, and `@metreeca/keep` and `@metreeca/keep-rest` to `^0.13.0`; projects using them alongside these packages
+  raise their own ranges to match as well, so that each of them is shared by both as a single copy
+- `@metreeca/tile-data` — **Breaking**: split in two. The app contexts and the `asset`, `board`, `fetch`, `model`,
   `router` and `storage` hooks move to [@metreeca/clay](https://github.com/metreeca/clay), while the `store` bindings
   become the whole of `@metreeca/tile`, which takes over the name the design system leaves (migration: import `app`
   and those hooks from `@metreeca/clay`, and replace `@metreeca/tile-data/store` with `@metreeca/tile` in imports)
-- `@metreeca/tile-cell`, `@metreeca/tile-hive` and `@metreeca/tile-move` — **breaking**: moved to
+- `@metreeca/tile-cell`, `@metreeca/tile-hive` and `@metreeca/tile-move` — **Breaking**: moved to
   [@metreeca/clay](https://github.com/metreeca/clay), the widgets and layouts as `@metreeca/clay-widgets`, the
   Markdown document with its table of contents as `@metreeca/clay-markdown`, and the movable items as the `transfer`
   and `roving` modules of `@metreeca/clay`, rendering `<clay-*>` elements tuned through `--clay-*` knobs (migration:
   replace the package names in dependencies and import paths, and `tile-` with `clay-` in the selectors and custom
   properties that stylesheets and inline styles aim at the elements, wherever an app restyles or retunes them)
-- `@metreeca/tile-lens` — **breaking**: renamed `@metreeca/tile-widgets`, the package holding every lens, facet and
-  field (migration: replace the package name in dependencies and import paths, as in `@metreeca/tile-widgets/sheet`)
-- `@metreeca/tile` — **breaking**: `useCollection` binds a screen to the collection held by a resource,
+- `@metreeca/tile` — **Breaking**: `useCollection` binds a screen to the collection held by a resource,
   shared by every widget on it, rather than retrieving items (migration: retrieve items through `useMembers`)
-- `@metreeca/tile-widgets/sheet` — **breaking**: `Sheet` renders the items of a `members` relay handed by
-  `useMembers` in place of the `entry`, `shape` and `model` props (migration: retrieve the items with `useMembers`)
-- `@metreeca/tile-widgets` — the widgets draw their glyphs with `lucide-preact`, a new peer dependency the app installs
-  once for every package drawing them, rather than through the `Icon` glyph roles; an app distributing a build ships
-  the Lucide licence notices the package README names, as it does for any other third-party code the build includes
 
 ### Removed
 
-- `@metreeca/tile` — **breaking**: the design system moves to its own `@metreeca/skin` package, renaming the
+- `@metreeca/tile` — **Breaking**: the design system moves to its own `@metreeca/skin` package, renaming the
   `--tile--*` tokens to `--skin--*`, the `tile` token map to `skin` and the `tile` cascade layer to `skin` (migration:
   depend on `@metreeca/skin`, import from it, and replace the `--tile--` prefix in stylesheets and inline styles)
+- `@metreeca/tile-lens` — **Breaking**: superseded by the new `@metreeca/tile-widgets` package (migration: replace the
+  package name in dependencies and import paths, as in `@metreeca/tile-widgets/sheet`, and hand `Sheet` the `members`
+  relay returned by `useMembers` in place of the `entry`, `shape` and `model` props)
 - `@metreeca/tile-form` — empty placeholder package dropped, as the fields join the lenses and facets in
   `@metreeca/tile-widgets` (migration: remove the dependency, which never exported anything)
 

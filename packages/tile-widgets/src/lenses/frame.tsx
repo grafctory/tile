@@ -1,0 +1,95 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Resource frame.
+ *
+ * Offers a frame for showing a single resource, the companion to the {@link sheet!Sheet Sheet} listing the members
+ * of a collection. The resource is read in place while it is retrieved, kept in step with the store or found missing.
+ *
+ * @module frame
+ */
+
+import type { ResourceShape } from "@metreeca/blue/resource";
+import type { Match, Model } from "@metreeca/blue/value";
+import type { Lazy } from "@metreeca/core";
+import type { Relay } from "@metreeca/core/relay";
+import type { ResourceCases } from "@metreeca/tile/resource";
+import { type ComponentChildren, createElement } from "preact";
+import { Failure, Hint } from "../index.js";
+import "./frame.css";
+
+
+/**
+ * Creates a resource frame.
+ *
+ * Shows a resource, rendering it through `children`, and keeps in step with it: the resource on show stays where it
+ * stands while a change the store signals is retrieved again, so the frame never blanks out in between.
+ *
+ * ```tsx
+ * const resource = useResource({ entry, shape: Item, model: { id: {}, label: {} } });
+ *
+ * <Frame resource={resource}>{item => <h1>{item.label}</h1>}</Frame>
+ * ```
+ *
+ * Where a `placeholder` is supplied, it fills the area, worded as still loading, until the resource is retrieved. A
+ * missing resource or a failed exchange is shown as a critical note instead, so the reader learns why nothing shows.
+ *
+ * @typeParam S The shape describing the resource
+ * @typeParam T The template stating the values wanted from the resource
+ *
+ * @param options The widget configuration
+ *
+ * @returns The frame
+ */
+export function Frame<S extends Lazy<ResourceShape>, T extends Model<S, T>>({
+
+	resource,
+
+	placeholder,
+	children
+
+}: {
+
+	/**
+	 * The resource shown, as handed by {@link @metreeca/tile!resource.useResource useResource}.
+	 */
+	resource: Relay<ResourceCases<S, T>>
+
+
+	/**
+	 * The glyph marking the area while the resource is retrieved; nothing is rendered in its place if omitted.
+	 */
+	placeholder?: ComponentChildren
+
+	/**
+	 * Renders the resource.
+	 */
+	children: (resource: Match<S, T>) => ComponentChildren
+
+}) {
+
+	return resource({
+
+		blank: () => placeholder && <Hint placeholder={placeholder} text={"Loading…"}/>,
+
+		ready: ({ state }) => createElement("tile-frame", {}, children(state)),
+
+		error: () => <Failure/>
+
+	});
+
+}

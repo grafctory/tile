@@ -1,7 +1,7 @@
 {
   "private": true,
   "version": "0.7.0",
-  "description": "Minimalist model-driven UI toolkit for linked data resources.",
+  "description": "Linked data UI toolkit for Preact.",
   "type": "module",
   "workspaces": [
     "packages/*"
@@ -12,12 +12,11 @@
     "setup": "npm ci && ush ln && npm --prefix specimen run setup",
     "build": "npm run build --workspaces && ush rm docs && npx typedoc",
     "check": "npm run check --workspaces",
-    "proof": "npm run build && npx wds --root-dir docs --open",
+    "proof": "npm run build && ush ws --open docs",
     "watch": "npm --prefix specimen run watch"
   },
   "devDependencies": {
     "@metreeca/rack": "^0.6.0",
-    "@web/dev-server": "^1.0.0",
     "typedoc": "^0.28.20",
     "vitest": "^5.0.5"
   },

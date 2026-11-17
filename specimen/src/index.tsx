@@ -24,16 +24,17 @@
  */
 
 import "@metreeca/skin/presets/roboto.css";
+import { Fetch } from "@metreeca/clay/fetch";
+import { host } from "@metreeca/clay";
+import { Router, Routes } from "@metreeca/clay/router";
 import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
-import { Root } from "@metreeca/specimen/index.core.js";
-import { TileCell, TileCellPath } from "@metreeca/specimen/tile-cell/index.js";
-import { TileHive, TileHivePath } from "@metreeca/specimen/tile-hive/index.js";
-import { TileLens, TileLensPath } from "@metreeca/specimen/tile-lens/index.js";
-import { TileMove, TileMovePath } from "@metreeca/specimen/tile-move/index.js";
-import { Fetch } from "@metreeca/tile/fetch";
-import { Router, Routes } from "@metreeca/tile/router";
-import { host } from "@metreeca/tile-hive";
+import { Root, TileApisPath, TilePath, TileWidgetsPath } from "@metreeca/specimen/index.core.js";
+import { Tile } from "@metreeca/specimen/tile/index.js";
+import { TileApis } from "@metreeca/specimen/tile-apis/index.js";
+import { TileWidgets } from "@metreeca/specimen/tile-widgets/index.js";
+import { toys } from "@metreeca/specimen/toys.js";
+import { Store } from "@metreeca/tile";
 import { render } from "preact";
 import "./index.css";
 
@@ -47,20 +48,23 @@ function Specimen() {
 
 	return <Fetch fetch={createFetch(mock({ delay: 1000 }))}>
 
-		<Router>
+		<Store factory={() => toys}>
 
-			<Routes>{{
+			<Router>
 
-				[Root]: TileCellPath,
+				<Routes>{{
 
-				[TileCellPath]: <TileCell/>,
-				[TileHivePath]: <TileHive/>,
-				[TileMovePath]: <TileMove/>,
-				[TileLensPath]: <TileLens/>
+					[Root]: TilePath,
 
-			}}</Routes>
+					[TilePath]: <Tile/>,
+					[TileWidgetsPath]: <TileWidgets/>,
+					[TileApisPath]: <TileApis/>
 
-		</Router>
+				}}</Routes>
+
+			</Router>
+
+		</Store>
 
 	</Fetch>;
 

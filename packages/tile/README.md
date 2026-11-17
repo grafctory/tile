@@ -2,27 +2,25 @@
 
 [![npm](https://img.shields.io/npm/v/@metreeca/tile)](https://www.npmjs.com/package/@metreeca/tile)
 
-Preact contexts and hooks for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
+Preact linked data store and shape-driven value types for [@metreeca/tile](https://github.com/metreeca/tile).
 
-The contexts a Tile app provides and the hooks its components consume them with, along with the binding that turns a
-framework-agnostic `@metreeca/core` state object into the state of a Preact component.
+The store an app shares with its screens, and the hooks that bind components to the resources and collections it holds.
+
+Reads and writes go through a [@metreeca/keep](https://github.com/metreeca/keep) store over the fetch client the app
+shares through its [@metreeca/clay](https://github.com/metreeca/clay) contexts, so components never handle caching,
+batching or validation themselves, and stay focused on what they present to the reader.
 
 # Installation
 
 ```shell
-npm install preact          # peer dependency
 npm install @metreeca/tile  # this package
+npm install preact          # peer dependency
 ```
 
 > [!WARNING]
 >
 > TypeScript consumers must use `"moduleResolution": "nodenext"/"node16"/"bundler"` in `tsconfig.json`.
 > The legacy `"node"` resolver is not supported.
-
-> [!WARNING]
->
-> Importing what the app states about itself reads the document, so it belongs to a browser: a consumer without one, a
-> test or a server render, has to supply a DOM before the import runs.
 
 # Usage
 

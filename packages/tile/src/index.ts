@@ -15,58 +15,97 @@
  */
 
 /**
- * Preact contexts and hooks.
+ * Preact linked data store and shape-driven value types.
  *
- * Provides what the app states about itself, so a component carries the app identity wherever it is assembled without
- * being handed it. The contexts and hooks themselves come from their own modules, leaving a component with the ones it
- * is wired to and nothing else.
- *
- * Importing this module reads the document, so a test or a server render has to supply a DOM before importing it.
+ * Offers the components of an interface one shared [store](https://metreeca.github.io/keep/) to read linked data
+ * resources from and write them back to. The store is configured once, where the interface is assembled, rather than
+ * at every call site. Components bind to the resources and collections it holds, so that every widget stays in step
+ * with the store and none has to drive exchanges of its own, or track the changes made by others.
  *
  * @module index
  */
 
-import { resolve } from "@metreeca/core/resource";
-import { immutable } from "@metreeca/core/values";
+import { useFetch } from "@metreeca/clay/fetch";
+import { error, type Optional } from "@metreeca/core";
+import type { Tag } from "@metreeca/core/language";
+import type { Fetch } from "@metreeca/http";
+import type { Store } from "@metreeca/keep";
+import { createRESTStore } from "@metreeca/keep-rest";
+import { type ComponentChildren, createContext, createElement } from "preact";
+import { useContext, useState } from "preact/hooks";
+import { localise, toLocale } from "./index.core.js";
 
+
+const Context = createContext<Optional<Store>>(undefined);
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * What the app says about itself, as its document states it.
+ * Offers a shared resource store to nested components.
  *
- * Read once on import and immutable thereafter, so a later edit to the document is never picked up.
+ * The store performs its exchanges through the fetch client of the innermost enclosing
+ * {@link @metreeca/clay!fetch.Fetch Fetch} context, so they share the services configured there, such as
+ * authentication and progress tracking, with every other exchange the app performs.
+ *
+ * Localised content is retrieved in the languages the reader prefers, so every component shows, searches and sorts
+ * text in the same language without stating one: a retrieval stating its own language priority keeps it.
+ *
+ * The store is assembled as the context first renders and kept for as long as it lives, so that pending operations
+ * are not disturbed by the interface around them: a factory or a locale handed over later is ignored.
+ *
+ * @param options The factory the store is assembled by, the languages it retrieves localised content in, and the
+ *     components it is offered to, which reach the store at whatever depth they render below the context
+ *
+ * @returns The nested components, with the store offered to them
  */
-export const app = immutable({
+export function Store({
+
+	factory = fetch => createRESTStore({ fetch }),
+	locale,
+
+	children
+
+}: {
 
 	/**
-	 * The absolute root URL of the site, with a trailing slash.
+	 * The factory assembling the store from the shared fetch client; defaults to a REST proxy store.
 	 */
-	root: resolve(location.href, "/"),
+	factory?: (fetch: Fetch) => Store
 
 	/**
-	 * The absolute base URL the app is published at, with a trailing slash, as `<base>` states it, or the site root.
+	 * The language tags localised content is retrieved in, most preferred first; defaults to the languages the browser
+	 * reports for the reader, each followed by its primary language, and then to content tagged as undetermined.
 	 */
-	base: resolve(resolve(location.href, "/"),
-		(document.querySelector("base")?.href || "/").replace(/\/*$/, "/")
-	),
+	locale?: readonly Tag[]
 
 	/**
-	 * The app name, as the `<title>` tag states it, or `undefined` if the tag is missing or empty.
+	 * The components the store is offered to.
 	 */
-	name: document.title || undefined,
+	children: ComponentChildren
 
-	/**
-	 * The URL of the app icon, as the `<link rel="icon">` tag states it, or `undefined` if the tag is missing.
-	 */
-	icon: document.querySelector<HTMLLinkElement>("link[rel=icon]")?.href || undefined,
+}) {
 
-	/**
-	 * The app description, as the `<meta name="description">` tag states it, or `undefined` if missing or empty.
-	 */
-	info: document.querySelector<HTMLMetaElement>("meta[name=description]")?.content || undefined,
+	const fetch = useFetch();
 
-	/**
-	 * The app copyright, as the `<meta name="copyright">` tag states it, or `undefined` if missing or empty.
-	 */
-	copy: document.querySelector<HTMLMetaElement>("meta[name=copyright]")?.content || undefined
+	const [store] = useState(() => localise(factory(fetch), locale ?? toLocale(navigator.languages)));
 
-});
+	return createElement(Context.Provider, { value: store, children });
+
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Retrieves the shared resource store.
+ *
+ * @returns The store offered by the innermost enclosing {@link Store} context
+ *
+ * @throws {@link !Error Error} If called outside any {@link Store} context
+ */
+export function useStore(): Store {
+
+	return useContext(Context) ?? error(new Error("missing <Store> context"));
+
+}

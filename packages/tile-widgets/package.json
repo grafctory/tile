@@ -1,0 +1,143 @@
+{
+  "name": "@metreeca/tile-widgets",
+  "version": "0.7.0",
+  "description": "Preact linked data widgets for @metreeca/tile.",
+  "keywords": [
+    "typescript",
+    "preact",
+    "json-ld",
+    "model-driven",
+    "ui"
+  ],
+  "homepage": "https://metreeca.github.io/tile/",
+  "bugs": {
+    "url": "https://github.com/metreeca/tile/issues",
+    "email": "info@metreeca.com"
+  },
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Metreeca",
+    "email": "info@metreeca.com",
+    "url": "https://www.metreeca.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/metreeca/tile.git",
+    "directory": "packages/tile-widgets"
+  },
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    "./count": {
+      "@metreeca/source": "./src/lenses/count.tsx",
+      "default": "./dist/lenses/count.js"
+    },
+    "./count.css": {
+      "@metreeca/source": "./src/lenses/count.css",
+      "default": "./dist/lenses/count.css"
+    },
+    "./frame": {
+      "@metreeca/source": "./src/lenses/frame.tsx",
+      "default": "./dist/lenses/frame.js"
+    },
+    "./frame.css": {
+      "@metreeca/source": "./src/lenses/frame.css",
+      "default": "./dist/lenses/frame.css"
+    },
+    "./sheet": {
+      "@metreeca/source": "./src/lenses/sheet.tsx",
+      "default": "./dist/lenses/sheet.js"
+    },
+    "./sheet.css": {
+      "@metreeca/source": "./src/lenses/sheet.css",
+      "default": "./dist/lenses/sheet.css"
+    },
+    "./table": {
+      "@metreeca/source": "./src/lenses/table.tsx",
+      "default": "./dist/lenses/table.js"
+    },
+    "./table.css": {
+      "@metreeca/source": "./src/lenses/table.css",
+      "default": "./dist/lenses/table.css"
+    },
+    "./clear": {
+      "@metreeca/source": "./src/facets/clear.tsx",
+      "default": "./dist/facets/clear.js"
+    },
+    "./facets": {
+      "@metreeca/source": "./src/facets/facets.tsx",
+      "default": "./dist/facets/facets.js"
+    },
+    "./facets.css": {
+      "@metreeca/source": "./src/facets/facets.css",
+      "default": "./dist/facets/facets.css"
+    },
+    "./range": {
+      "@metreeca/source": "./src/facets/range.tsx",
+      "default": "./dist/facets/range.js"
+    },
+    "./range.css": {
+      "@metreeca/source": "./src/facets/range.css",
+      "default": "./dist/facets/range.css"
+    },
+    "./search": {
+      "@metreeca/source": "./src/facets/search.tsx",
+      "default": "./dist/facets/search.js"
+    },
+    "./search.css": {
+      "@metreeca/source": "./src/facets/search.css",
+      "default": "./dist/facets/search.css"
+    },
+    "./tally": {
+      "@metreeca/source": "./src/facets/tally.tsx",
+      "default": "./dist/facets/tally.js"
+    },
+    "./tally.css": {
+      "@metreeca/source": "./src/facets/tally.css",
+      "default": "./dist/facets/tally.css"
+    },
+    "./index.css": {
+      "@metreeca/source": "./src/index.css",
+      "default": "./dist/index.css"
+    },
+    "./*.core": null,
+    "./index": null
+  },
+  "files": [
+    "README.md",
+    "LICENSE",
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "scripts": {
+    "clean": "ush rm dist docs node_modules '*.tsbuildinfo'",
+    "build": "tsc -b tsconfig.build.json && ush cp dist 'src/**/*.css'",
+    "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests --environment happy-dom run"
+  },
+  "dependencies": {
+    "@metreeca/blue": "^0.13.1",
+    "@metreeca/clay": "^0.1.0",
+    "@metreeca/core": "^0.13.0",
+    "@metreeca/http": "^0.5.0",
+    "@metreeca/qest": "^0.13.0",
+    "@metreeca/skin": "^0.1.0",
+    "@metreeca/tile": "^0.7.0"
+  },
+  "devDependencies": {
+    "@metreeca/keep": "^0.12.2",
+    "happy-dom": "^21.0.4",
+    "lucide-preact": "^1.47.0",
+    "preact": "^10.29.8",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
+  },
+  "peerDependencies": {
+    "lucide-preact": "^1.47.0",
+    "preact": "^10.27.2"
+  }
+}

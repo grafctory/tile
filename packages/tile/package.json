@@ -1,7 +1,7 @@
 {
   "name": "@metreeca/tile",
   "version": "0.7.0",
-  "description": "Preact contexts and hooks for @metreeca/tile interfaces.",
+  "description": "Preact linked data store and shape-driven value types for @metreeca/tile.",
   "keywords": [
     "typescript",
     "preact",
@@ -32,13 +32,18 @@
       "@metreeca/source": "./src/index.ts",
       "default": "./dist/index.js"
     },
-    "./store": {
-      "@metreeca/source": "./src/store/index.ts",
-      "default": "./dist/store/index.js"
+    "./types": {
+      "@metreeca/source": "./src/types/index.ts",
+      "default": "./dist/types/index.js"
     },
+    "./types/*": {
+      "@metreeca/source": "./src/types/*.ts",
+      "default": "./dist/types/*.js"
+    },
+    "./types/*.core": null,
     "./*": {
-      "@metreeca/source": "./src/*.ts",
-      "default": "./dist/*.js"
+      "@metreeca/source": "./src/hooks/*.ts",
+      "default": "./dist/hooks/*.js"
     },
     "./*.core": null
   },
@@ -57,6 +62,7 @@
   },
   "dependencies": {
     "@metreeca/blue": "^0.13.1",
+    "@metreeca/clay": "^0.1.0",
     "@metreeca/core": "^0.13.0",
     "@metreeca/http": "^0.5.0",
     "@metreeca/keep": "^0.12.2",

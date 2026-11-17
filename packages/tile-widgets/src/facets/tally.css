@@ -1,0 +1,349 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* The number of options shown in full before the list scrolls. */
+
+@property --tile-tally-rows {
+    syntax: "<integer>";
+    inherits: true;
+    initial-value: 10;
+}
+
+/*
+ * A tally is a bounded box stacking the search field over the options, set apart by a rule. The options scroll
+ * within the box once they outgrow it, so a long list never pushes the facets below it out of view.
+ */
+
+tile-tally {
+
+    display: flex;
+    flex-direction: column;
+
+    border-style: var(--skin--border-style);
+    border-radius: var(--skin--border-radius-050);
+
+    /*
+     * The box holds a field, so its edge takes the line a field takes, matching the search fields beside the facets
+     * and holding the 3:1 a control boundary owes; the rule inside the box is drawn in the same line.
+     */
+
+    border-color: var(--skin--border-color-field);
+
+    /*
+     * The box is painted in the page colour, so a facet stands out as a control from whatever surface it sits on, the
+     * sunken tray above all; the text roles inside hold their contrast against it by the design system contract.
+     */
+
+    background-color: var(--skin--background-color);
+
+    /* The parts are left transparent, so their square corners never mask the rounded ones of the box. */
+
+    & > header,
+    & > section {
+        background-color: transparent;
+    }
+
+    /*
+     * The placeholder doubles as the name of the facet, so it takes the text colour, as the glyph beside it does,
+     * reading as the title of the facet rather than as the hint of an empty field. Once the field takes focus, the
+     * placeholder turns back to the placeholder colour, reading as the hint of a field waiting for text to be typed.
+     */
+
+    & > header {
+
+        display: grid;
+        grid-template-columns: min-content minmax(0, 1fr);
+        grid-auto-columns: min-content;
+        grid-auto-flow: column;
+        align-items: center;
+        column-gap: var(--skin--spacing-050);
+
+        /* The row keeps room for the controls whether shown or not, so the facet holds still as they come and go. */
+
+        grid-template-rows: minmax(var(--skin--scaling-150), auto);
+
+        /* The controls at the end stand as far from the edge as from the rules above and below them. */
+
+        padding-block: var(--skin--spacing-025);
+        padding-inline: var(--skin--spacing-050) var(--skin--spacing-025);
+
+        /*
+         * The header follows the rounded corners of the box, the bottom ones too while nothing shows below it, so the
+         * focus mark it carries for the search field traces the edge of the box rather than a square within it.
+         */
+
+        border-start-start-radius: calc(var(--skin--border-radius-050) - var(--skin--border-width));
+        border-start-end-radius: calc(var(--skin--border-radius-050) - var(--skin--border-width));
+
+        &:has(+ section[hidden]) {
+            border-end-start-radius: calc(var(--skin--border-radius-050) - var(--skin--border-width));
+            border-end-end-radius: calc(var(--skin--border-radius-050) - var(--skin--border-width));
+        }
+
+        &:has(> input:focus) {
+            outline: var(--skin--outline-focus);
+            outline-offset: calc(-2 * var(--skin--border-width));
+        }
+
+        /* The controls are set as one item of the row, side by side with no gap, since each pads its own glyph. */
+
+        & > span {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        /*
+         * The search clear acts on the field alone, so it reads quieter than the reset of the facet through a
+         * smaller glyph, while keeping the full pointer target, as easy to hit as the controls beside it.
+         */
+
+        & > span > button > .clear {
+            width: var(--skin--scaling-075);
+            height: var(--skin--scaling-075);
+            translate: var(--skin--spacing-010); /* optical nudge toward the edge */
+        }
+
+        /*
+         * The field leaves its focus mark to the header, which draws it around the glyph and controls as well. It fills
+         * the height of the row, so its text stays centred while the glyph is seated on the baseline of that text.
+         */
+
+        & > input {
+
+            align-self: baseline;
+            block-size: var(--skin--scaling-150);
+            min-width: 0;
+            padding: 0; /* The header already holds the field clear of the edge. */
+            border-style: none;
+            background-color: transparent;
+
+            &:focus {
+
+                outline: none;
+
+                &::placeholder {
+                    color: var(--skin--color-placeholder);
+                }
+
+            }
+
+            /* The platform cancel button is left out, since the reset of the facet already empties the field. */
+
+            &::-webkit-search-cancel-button {
+                display: none;
+            }
+
+            &::placeholder {
+                color: inherit;
+            }
+
+        }
+
+    }
+
+    & > section {
+
+        /*
+         * A longer list scrolls within the box, which cuts through the first option beyond those shown in full, so the
+         * clipped option tells the reader that the list carries on beyond the edge.
+         */
+
+        max-block-size: calc(
+            (var(--tile-tally-rows) + 0.6) * 1lh + var(--skin--spacing-050) + var(--skin--border-width)
+        );
+
+        overflow-y: auto;
+
+        /*
+         * The options are set tighter than running text, so a dense list fits more rows in the same height. The
+         * scroll bound above follows the tighter leading, since it counts the rows in lines of the section.
+         */
+
+        line-height: calc(var(--skin--line-height) * 0.95);
+
+        border-top-style: var(--skin--border-style);
+        border-top-color: var(--skin--border-color-field);
+
+        /*
+         * A failed retrieval reads as one line of small print, its mark sized to the text rather than to the space a
+         * note is handed elsewhere, so a facet failing never outweighs the facets around it in the list of facets.
+         */
+
+        & > tile-note {
+
+            margin: 0;
+            padding: var(--skin--spacing-050);
+
+            font-size: var(--skin--font-size-small);
+
+        }
+
+        /*
+         * The options are laid out as one grid of box, name and count columns shared by every row, so the counts line
+         * up down the list, and each row seats its box, name and count on the one baseline of the name it holds. The
+         * box column takes the measure of the header glyph, its box centred under the glyph, so the names line up
+         * with the search field above them.
+         */
+
+        & > ul {
+
+            display: grid;
+            grid-template-columns: var(--skin--scaling-100) minmax(0, 1fr) min-content;
+            align-items: center;
+            column-gap: var(--skin--spacing-050);
+
+            margin: 0;
+            padding: var(--skin--spacing-050);
+
+            list-style-type: none;
+
+            /*
+             * The options are rows of a list, packed line on line rather than spaced out as prose list items are, and
+             * set in the label colour, so they read as the values of a control rather than as part of the content.
+             */
+
+            & > li {
+
+                display: grid;
+                grid-column: 1 / -1;
+                grid-template-columns: subgrid;
+
+                margin: 0;
+                color: var(--skin--color-label);
+
+            }
+
+            /*
+             * An option no item lets through under the other criteria sets the name of a linked resource in the label
+             * colour too, keeping its underline. Its 0 count gives way to a centred dot in the place of the digit, so
+             * the column of counts still reads as one of figures, aligned down the list with the counts around it.
+             */
+
+            & > li.unavailable {
+
+                & a {
+                    color: inherit;
+                }
+
+                & > label > small {
+
+                    position: relative;
+                    visibility: hidden;
+
+                    &::after {
+                        content: "•";
+                        position: absolute;
+                        inset: 0;
+                        text-align: center;
+                        visibility: visible;
+                    }
+
+                }
+
+                /*
+                 * Unless ticked, such an option is disabled and takes the disabled colour, as a disabled control does,
+                 * the name of a linked resource included. A ticked one keeps the label colour, since it is still there
+                 * to be unticked, so every option the other criteria rule out without a tick reads as out of reach.
+                 */
+
+                &:has(input:disabled) > label {
+
+                    cursor: default;
+                    color: var(--skin--color-disabled);
+
+                    /* The count follows, in place of the colour Skin gives small print. */
+
+                    & > small {
+                        color: inherit;
+                    }
+
+                }
+
+            }
+
+            /* The name the facet supplies for the items holding no value is set at rest, apart from the names of values. */
+
+            & > li.blank > label > span {
+                font-weight: var(--skin--font-weight);
+            }
+
+            /*
+             * The whole row toggles the checkbox, the name clipped with an ellipsis rather than wrapped, so a long
+             * name never widens the box; counts line up at the end, in figures of equal width.
+             */
+
+            & > li > label {
+
+                display: grid;
+                grid-column: 1 / -1;
+                grid-template-columns: subgrid;
+                align-items: baseline;
+
+                cursor: pointer;
+
+                /*
+                 * The box stands on the baseline, reading as a capital beside the name in any face, and
+                 * smaller than a stock checkbox, so the rows of a dense list read as values rather than inputs; it is
+                 * centred in its column, so it stands under the middle of the header glyph.
+                 */
+
+                & > input {
+
+                    justify-self: center;
+
+                    inline-size: 1cap;
+                    block-size: 1cap;
+
+                }
+
+                /*
+                 * The name is set in the strong weight, so a plain name reads alike beside the name of a linked one. It
+                 * is clipped along the line alone, so the tighter leading never cuts off descenders or underlines, and
+                 * the clip stands clear of the name by the reach of the focus ring of a link, offset and width alike,
+                 * so the ring is drawn whole while the name keeps its place in the column.
+                 */
+
+                & > span {
+
+                    overflow-x: clip;
+
+                    padding-inline: calc(3 * var(--skin--border-width));
+                    margin-inline: calc(-3 * var(--skin--border-width));
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+
+                    font-weight: var(--skin--font-weight-strong);
+
+                }
+
+                /*
+                 * The counts are sized relative to the name of the option, so they stay smaller than it at whatever
+                 * size the facet is set, and hold the same look whatever an app does to small print elsewhere.
+                 */
+
+                & > small {
+                    justify-self: end;
+                    font-size: 90%;
+                    font-variant-numeric: tabular-nums;
+                }
+
+            }
+
+        }
+
+    }
+
+}

@@ -1,0 +1,153 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * A table takes the base rules the design system gives native tables. It sets up no scrolling of its own, which
+ * would capture its sticky headers, so the area around it scrolls a table outgrowing it in either direction.
+ */
+
+tile-table {
+
+    display: block;
+
+    /*
+     * Once the reader reorders the items, the columns keep the widths they were first shown at, so a new order bringing
+     * longer or shorter values into view never stretches or shrinks them; longer values are clipped to their cells.
+     */
+
+    & table[data-frozen] {
+        table-layout: fixed;
+    }
+
+    /* Headers stay at the top of the scrolling area while the rows pass under them, naming the columns throughout. */
+
+    & thead th {
+
+        position: sticky;
+        top: 0;
+        z-index: var(--skin--z-index-sticky);
+
+    }
+
+    /*
+     * A header button is the header itself, not a form control, so it drops the box Skin gives buttons and its text
+     * sits where a plain header would. A sort glyph sits centred on the label, away from the values: opening an
+     * end-aligned header, closing any other. Every button is a line high, so the reset glyph standing alone centres on
+     * the labels beside it.
+     */
+
+    & thead th > button {
+
+        display: inline-flex;
+        vertical-align: top;
+        column-gap: var(--skin--spacing-025);
+
+        min-block-size: 1lh;
+        padding: 0;
+        border-style: none;
+
+        /*
+         * A header unsorted keeps the room its glyph takes once sorted, so the widths the columns are first measured at
+         * still fit the label beside its glyph after the reader sorts the items on it.
+         */
+
+        &:not(:has(svg)) {
+            padding-inline-end: calc(var(--skin--scaling-100) + var(--skin--spacing-025));
+        }
+
+    }
+
+    & thead th.end > button {
+
+        flex-direction: row-reverse;
+
+        &:not(:has(svg)) {
+            padding-inline: calc(var(--skin--scaling-100) + var(--skin--spacing-025)) 0;
+        }
+
+    }
+
+    /*
+     * A sort mark takes the disabled colour, at 1.87:1 on the page in the light scheme and 2.00:1 in the dark one,
+     * so the header text leads; under the pointer it follows the text into the hover colour.
+     */
+
+    & thead th:not(:last-child) > button:not(:hover) > svg {
+        color: var(--skin--color-disabled);
+    }
+
+    /*
+     * Cells hold to one line, so every row stands a line high, and a value outgrowing its cell is clipped with an
+     * ellipsis rather than wrapped onto the lines below.
+     */
+
+    & th,
+    & td {
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        /* Values set at the end of their cells line up figures by their last digit, in digits of equal width. */
+
+        &.end {
+            text-align: end;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* The trailing cell holds controls alone, at the end of the row. */
+
+        &:last-child {
+            text-align: end;
+        }
+
+    }
+
+    /*
+     * A value shared by a group of rows spans them in a single cell, and stays in view right under the headers while
+     * its rows scroll past, so the group is named however far the table is scrolled. The cell lets its value overflow,
+     * since a clipping cell would hold it in place, and the value clips itself to the cell width instead. It sticks
+     * below the header row (one line, its padding and its rule) by a further cell padding, level with the values of
+     * the first row in view, and leaves with the last row of its group, as the value of the next group takes its place.
+     */
+
+    & td[rowspan] {
+
+        overflow: visible;
+
+        & > span {
+
+            display: block;
+            position: sticky;
+            top: calc(1lh + 3 * var(--skin--spacing-050) + var(--skin--border-width));
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+        }
+
+    }
+
+    /*
+     * The trailing column takes the room the values leave, as the design system has an empty last header do, so the
+     * values keep their natural widths and the controls close each row at the far end of the table.
+     */
+
+    & th:last-child {
+        width: 100%;
+    }
+
+}

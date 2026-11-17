@@ -1,0 +1,1119 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { number } from "@metreeca/blue/number";
+import { reference } from "@metreeca/blue/reference";
+import { id, multiple, optional, resource } from "@metreeca/blue/resource";
+import { AutoDelay } from "../index.js";
+import { immutable } from "@metreeca/core/values";
+import type { Store as Backend } from "@metreeca/keep";
+import type { Criteria } from "@metreeca/qest/model";
+import { Store } from "@metreeca/tile";
+import { useCollection } from "@metreeca/tile/collection";
+import { useRange } from "@metreeca/tile/range";
+import type { Type } from "@metreeca/tile/types";
+import { date } from "@metreeca/tile/types/date";
+import { decimal } from "@metreeca/tile/types/decimal";
+import { instant } from "@metreeca/tile/types/instant";
+import { integer } from "@metreeca/tile/types/integer";
+import { string } from "@metreeca/tile/types/string";
+import { time } from "@metreeca/tile/types/time";
+import { year } from "@metreeca/tile/types/year";
+import { createElement, render } from "preact";
+import { act } from "preact/test-utils";
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+import { Range } from "./range.js";
+
+
+const entry = "https://example.com/catalogue/";
+
+const Item = resource({ id: id(), year: optional(number()) });
+const Catalogue = resource({ id: id(), members: multiple(reference(Item)) });
+
+
+/**
+ * A store handing over the lowest and highest values given, immutable as every store hands them out.
+ */
+function bounds(min?: unknown, max?: unknown) {
+	return vi.fn(async () => immutable({ id: entry, members: [{ min, max }] }));
+}
+
+function backend(lookup: unknown): Backend {
+	return {
+		lookup,
+		observe: () => () => {}
+	} as unknown as Backend; // ;(test stub) only the members the binding calls are provided
+}
+
+function mount(lookup: unknown, {
+
+	collapsed,
+	type = integer,
+	criteria = {},
+	onChange = () => {}
+
+}: {
+
+	readonly collapsed?: boolean
+	readonly type?: Type
+	readonly criteria?: Criteria
+	readonly onChange?: (criteria: Criteria) => void
+
+} = {}): void {
+
+	function Host() {
+
+		const collection = useCollection({ entry, shape: Catalogue, query: criteria, onChange });
+
+		return createElement(Range, {
+			name: "Year",
+			...(collapsed === undefined ? {} : { collapsed }),
+			type,
+			range: useRange(collection, "year")
+		});
+
+	}
+
+	act(() => render(createElement(Store, {
+		factory: () => backend(lookup),
+		children: createElement(Host, {})
+	}), document.body));
+
+}
+
+function facet(): Element | null {
+	return document.querySelector("tile-range");
+}
+
+function header(): HTMLElement | null {
+	return document.querySelector("tile-range > header");
+}
+
+function lower(): HTMLInputElement | null {
+	return document.querySelector("input[aria-label=From]");
+}
+
+function upper(): HTMLInputElement | null {
+	return document.querySelector("input[aria-label=To]");
+}
+
+function clear(): HTMLButtonElement | null {
+	return document.querySelector("button[title=Reset]");
+}
+
+function disclosure(): HTMLButtonElement | null {
+	return document.querySelector("button[aria-expanded]");
+}
+
+function configure(): HTMLButtonElement | null {
+	return document.querySelector("tile-range > header > button");
+}
+
+function setting(name: string): HTMLInputElement | null {
+	return [...document.querySelectorAll("tile-range > section label")]
+		.find(label => label.textContent === name)
+		?.querySelector("input") ?? null;
+}
+
+function focus(target: Element | null, type: "focusin" | "focusout", relatedTarget: Element | null = null): void {
+	act(() => void target!.dispatchEvent(new FocusEvent(type, { bubbles: true, relatedTarget })));
+}
+
+function edit(input: HTMLInputElement | null, text: string): void {
+	act(() => {
+		input!.value = text; // test harness: the facet is ready
+		input!.dispatchEvent(new Event("input", { bubbles: true }));
+	});
+}
+
+/**
+ * Edits a field and leaves it, as a reader committing the field does.
+ */
+function commit(input: HTMLInputElement | null, text: string): void {
+	edit(input, text);
+	act(() => void input!.dispatchEvent(new FocusEvent("focusout", { bubbles: true })));
+}
+
+async function ready(): Promise<void> {
+	await vi.waitFor(() => expect(lower()).not.toBeNull());
+}
+
+async function loaded(): Promise<void> {
+	await vi.waitFor(() => expect(facet()?.getAttribute("aria-busy")).not.toBe("true"));
+}
+
+
+afterEach(async () => {
+	act(() => render(null, document.body));
+});
+
+
+describe("Range", () => {
+
+	describe("accessibility", () => {
+
+		it("should be a group named by its name, shown in its header", async () => {
+
+			mount(bounds(1990, 2020));
+
+			const labelledby = facet()?.getAttribute("aria-labelledby") ?? "";
+
+			expect(facet()?.getAttribute("role")).toBe("group");
+			expect(document.getElementById(labelledby)?.textContent).toBe("Year");
+			expect(facet()?.querySelector("header")?.contains(document.getElementById(labelledby))).toBe(true);
+
+		});
+
+		it("should be busy while the values are retrieved for the first time", async () => {
+
+			mount(vi.fn(() => new Promise(() => {})));
+
+			expect(facet()?.getAttribute("aria-busy")).toBe("true");
+
+		});
+
+		it("should hide the fields while the values are retrieved for the first time", async () => {
+
+			mount(vi.fn(() => new Promise(() => {})));
+
+			expect(facet()?.querySelector("header")?.textContent).toBe("Year");
+			expect(facet()?.querySelector("section")?.hidden).toBe(true);
+
+		});
+
+		it("should not be busy once the values are retrieved", async () => {
+
+			mount(bounds(1990, 2020));
+
+			await ready();
+
+			expect(facet()?.getAttribute("aria-busy")).not.toBe("true");
+
+		});
+
+		it("should name both fields", async () => {
+
+			mount(bounds(1990, 2020));
+
+			await ready();
+
+			expect(upper()).not.toBeNull();
+
+		});
+
+		it("should let the keyboard reach its header", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true });
+
+			expect(header()?.getAttribute("tabindex")).toBe("0");
+
+		});
+
+		it("should offer no disclosure", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true });
+
+			await loaded();
+
+			expect(disclosure()).toBeNull();
+
+		});
+
+	});
+
+	describe("collapsed", () => {
+
+		it("should show no fields while closed with no bound set", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true });
+
+			await loaded();
+
+			expect(lower()).toBeNull();
+
+		});
+
+		it("should show the fields while closed with a bound set", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true, criteria: { ">=year": 2000 } });
+
+			await ready();
+
+		});
+
+		it("should open as its header takes focus", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true });
+
+			await loaded();
+
+			focus(header(), "focusin");
+
+			await ready();
+
+		});
+
+		it("should close as focus leaves the facet once opened by its header", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true });
+
+			await loaded();
+
+			focus(header(), "focusin");
+
+			await ready();
+
+			focus(lower(), "focusout", document.body);
+
+			await vi.waitFor(() => expect(lower()).toBeNull());
+
+		});
+
+		it("should stay open as focus moves within the facet", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true });
+
+			await loaded();
+
+			focus(header(), "focusin");
+
+			await ready();
+
+			focus(lower(), "focusout", upper());
+
+			await act(async () => {});
+
+			expect(lower()).not.toBeNull();
+
+		});
+
+		it("should start open unless collapsed", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: false });
+
+			await ready();
+
+		});
+
+		it("should stay open as focus leaves the facet unless collapsed", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: false });
+
+			await ready();
+
+			focus(lower(), "focusout", document.body);
+
+			await act(async () => {});
+
+			expect(lower()).not.toBeNull();
+
+		});
+
+	});
+
+	describe("configure", () => {
+
+		it("should offer to configure while the fields are shown", async () => {
+
+			mount(bounds(1990, 2020));
+
+			await ready();
+
+			expect(configure()?.title).toBe("Configure");
+			expect(configure()?.querySelector("svg")).not.toBeNull();
+
+		});
+
+		it("should offer to be done while the settings are shown", async () => {
+
+			mount(bounds(1990, 2020));
+
+			await ready();
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(configure()?.title).toBe("Done"));
+
+			expect(configure()?.querySelector(".lucide-check")).not.toBeNull();
+
+		});
+
+		it("should show the settings in place of the fields", async () => {
+
+			mount(bounds(1990, 2020));
+
+			await ready();
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(setting("Keep open")).not.toBeNull());
+
+			expect(lower()).toBeNull();
+
+		});
+
+		it("should show the settings while closed", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true });
+
+			await loaded();
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(setting("Keep open")).not.toBeNull());
+
+			expect(facet()?.querySelector("section")?.hidden).toBe(false);
+
+		});
+
+		it("should show the fields again as configure is pressed again", async () => {
+
+			mount(bounds(1990, 2020));
+
+			await ready();
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(setting("Keep open")).not.toBeNull());
+
+			act(() => configure()?.click());
+
+			await ready();
+
+			expect(setting("Keep open")).toBeNull();
+
+		});
+
+		it("should hide the settings as focus leaves the facet", async () => {
+
+			mount(bounds(1990, 2020));
+
+			await ready();
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(setting("Keep open")).not.toBeNull());
+
+			focus(configure(), "focusout", document.body);
+
+			await vi.waitFor(() => expect(setting("Keep open")).toBeNull());
+
+		});
+
+		it("should let the keyboard reach the configure button, whatever the browser preferences", async () => {
+
+			mount(bounds(1990, 2020));
+
+			await ready();
+
+			expect(configure()?.getAttribute("tabindex")).toBe("0");
+
+		});
+
+		it("should take its header off the keyboard path while the settings are shown", async () => {
+
+			mount(bounds(1990, 2020));
+
+			await ready();
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(header()?.getAttribute("tabindex")).toBe("-1"));
+
+		});
+
+		it("should not open as the configure button takes focus", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true });
+
+			await loaded();
+
+			focus(configure(), "focusin");
+
+			await act(async () => {});
+
+			expect(lower()).toBeNull();
+
+		});
+
+		it("should not offer a reset while the settings are shown", async () => {
+
+			mount(bounds(1990, 2020), { criteria: { ">=year": 2000 } });
+
+			await vi.waitFor(() => expect(clear()).not.toBeNull());
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(clear()).toBeNull());
+
+		});
+
+		it("should leave keep open unticked if collapsed", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true });
+
+			await loaded();
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(setting("Keep open")?.checked).toBe(false));
+
+		});
+
+		it("should tick keep open unless collapsed", async () => {
+
+			mount(bounds(1990, 2020));
+
+			await ready();
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(setting("Keep open")?.checked).toBe(true));
+
+		});
+
+		it("should close as focus leaves the facet once keep open is unticked", async () => {
+
+			mount(bounds(1990, 2020));
+
+			await ready();
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(setting("Keep open")).not.toBeNull());
+
+			await act(async () => void setting("Keep open")?.click()); // the fold renders before focus leaves
+
+			expect(setting("Keep open")?.checked).toBe(false);
+
+			focus(configure(), "focusout", document.body);
+
+			await vi.waitFor(() => expect(facet()?.querySelector("section")?.hidden).toBe(true));
+
+		});
+
+		it("should stay open as focus leaves the facet once keep open is ticked", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true });
+
+			await loaded();
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(setting("Keep open")?.checked).toBe(false));
+
+			await act(async () => void setting("Keep open")?.click()); // the fold renders before focus leaves
+
+			expect(setting("Keep open")?.checked).toBe(true);
+
+			focus(configure(), "focusout", document.body);
+
+			await ready();
+
+		});
+
+	});
+
+	describe("fields", () => {
+
+		it("should work on the native input the type works on", async () => {
+
+			const inputs = async (type: Type) => {
+
+				mount(bounds(), { type });
+
+				await ready();
+
+				focus(lower(), "focusin");
+
+				await act(async () => {});
+
+				const from = lower()!.type; // test harness: the facet is ready
+
+				focus(lower(), "focusout", upper());
+				focus(upper(), "focusin");
+
+				await act(async () => {});
+
+				return [from, upper()!.type];
+
+			};
+
+			expect(await inputs(integer)).toEqual(["number", "number"]);
+			expect(await inputs(decimal)).toEqual(["number", "number"]);
+			expect(await inputs(year)).toEqual(["number", "number"]);
+			expect(await inputs(date)).toEqual(["date", "date"]);
+			expect(await inputs(time)).toEqual(["time", "time"]);
+			expect(await inputs(instant)).toEqual(["datetime-local", "datetime-local"]);
+			expect(await inputs(instant.as(date))).toEqual(["date", "date"]);
+			expect(await inputs(string)).toEqual(["text", "text"]);
+
+		});
+
+		it("should suggest the lowest and highest values as the type shows them", async () => {
+
+			mount(bounds(1990, 2020));
+
+			await vi.waitFor(() => expect([lower()?.placeholder, upper()?.placeholder]).toEqual([
+				integer.format(1990), integer.format(2020)
+			]));
+
+		});
+
+		it("should suggest the lowest and highest values on text fields while temporal fields are empty and unfocused", async () => {
+
+			mount(bounds("2020-01-01", "2020-12-31"), { type: date });
+
+			await ready();
+
+			expect([lower()?.type, upper()?.type]).toEqual(["text", "text"]);
+			expect([lower()?.placeholder, upper()?.placeholder]).toEqual([
+				date.format("2020-01-01"), date.format("2020-12-31")
+			]);
+
+		});
+
+		it("should switch temporal fields to the native input as they take focus", async () => {
+
+			mount(bounds("2020-01-01", "2020-12-31"), { type: date });
+
+			await ready();
+
+			focus(lower(), "focusin");
+
+			await vi.waitFor(() => expect([lower()?.type, upper()?.type]).toEqual(["date", "text"]));
+
+			focus(lower(), "focusout", upper());
+			focus(upper(), "focusin");
+
+			await vi.waitFor(() => expect([lower()?.type, upper()?.type]).toEqual(["text", "date"]));
+
+		});
+
+		it("should mark the fields by a dot where no item holds a value", async () => {
+
+			mount(bounds());
+
+			await ready();
+
+			expect([lower()?.placeholder, upper()?.placeholder]).toEqual(["•", "•"]);
+
+		});
+
+		it("should start a field from nothing where no item holds a value, as it takes focus", async () => {
+
+			mount(bounds());
+
+			await ready();
+
+			act(() => lower()?.focus());
+
+			expect(lower()?.value).toBe("");
+
+		});
+
+		it("should hold the bounds set, as the input takes them", async () => {
+
+			mount(bounds(1990, 2020), { criteria: { ">=year": 2000, "<=year": 2010 } });
+
+			await ready();
+
+			expect([lower()?.value, upper()?.value]).toEqual(["2000", "2010"]);
+
+		});
+
+		it("should constrain each field by the other", async () => {
+
+			mount(bounds(1990, 2020), { criteria: { ">=year": 2000, "<=year": 2010 } });
+
+			await ready();
+
+			expect([lower()?.max, upper()?.min]).toEqual(["2010", "2000"]);
+
+		});
+
+		it("should not hold a bound field to the values on offer on its own side, which the bound narrows", async () => {
+
+			mount(bounds(2005, 2008), { criteria: { ">=year": 2000, "<=year": 2010 } });
+
+			await ready();
+
+			expect([lower()?.hasAttribute("min"), upper()?.hasAttribute("max")]).toEqual([false, false]);
+			expect([lower()?.checkValidity(), upper()?.checkValidity()]).toEqual([true, true]);
+
+		});
+
+		it("should constrain each field by the values on offer while the other is empty", async () => {
+
+			mount(bounds(1990, 2020));
+
+			await ready();
+
+			expect([lower()?.min, lower()?.max, upper()?.min, upper()?.max]).toEqual(["1990", "2020", "1990", "2020"]);
+
+		});
+
+		it("should let ordered fields take values off the steps from the values on offer", async () => {
+
+			const steps = async (type: Type, min: unknown, max: unknown) => {
+
+				act(() => render(null, document.body));
+				mount(bounds(min, max), { type });
+
+				await ready();
+
+				focus(lower(), "focusin");
+
+				await act(async () => {});
+
+				const from = lower()?.step;
+
+				focus(lower(), "focusout", upper());
+				focus(upper(), "focusin");
+
+				await act(async () => {});
+
+				return [from, upper()?.step];
+
+			};
+
+			expect(await steps(decimal, 9.99, 199.99)).toEqual(["any", "any"]);
+			expect(await steps(time, "10:15:30", "18:00:00")).toEqual(["any", "any"]);
+			expect(await steps(instant, "2020-01-01T10:15:30Z", "2020-12-31T10:00:00Z")).toEqual(["any", "any"]);
+
+		});
+
+		it("should leave text fields unconstrained", async () => {
+
+			mount(bounds("a", "z"), { type: string });
+
+			await ready();
+
+			expect([lower()?.hasAttribute("min"), upper()?.hasAttribute("max")]).toEqual([false, false]);
+
+		});
+
+		it("should show a failed retrieval as a critical note", async () => {
+
+			mount(vi.fn(async () => { throw new Error("failed"); }));
+
+			await vi.waitFor(() => expect(facet()?.querySelector("tile-note")?.textContent).toContain("Not Available"));
+
+		});
+
+	});
+
+	describe("narrowing", () => {
+
+		it("should hold an edit back until the reader pauses", async () => {
+
+			const onChange = vi.fn();
+
+			mount(bounds(1990, 2020), { onChange });
+
+			await ready();
+
+			edit(lower(), "2000");
+
+			expect(onChange).not.toHaveBeenCalled();
+			expect(lower()?.value).toBe("2000");
+
+			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({ ">=year": 2000 }), {
+				timeout: 4 * AutoDelay
+			});
+
+		});
+
+		it("should hold an edit the field rejects across a pause, as typing a value slowly does", async () => {
+
+			const onChange = vi.fn();
+
+			mount(bounds(1990, 2020), { onChange });
+
+			await ready();
+
+			focus(lower(), "focusin");
+			edit(lower(), "19");
+
+			await new Promise(resolve => setTimeout(resolve, 3 * AutoDelay));
+
+			expect(onChange).not.toHaveBeenCalled();
+			expect(lower()?.value).toBe("19");
+
+			edit(lower(), "1995");
+
+			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({ ">=year": 1995 }), {
+				timeout: 4 * AutoDelay
+			});
+
+			expect(onChange).toHaveBeenCalledTimes(1);
+
+		});
+
+		it("should apply a run of edits once, as stepping through values does", async () => {
+
+			const onChange = vi.fn();
+
+			mount(bounds(1990, 2020), { onChange });
+
+			await ready();
+
+			edit(lower(), "1991");
+			edit(lower(), "1992");
+			edit(lower(), "1993");
+
+			await vi.waitFor(() => expect(onChange).toHaveBeenCalled(), { timeout: 4 * AutoDelay });
+
+			expect(onChange.mock.calls).toEqual([[{ ">=year": 1993 }]]);
+
+		});
+
+		it("should hold an edit on a masked field back until the reader commits it", async () => {
+
+			const onChange = vi.fn();
+
+			mount(bounds("2020-01-01", "2020-12-31"), { type: date, onChange });
+
+			await ready();
+
+			focus(lower(), "focusin");
+			edit(lower(), "2020-06-01");
+
+			await new Promise(resolve => setTimeout(resolve, 3 * AutoDelay));
+
+			expect(onChange).not.toHaveBeenCalled();
+
+			focus(lower(), "focusout");
+
+			await vi.waitFor(() => expect(onChange).toHaveBeenCalledTimes(1));
+
+		});
+
+		it("should start an empty field from the value it suggests as it takes focus", async () => {
+
+			mount(bounds(1990, 2020));
+
+			await ready();
+
+			focus(upper(), "focusin");
+
+			await vi.waitFor(() => expect(upper()?.value).toBe("2020"));
+
+		});
+
+		it("should select the bound a field holds as it takes focus", async () => {
+
+			mount(bounds("a", "z"), { type: string, criteria: { ">=year": "m" } });
+
+			await vi.waitFor(() => expect(lower()?.value).toBe("m"));
+
+			focus(lower(), "focusin");
+
+			await vi.waitFor(() => expect([lower()?.selectionStart, lower()?.selectionEnd]).toEqual([0, 1]));
+
+		});
+
+		it("should select the value an empty field suggests as it takes focus", async () => {
+
+			const selected = vi.spyOn(HTMLInputElement.prototype, "select");
+
+			mount(bounds(1990, 2020));
+
+			await ready();
+
+			focus(upper(), "focusin");
+
+			const values = () => selected.mock.contexts.map(context => context === upper() ? upper()?.value : undefined);
+
+			await vi.waitFor(() => expect(values()).toEqual(["2020"]));
+
+			selected.mockRestore();
+
+		});
+
+		it("should select the text of a field focused by a click once the button is released", async () => {
+
+			mount(bounds("a", "z"), { type: string, criteria: { ">=year": "m" } });
+
+			await vi.waitFor(() => expect(lower()?.value).toBe("m"));
+
+			act(() => void lower()!.dispatchEvent(new MouseEvent("mousedown", { bubbles: true })));
+			focus(lower(), "focusin");
+
+			await new Promise(resolve => setTimeout(resolve));
+
+			act(() => lower()!.setSelectionRange(1, 1)); // the release of the button places the caret
+			act(() => void lower()!.dispatchEvent(new MouseEvent("mouseup", { bubbles: true })));
+
+			await vi.waitFor(() => expect([lower()?.selectionStart, lower()?.selectionEnd]).toEqual([0, 1]));
+
+		});
+
+		it("should let the release of a button on a field take its native effect", async () => {
+
+			mount(bounds(1990, 2020));
+
+			await ready();
+
+			const press = (type: string) => {
+				const event = new MouseEvent(type, { bubbles: true, cancelable: true });
+				act(() => void lower()!.dispatchEvent(event));
+				return event.defaultPrevented;
+			};
+
+			expect(press("mousedown")).toBe(false);
+			focus(lower(), "focusin");
+			expect(press("mouseup")).toBe(false);
+
+		});
+
+		it("should apply nothing for a suggestion left as it is", async () => {
+
+			const onChange = vi.fn();
+
+			mount(bounds(1990, 2020), { onChange });
+
+			await ready();
+
+			focus(upper(), "focusin");
+
+			await vi.waitFor(() => expect(upper()?.value).toBe("2020"));
+
+			focus(upper(), "focusout");
+
+			await act(async () => {});
+
+			expect(onChange).not.toHaveBeenCalled();
+			expect(upper()?.value).toBe("");
+
+		});
+
+		it("should show an empty field once its applied bound is reset", async () => {
+
+			const onChange = vi.fn();
+
+			mount(bounds(1990, 2020), { onChange });
+
+			await ready();
+
+			commit(lower(), "2000");
+
+			await vi.waitFor(() => expect(clear()).not.toBeNull());
+
+			act(() => clear()?.click());
+
+			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({}));
+			await vi.waitFor(() => expect(lower()?.value).toBe(""));
+
+		});
+
+		it("should apply an edit at once on Enter", async () => {
+
+			const onChange = vi.fn();
+
+			mount(bounds(1990, 2020), { onChange });
+
+			await ready();
+
+			edit(lower(), "2000");
+
+			act(() => void lower()!.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true })));
+
+			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({ ">=year": 2000 }), {
+				timeout: AutoDelay / 2
+			});
+
+		});
+
+		it("should apply a lower bound once committed", async () => {
+
+			const onChange = vi.fn();
+
+			mount(bounds(1990, 2020), { onChange });
+
+			await ready();
+
+			commit(lower(), "2000");
+
+			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({ ">=year": 2000 }));
+
+		});
+
+		it("should apply an upper bound once committed", async () => {
+
+			const onChange = vi.fn();
+
+			mount(bounds(1990, 2020), { onChange });
+
+			await ready();
+
+			commit(upper(), "2010");
+
+			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({ "<=year": 2010 }));
+
+		});
+
+		it("should apply bounds off the steps from the values on offer", async () => {
+
+			const onChange = vi.fn();
+
+			mount(bounds(9.99, 199.99), { type: decimal, onChange });
+
+			await ready();
+
+			commit(lower(), "50");
+
+			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({ ">=year": 50 }));
+
+			commit(upper(), "100.5");
+
+			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({ ">=year": 50, "<=year": 100.5 }));
+
+		});
+
+		it("should bound instants shown as days by whole days", async () => {
+
+			const onChange = vi.fn();
+
+			mount(bounds("2020-01-01T10:00:00Z", "2020-12-31T10:00:00Z"), { type: instant.as(date), onChange });
+
+			await ready();
+
+			commit(lower(), "2020-06-01");
+
+			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({
+				">=year": new Date(2020, 5, 1).toISOString()
+			}));
+
+			commit(upper(), "2020-06-30");
+
+			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({
+				">=year": new Date(2020, 5, 1).toISOString(),
+				"<=year": new Date(new Date(2020, 6, 1).getTime()-1).toISOString()
+			}));
+
+		});
+
+		it("should remove a bound once its field is emptied", async () => {
+
+			const onChange = vi.fn();
+
+			mount(bounds(1990, 2020), { criteria: { ">=year": 2000, "<=year": 2010 }, onChange });
+
+			await ready();
+
+			commit(lower(), "");
+
+			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({ "<=year": 2010 }));
+
+		});
+
+		it("should leave the bound as it was on text the type cannot read", async () => {
+
+			const onChange = vi.fn();
+
+			mount(bounds("a", "z"), { type: { ...string, parse: () => { throw new SyntaxError("malformed"); } }, onChange });
+
+			await ready();
+
+			commit(lower(), "m");
+
+			await act(async () => {});
+
+			expect(onChange).not.toHaveBeenCalled();
+
+		});
+
+	});
+
+	describe("reset", () => {
+
+		it("should let the keyboard reach the reset, whatever the browser preferences", async () => {
+
+			mount(bounds(1990, 2020), { criteria: { ">=year": 2000 } });
+
+			await vi.waitFor(() => expect(clear()?.getAttribute("tabindex")).toBe("0"));
+
+		});
+
+		it("should not offer a reset while no bound is set", async () => {
+
+			mount(bounds(1990, 2020));
+
+			await ready();
+
+			expect(clear()).toBeNull();
+
+		});
+
+		it("should remove both bounds", async () => {
+
+			const onChange = vi.fn();
+
+			mount(bounds(1990, 2020), { criteria: { ">=year": 2000, "<=year": 2010 }, onChange });
+
+			await vi.waitFor(() => expect(clear()).not.toBeNull());
+
+			act(() => clear()?.click());
+
+			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({}));
+
+		});
+
+		it("should keep an opened facet open, as the pressed reset goes away", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true, criteria: { ">=year": 2000 } });
+
+			await vi.waitFor(() => expect(clear()).not.toBeNull());
+
+			act(() => header()?.focus());
+			act(() => clear()?.focus());
+			act(() => clear()?.click());
+
+			await vi.waitFor(() => expect(clear()).toBeNull());
+			await act(async () => {});
+
+			await ready();
+
+		});
+
+		it("should close the facet as focus leaves it after the reset", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true, criteria: { ">=year": 2000 } });
+
+			await vi.waitFor(() => expect(clear()).not.toBeNull());
+
+			act(() => header()?.focus());
+			act(() => clear()?.focus());
+			act(() => clear()?.click());
+
+			await vi.waitFor(() => expect(clear()).toBeNull());
+			await act(async () => {});
+
+			act(() => {
+				document.body.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+				(document.activeElement as HTMLElement | null)?.blur(); // ;(test harness) focus is within the facet
+				document.body.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }));
+			});
+
+			await vi.waitFor(() => expect(lower()).toBeNull());
+
+		});
+
+	});
+
+});

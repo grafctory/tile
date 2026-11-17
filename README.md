@@ -1,19 +1,26 @@
 # @metreeca/tile
 
-Minimalist model-driven UI toolkit for linked data resources.
+Linked data UI toolkit for Preact.
 
-Preact components for [@metreeca/qest](https://github.com/metreeca/qest) linked data APIs. Resource models shared with
-the server drive what screens show, what forms accept and how values are validated, so neither side restates them.
+Preact lenses, facets and fields for [@metreeca/qest](https://github.com/metreeca/qest) linked data APIs:
 
-Screens are composed in JSX from general-purpose widgets and layouts alongside linked data views and forms. The
-[@metreeca/skin] design system is optional: components work without it and follow the platform colour scheme with it.
+- **Shape-Driven Screens**: the [@metreeca/blue] shapes shared with the server decide what screens show and accept
+- **Accessible Widgets**: labelled controls, keyboard paths and status announcements designed to WCAG 2.2 AA
+- **Store-Backed Resources**: a [@metreeca/keep] store keeps caching, batching and validation out of interface code
+
+Screens are composed in JSX from linked data lenses, facets and fields, running within the contexts and hooks of
+[@metreeca/clay](https://github.com/metreeca/clay), and leave the exchange of resources to the store.
+
+Their look comes from the [@metreeca/skin] design tokens alone: components render without the skin stylesheet, and
+follow the platform colour scheme once it is loaded, or whatever theme the app sets there instead.
 
 # Installation
 
 ```shell
-npm install @metreeca/skin            # design system package, optional
-npm install @metreeca/tile            # Preact contexts and hooks
-npm install @metreeca/tile-<layer>    # Preact package, one per component layer
+npm install @metreeca/skin            # design system stylesheet, optional
+npm install @metreeca/clay            # contexts and hooks the store runs within
+npm install @metreeca/tile            # linked data store and value types
+npm install @metreeca/tile-widgets    # linked data lenses, facets and fields
 ```
 
 > [!WARNING]
@@ -21,36 +28,33 @@ npm install @metreeca/tile-<layer>    # Preact package, one per component layer
 > TypeScript consumers must use `"moduleResolution": "nodenext"/"node16"/"bundler"` in `tsconfig.json`.
 > The legacy `"node"` resolver is not supported.
 
-Add a binding package for each component layer an app assembles its screens from. Bindings render with Preact and take
-it as a peer dependency: check the package README for what each one expects. The [@metreeca/skin] design system is
-optional and styles whatever a binding renders. An app brands it by overriding its tokens, as its
-[theming guide](https://github.com/metreeca/skin#theming) explains for colours, faces and every other family.
+Add the widgets package where the app's screens show linked data, with the peer dependencies its README lists. An
+app brands whatever Tile renders by overriding the [@metreeca/skin] tokens, as its
+[theming guide](https://github.com/metreeca/skin#theming) explains for each family of tokens it defines.
 
-| Package               | Description                          |
-|-----------------------|--------------------------------------|
-| [@metreeca/tile-type] | Shape-driven value text              |
-| [@metreeca/tile]      | Contexts and hooks                   |
-| [@metreeca/tile-cell] | Widgets and controls                 |
-| [@metreeca/tile-hive] | Layouts and containers               |
-| [@metreeca/tile-move] | Movable items and the move lifecycle |
-| [@metreeca/tile-lens] | Linked data views                    |
-| [@metreeca/tile-form] | Linked data forms                    |
+| Package                  | Description                                    |
+|--------------------------|------------------------------------------------|
+| [@metreeca/tile]         | Linked data store and shape-driven value types |
+| [@metreeca/tile-widgets] | Linked data widgets                            |
+| [@metreeca/tile-charts]  | Linked data charts (planned)                   |
+| [@metreeca/tile-topics]  | SKOS topic widgets (planned)                   |
+| [@metreeca/tile-apis]    | API documentation widgets (planned)            |
 
 [@metreeca/skin]: https://metreeca.github.io/skin/
 
-[@metreeca/tile-type]: https://metreeca.github.io/tile/modules/_metreeca_tile-type.html
+[@metreeca/blue]: https://github.com/metreeca/blue
+
+[@metreeca/keep]: https://github.com/metreeca/keep
 
 [@metreeca/tile]: https://metreeca.github.io/tile/modules/_metreeca_tile.html
 
-[@metreeca/tile-cell]: https://metreeca.github.io/tile/modules/_metreeca_tile-cell.html
+[@metreeca/tile-widgets]: https://metreeca.github.io/tile/modules/_metreeca_tile-widgets.html
 
-[@metreeca/tile-hive]: https://metreeca.github.io/tile/modules/_metreeca_tile-hive.html
+[@metreeca/tile-charts]: https://metreeca.github.io/tile/modules/_metreeca_tile-charts.html
 
-[@metreeca/tile-move]: https://metreeca.github.io/tile/modules/_metreeca_tile-move.html
+[@metreeca/tile-topics]: https://metreeca.github.io/tile/modules/_metreeca_tile-topics.html
 
-[@metreeca/tile-lens]: https://metreeca.github.io/tile/modules/_metreeca_tile-lens.html
-
-[@metreeca/tile-form]: https://metreeca.github.io/tile/modules/_metreeca_tile-form.html
+[@metreeca/tile-apis]: https://metreeca.github.io/tile/modules/_metreeca_tile-apis.html
 
 # Usage
 

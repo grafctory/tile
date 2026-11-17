@@ -1,0 +1,79 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Collection reset.
+ *
+ * Offers a control that drops every criterion narrowing a collection, so that every lens presenting the collection
+ * goes back to all of its items in a single step, rather than one facet at a time.
+ *
+ * @module clear
+ */
+
+import type { ResourceShape } from "@metreeca/blue/resource";
+import type { Lazy } from "@metreeca/core";
+import type { Collection, Collections } from "@metreeca/tile/collection";
+import { XCircleIcon } from "lucide-preact";
+import { createElement } from "preact";
+import "../index.css";
+
+
+/**
+ * Creates a collection reset.
+ *
+ * Shows a subtle button marked by the reset glyph, removing every criterion the reader set on the collection, so that
+ * every widget handed the same collection, lenses and facets alike, follows along. The button is disabled while
+ * no criterion narrows the collection, and its `Clear Filters` hint names it for assistive technology.
+ *
+ * ```tsx
+ * const collection = useCollection({ entry: "/courses/", shape: Course });
+ *
+ * <Clear collection={collection}/>
+ * ```
+ *
+ * @typeParam S The shape describing the resource holding the collection
+ * @typeParam P The property of the resource collecting the items
+ *
+ * @param options The widget configuration
+ *
+ * @returns The reset control
+ */
+export function Clear<S extends Lazy<ResourceShape>, P extends Collections<S>>({
+
+	collection
+
+}: {
+
+	/**
+	 * The collection reset, as handed by {@link @metreeca/tile!collection.useCollection useCollection}.
+	 */
+	collection: Collection<S, P>
+
+}) {
+
+	// Safari leaves buttons off the keyboard path unless the reader opts in, so the button states its place on it
+
+	return createElement("tile-clear", {}, <button type="button" tabIndex={0}
+
+		disabled={Object.keys(collection.query).length === 0}
+
+		title={"Clear Filters"}
+
+		onClick={collection.clear}
+
+	><XCircleIcon/></button>);
+
+}

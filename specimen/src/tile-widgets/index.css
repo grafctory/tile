@@ -1,0 +1,234 @@
+/*
+ * Copyright © 2025-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**** Controls ********************************************************************************************************/
+
+/*
+ * A row of controls flows the way a toolbar would lay one out. The controls are spaced from one another rather than
+ * left to the single space between words, which reads as one run of text rather than as separate controls.
+ */
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: var(--skin--spacing-150);
+    row-gap: var(--skin--spacing-050);
+    margin-bottom: var(--skin--spacing-100);
+}
+
+
+/**** Facets **********************************************************************************************************/
+
+/*
+ * Facets stand in a column beside the items they narrow, as a search page lays them out, and move above the items
+ * where the page is too narrow to hold both side by side.
+ */
+
+.facets {
+
+    /*
+     * The facet column holds no narrower than a facet header with its name and glyphs side by side, a page layout
+     * measure in text widths that the design system leaves to each app.
+     */
+
+    display: grid;
+    grid-template-columns: minmax(14rem, 1fr) 3fr;
+    align-items: start;
+    gap: var(--skin--spacing-150);
+
+    margin-block-start: var(--skin--spacing-100);
+
+    @container style(--skin--viewport-medium: off) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    /* The category facet keeps its list short, the rest of the values scrolling within it. */
+
+    & > tile-facets > tile-tally[aria-label="Category"] {
+        --tile-tally-rows: 5;
+    }
+
+    & > section {
+        min-width: 0;
+    }
+}
+
+
+/**** Matches *********************************************************************************************************/
+
+/* The strip telling the matches is padded as a facet header is, so it lines up with the facets below it. */
+
+clay-strip[look]:has(> tile-count) {
+    min-block-size: var(--skin--scaling-150);
+    padding-block: var(--skin--spacing-025);
+    padding-inline: var(--skin--spacing-050) var(--skin--spacing-025);
+}
+
+
+/**** Gallery *********************************************************************************************************/
+
+/*
+ * A sheet of cards lays them out as a gallery, as many to a row as the width holds, every row as tall as the tallest
+ * card. Descriptions are clipped to a few lines, so a long one never stretches the gallery out of proportion.
+ */
+
+tile-sheet:has(> clay-card) {
+
+    /* A card holds no narrower than its title on one line beside the glyph, a gallery measure left to each app. */
+
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+    grid-auto-rows: 1fr;
+    gap: var(--skin--spacing-100);
+
+    & > clay-card {
+
+        margin: 0;
+        align-content: start;
+        transition: box-shadow var(--skin--duration-fast) var(--skin--easing-standard);
+
+        &:hover {
+            box-shadow: var(--skin--box-shadow-raised);
+        }
+
+        /*
+         * The glyph standing for the product rides with the text it sits in, so it is scaled through the font size. Its
+         * line is exactly as tall as the glyph, since leading meant for display text would push the card body down.
+         */
+
+        & > i {
+            font-size: var(--skin--scaling-200);
+            line-height: 1;
+            color: var(--skin--color-link);
+        }
+
+        /* The description may shrink below its unwrapped width, or it squeezes the price and the glyph out. */
+
+        & > div {
+            min-width: 0;
+        }
+
+        & p {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        & small {
+            display: flex;
+            flex-wrap: wrap;
+            column-gap: var(--skin--spacing-075);
+            margin-top: var(--skin--spacing-050);
+            color: var(--skin--color-label);
+        }
+
+    }
+
+    .price {
+        font-weight: var(--skin--font-weight-strong);
+
+        & > em {
+            margin-inline-start: var(--skin--spacing-050);
+            font-style: normal;
+            font-size: var(--skin--font-size-small);
+        }
+
+        & > .rising {
+            color: var(--skin--color-pass);
+        }
+
+        & > .falling {
+            color: var(--skin--color-fail);
+        }
+    }
+
+    .rating {
+        color: var(--skin--color-warn);
+        letter-spacing: var(--skin--letter-spacing-caps);
+    }
+
+    .stock[data-out] {
+        color: var(--skin--color-fail);
+    }
+
+}
+
+
+/**** Samples *********************************************************************************************************/
+
+/*
+ * A sample sets a widget in a dashed outline, so the area it takes shows. A set of samples runs them side by side, at
+ * equal widths and at the height of the tallest, so the cases a widget meets compare at the same size.
+ */
+
+.samples {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    gap: var(--skin--spacing-150);
+    margin-bottom: var(--skin--spacing-100);
+}
+
+/*
+ * The inset of the widget within the outline, resolved once at the size of the sample: spacing follows the font size,
+ * so the smaller caption would otherwise take a narrower inset than the widget and sit to its left.
+ */
+
+@property --sample-inset {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 0px;
+}
+
+.sample {
+
+    --sample-inset: var(--skin--spacing-150);
+
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--skin--spacing-050);
+    margin: 0; /* spaced by the set it stands in, never by the flow of the prose */
+
+    /*
+     * The outline is dashed, unlike any border the design system draws, so it reads as the frame of the sample rather
+     * than as an edge of the widget inside it.
+     */
+
+    & > div {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        padding: var(--sample-inset);
+        border-style: dashed;
+        border-radius: var(--skin--border-radius-025);
+    }
+
+    /*
+     * The caption is inset as the widget is, by the outline and the padding inside it, so the two line up. The outline
+     * is matched by a transparent border rather than by padding, so the platform rounds both widths to the same pixel.
+     */
+
+    & > figcaption {
+        padding-inline: var(--sample-inset);
+        border-inline: var(--skin--border-width) var(--skin--border-style) transparent;
+        color: var(--skin--color-label);
+    }
+
+}

@@ -45,6 +45,8 @@ export default defineConfig(() => ({ // https://vite.dev/config/
         assetsDir: ".",
         emptyOutDir: true,
 
+        cssTarget: "esnext", // keeps light-dark() tokens intact, lowered fallbacks being invalid in @property values
+
         rollupOptions: {
             output: { manualChunks: undefined } // no vendor chunks
         }

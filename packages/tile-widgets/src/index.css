@@ -236,6 +236,22 @@ tile-more {
 
 }
 
+/*
+ * The spinner of a facet waiting for its values takes the box of the controls it stands in for, padding its glyph as
+ * they do, so the header holds still as the spinner gives way to them and the facet settles in the state it reached.
+ */
+
+:is(tile-tally, tile-range) > header > span > .lucide-refresh-cw {
+
+    box-sizing: content-box;
+    padding: var(--skin--spacing-025);
+
+    color: var(--skin--color-label);
+
+    animation: tile-more-turn var(--skin--duration-spin) linear infinite;
+
+}
+
 @keyframes tile-more-turn {
 
     to {

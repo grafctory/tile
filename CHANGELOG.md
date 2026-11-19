@@ -12,12 +12,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `useMembers` lets a page keep the sort order and the number of items on show wherever it likes, so that a catalogue
   the reader returns to grows back to where they left it: `order` and `limit` restore them as the members bind,
   `onChange` takes both once for every change, and `basis` states the order `reset` restores ([#8](https://github.com/metreeca/tile/issues/8))
+- `useTally` and `useRange` take an `eager` option retrieving the values at once, for a binding that no facet shows
+  and so nothing else would ever ask for its values ([#9](https://github.com/metreeca/tile/issues/9))
 
 ### Changed
 
 - **Breaking**: `useMembers` reads `order` only as the members start over, no longer whenever it changes, so that a
   page handing back what `onChange` takes doesn't retrieve the items twice; a page sorting the items again from outside
   its lens calls the `sort` function the members hand over instead of handing over a new `order`
+- **Breaking**: `useTally` and `useRange` wait in a new `idle` case until asked for their values, unless created
+  `eager` or narrowing the collection already, and the `Tally` and `Range` facets ask only once open or turned to, so
+  that a page whose facets the reader never opens costs the store nothing; code matching every case of either binding
+  handles `idle` as well, calling its `load` function to have the values retrieved ([#9](https://github.com/metreeca/tile/issues/9))
 
 ## [0.9.0](https://github.com/metreeca/tile/compare/v0.8.0...v0.9.0) - 2026-11-19
 

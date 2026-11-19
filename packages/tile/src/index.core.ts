@@ -30,6 +30,7 @@ import { effective, type Range } from "@metreeca/blue/value";
 import { isArray, isIdentifier, isObject, isString, type Lazy, type Optional } from "@metreeca/core";
 import type { Tag } from "@metreeca/core/language";
 import type { Option } from "@metreeca/core/relay";
+import { createState } from "@metreeca/core/state";
 import { type IRI, isIRI, resolve } from "@metreeca/core/resource";
 import { equals, immutable } from "@metreeca/core/values";
 import { NotFound } from "@metreeca/http";
@@ -38,6 +39,31 @@ import type { Store, StoreClient } from "@metreeca/keep";
 import { decodeProbe, isBinding, isSelector, type Probe } from "@metreeca/qest/model";
 import type { Reference } from "@metreeca/qest/state";
 import { useEffect, useState } from "preact/hooks";
+
+
+/**
+ * Lazy binding latch.
+ *
+ * Remembers that a lazy binding was asked for its value, so that it keeps retrieving it from then on.
+ *
+ * A transition returns a new latch and leaves this one unchanged, or returns this latch itself where nothing changes.
+ */
+export interface Latch {
+
+	/**
+	 * Whether the binding was asked for its value.
+	 */
+	readonly tripped: boolean
+
+
+	/**
+	 * Records that the binding was asked for its value.
+	 *
+	 * @returns A tripped latch, or this latch if already so
+	 */
+	trip(): this
+
+}
 
 
 /**
@@ -179,7 +205,8 @@ export function resolveTarget<Q extends object>({
  *     function it is handed, so that a failure moves the binding to `error`. The value is retrieved again whenever the
  *     store, the resource or the model change, and the retrieval is then handed the `ready` state on show, so that it
  *     may extend that state rather than retrieve it all again. The whole value is retrieved instead as the store
- *     signals a change or the binding is reloaded, so that no part of the value on show is left out of date
+ *     signals a change or the binding is reloaded, so that no part of the value on show is left out of date. While
+ *     `idle`, the binding stays `blank`, neither retrieving the value nor tracking its changes
  *
  * @returns The current state of the binding
  */
@@ -188,6 +215,7 @@ export function useEntry<V, W extends object>({
 	store,
 	entry,
 	model,
+	idle = false,
 
 	lookup,
 	modify
@@ -197,6 +225,7 @@ export function useEntry<V, W extends object>({
 	readonly store: Store
 	readonly entry: Reference
 	readonly model: object
+	readonly idle?: boolean
 
 	lookup(shown?: { readonly state: V } & W): Promise<Optional<V>>
 
@@ -224,11 +253,19 @@ export function useEntry<V, W extends object>({
 
 	useEffect(() => {
 
-		void track(option.ready);
+		if ( idle ) {
 
-		return store.observe(() => void track(), entry);
+			return undefined;
 
-	}, [store, entry, current]);
+		} else {
+
+			void track(option.ready);
+
+			return store.observe(() => void track(), entry);
+
+		}
+
+	}, [store, entry, current, idle]);
 
 
 	return option;
@@ -272,6 +309,23 @@ export function useEntry<V, W extends object>({
 			});
 	}
 
+}
+
+/**
+ * Creates a lazy binding latch.
+ *
+ * @returns An immutable {@link Latch}, not tripped yet
+ */
+export function createLatch(): Latch {
+	return createState<Latch>({
+
+		tripped: false,
+
+		trip() {
+			return { tripped: true };
+		}
+
+	});
 }
 
 

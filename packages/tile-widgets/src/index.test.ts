@@ -16,7 +16,7 @@
 
 import { describe, expect, it } from "vitest";
 
-import { createFold } from "./index.core.js";
+import { createFold, createLatch } from "./index.core.js";
 
 
 describe("createFold", () => {
@@ -132,6 +132,30 @@ describe("createFold", () => {
 		fold.expand();
 
 		expect(fold.open).toBe(false);
+
+	});
+
+});
+
+describe("createLatch", () => {
+
+	it("should start not tripped", async () => {
+		expect(createLatch().tripped).toBe(false);
+	});
+
+	describe("trip()", () => {
+
+		it("should trip the latch", async () => {
+			expect(createLatch().trip().tripped).toBe(true);
+		});
+
+		it("should leave a tripped latch as it stands", async () => {
+
+			const latch = createLatch().trip();
+
+			expect(latch.trip()).toBe(latch);
+
+		});
 
 	});
 

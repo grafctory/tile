@@ -43,7 +43,7 @@ export function Tally() {
 
 	const collection = useCollection({ entry, shape: Products });
 
-	const tally = useTally(collection, "condition");
+	const tally = useTally(collection, "condition", { eager: true });
 	const count = useCount(collection);
 
 	return <>

@@ -31,8 +31,8 @@ import type { TallyBucket, TallyCases } from "@metreeca/tile/tally";
 import { SquareCheckBigIcon, XCircleIcon, XIcon } from "lucide-preact";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId, useState } from "preact/hooks";
-import { createFold } from "../index.core.js";
-import { AutoDelay, cancel, classes, Configure, Failure, keys, leave, More, Settings } from "../index.js";
+import { createFold, createLatch } from "../index.core.js";
+import { AutoDelay, cancel, classes, Configure, Failure, keys, leave, More, Settings, Spinner } from "../index.js";
 import "./tally.css";
 
 
@@ -54,6 +54,11 @@ import "./tally.css";
  *
  * The facet folds down to the values ticked. Turning to the search field opens it while the reader works on it, and
  * focus leaving a collapsing facet closes it again, back to the values the reader ticked.
+ *
+ * An open facet asks for its values at once, while a closed one asks only as the reader turns to its search field,
+ * so a facet the reader never turns to costs the store nothing. A closed facet the reader turns to shows a spinner in
+ * place of the clear and reset buttons until the values arrive or their retrieval fails and is reported. A tally
+ * created `eager` has its values retrieved at once, whatever the facet does, and never shows the spinner at all.
  *
  * A button marked by the facet glyph shows the settings of the facet in place of its values. A check mark takes its
  * place and ends the settings, as does focus leaving the facet. Meanwhile, the search field shows the facet name and
@@ -126,11 +131,19 @@ export function Tally({
 		open: !collapsed, collapsing: collapsed
 	}));
 
+	const { tripped, trip } = useModel(() => createLatch());
+
 	const keywords = tally({ ready: ({ keywords }) => keywords }) ?? "";
 
+	const idle = tally({ idle: () => true }) ?? false;
+	const waiting = tripped && (tally({ blank: () => true }) ?? false);
 	const failed = tally({ error: () => true }) ?? false;
 	const filled = tally({ ready: ({ state }) => state.length > 0 }) ?? false;
 	const ticked = tally({ ready: ({ state }) => state.some(({ selected }) => selected) }) ?? false;
+
+	// the binding cannot be asked while rendering, so an open facet asks for its values once drawn open
+
+	useEffect(() => void (open && idle && tally({ idle: ({ load }) => load() })), [open, idle]);
 
 	/*
 	 * The text the reader typed is held apart from the keywords narrowing the options until the reader pauses, and is
@@ -158,11 +171,15 @@ export function Tally({
 
 		"tabIndex": -1,
 
-		// the search field opens the facet as it takes focus, any other part leaves it as it stands
+		/*
+		 * The search field opens the facet as it takes focus, any other part leaves it as it stands. Beside the
+		 * configure button, it is all the header of a waiting facet offers, so it asks for the values as well.
+		 */
 
 		"onFocusIn": (event: FocusEvent) => {
 			if ( event.target instanceof HTMLInputElement && event.target.type === "search" ) {
 				expand();
+				tally({ idle: ({ load }) => { trip(); load(); } });
 			}
 		},
 
@@ -190,7 +207,7 @@ export function Tally({
 
 				{/* Safari leaves buttons off the keyboard path unless the reader opts in, so each states its place on it */}
 
-				{text !== "" ? <button type="button" tabIndex={0}
+				{waiting ? <Spinner/> : text !== "" ? <button type="button" tabIndex={0}
 
 					title={"Clear"}
 

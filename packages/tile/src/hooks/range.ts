@@ -25,13 +25,15 @@
 
 import type { ResourceShape } from "@metreeca/blue/resource";
 import { items } from "@metreeca/blue/value";
+import { useModel } from "@metreeca/clay/model";
 import { isObject, type Lazy, opt, type Optional } from "@metreeca/core";
 import { createRelay, type Relay } from "@metreeca/core/relay";
+import { immutable } from "@metreeca/core/values";
 import type { Problem } from "@metreeca/http/success";
 import type { Criteria, Expression, Template } from "@metreeca/qest/model";
 import { isLiteral, type Literal } from "@metreeca/qest/state";
 import type { Collection, Collections } from "./collection.core.js";
-import { useEntry } from "../index.core.js";
+import { createLatch, useEntry } from "../index.core.js";
 import { useStore } from "../index.js";
 
 
@@ -39,6 +41,18 @@ import { useStore } from "../index.js";
  * Shared collection range cases.
  */
 export type RangeCases = {
+
+	/**
+	 * The lowest and highest values wait to be asked for, as the binding is not `eager` and no bound is set yet.
+	 */
+	readonly idle: {
+
+		/**
+		 * Starts retrieving the values, which the binding keeps up to date from then on, as one created `eager` does.
+		 */
+		load(): void
+
+	}
 
 	/**
 	 * The lowest and highest values are being retrieved for the first time.
@@ -125,11 +139,16 @@ export type RangeCases = {
  * highest values the items let through by the collection criteria hold for `expression`, its own bounds included, and
  * retrieves them again whenever the criteria change or the store signals a change to the collection.
  *
+ * Unless created `eager`, the binding waits in `idle` and retrieves nothing until asked for the values, sparing the
+ * store the requests of a facet the reader never turns to. It waits only while no bound is set, as the facet then has
+ * the bounds to show at once, and once asked it keeps the values up to date as an eager binding does.
+ *
  * @typeParam S The shape describing the resource holding the collection
  * @typeParam P The property of the resource collecting the items
  *
  * @param collection The collection narrowed, as handed by {@link "collection"!useCollection useCollection}
  * @param expression The expression the bounds apply to, as a property path possibly behind a transform pipe: `year`
+ * @param options Whether the values are retrieved at once rather than as the facet showing them asks for them
  *
  * @returns A {@link Relay} over the {@link RangeCases} of the binding
  *
@@ -138,7 +157,23 @@ export type RangeCases = {
 export function useRange<S extends Lazy<ResourceShape>, P extends Collections<S>>(
 
 	collection: Collection<S, P>,
-	expression: Expression
+	expression: Expression,
+
+	{
+
+		eager = false
+
+	}: {
+
+		/**
+		 * Whether the values are retrieved at once rather than waiting in `idle` until asked for. A binding that no
+		 * facet shows needs them at once, since nothing else would ever ask for them on its behalf.
+		 *
+		 * @defaultValue false
+		 */
+		readonly eager?: boolean
+
+	} = {}
 
 ): Relay<RangeCases> {
 
@@ -159,11 +194,16 @@ export function useRange<S extends Lazy<ResourceShape>, P extends Collections<S>
 		}
 	};
 
+	const latch = useModel(() => createLatch());
+
+	const idle = !eager && !latch.tripped && criteria[lower] === undefined && criteria[upper] === undefined;
+
 	const option = useEntry({
 
 		store,
 		entry,
 		model,
+		idle,
 
 		lookup: () => store.lookup({ entry, shape: holder, model })
 			.then(match => opt(match, match => bounds(items(match, model)))),
@@ -186,11 +226,10 @@ export function useRange<S extends Lazy<ResourceShape>, P extends Collections<S>
 	 * retrieved, so a bound just set is handed over at once rather than once the values are retrieved again.
 	 */
 
-	return createRelay<RangeCases>(option.ready === undefined ? option : {
-
-		ready: { ...option.ready, lower: criteria[lower], upper: criteria[upper] }
-
-	});
+	return createRelay<RangeCases>(idle ? immutable({ idle: { load: () => void latch.trip() } })
+		: option.ready === undefined ? option
+			: { ready: { ...option.ready, lower: criteria[lower], upper: criteria[upper] } }
+	);
 
 }
 

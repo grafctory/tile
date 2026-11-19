@@ -25,7 +25,7 @@ import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from "vitest";
 
-import { resolveTarget } from "./index.core.js";
+import { createLatch, resolveTarget } from "./index.core.js";
 import { Store, useStore } from "./index.js";
 import { useResource } from "./hooks/resource.js";
 
@@ -644,6 +644,30 @@ describe("useResource()", () => {
 			await expect(binding()({ error: ({ reload }) => reload() })).rejects.toMatchObject({ status: 503 });
 
 			await settled("error 503");
+
+		});
+
+	});
+
+});
+
+describe("createLatch()", () => {
+
+	it("should start not tripped", async () => {
+		expect(createLatch().tripped).toBe(false);
+	});
+
+	describe("trip()", () => {
+
+		it("should trip the latch", async () => {
+			expect(createLatch().trip().tripped).toBe(true);
+		});
+
+		it("should leave a tripped latch as it stands", async () => {
+
+			const latch = createLatch().trip();
+
+			expect(latch.trip()).toBe(latch);
 
 		});
 

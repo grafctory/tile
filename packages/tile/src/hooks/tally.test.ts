@@ -179,7 +179,7 @@ describe("useTally()", () => {
 		return lookup.mock.calls.map(([{ model }]) => model);
 	}
 
-	function mount(store: Backend, { scope = {}, criteria = {}, expression = "category", label, size }: {
+	function mount(store: Backend, { scope = {}, criteria = {}, expression = "category", label, size, eager = true }: {
 
 		readonly scope?: Criteria
 		readonly criteria?: Criteria
@@ -187,6 +187,7 @@ describe("useTally()", () => {
 		readonly expression?: string
 		readonly label?: string
 		readonly size?: number
+		readonly eager?: null | boolean // eager if omitted, null leaving it to the hook default
 
 	} = {}): {
 
@@ -205,7 +206,8 @@ describe("useTally()", () => {
 			collections(collection);
 			bindings(useTally(collection, expression, {
 				...(label ? { label } : {}),
-				...(size ? { size } : {})
+				...(size ? { size } : {}),
+				...(eager === null ? {} : { eager })
 			}));
 
 			return null;
@@ -688,6 +690,113 @@ describe("useTally()", () => {
 
 			await vi.waitFor(() => expect(collection().query).toEqual({ "?region": ["r1"] }));
 			await vi.waitFor(() => expect(binding()({ ready: ({ keywords, offset }) => [keywords, offset] })).toEqual(["", 0]));
+
+		});
+
+	});
+
+	describe("idle", () => {
+
+		it("should be idle, retrieving nothing and tracking no change, until asked for the options", async () => {
+
+			const lookup = options([{ value: "a", count: 1 }]);
+			const observe = vi.fn(() => () => {});
+
+			const { options: binding } = mount(backend(lookup, observe), { eager: false });
+
+			await act(async () => {}); // lets any retrieval due on mount start
+
+			expect(binding()({ idle: () => "idle" })).toBe("idle");
+			expect(lookup).not.toHaveBeenCalled();
+			expect(observe).not.toHaveBeenCalled();
+
+		});
+
+		it("should be blank while the options asked for are retrieved for the first time", async () => {
+
+			const lookup = vi.fn(() => new Promise(() => {}));
+			const { options: binding } = mount(backend(lookup), { eager: false });
+
+			act(() => binding()({ idle: ({ load }) => load() }));
+
+			await vi.waitFor(() => expect(lookup).toHaveBeenCalled());
+
+			expect(binding()({ blank: () => "blank" })).toBe("blank");
+
+		});
+
+		it("should retrieve the options as an eager binding does once asked for them", async () => {
+
+			const lookup = options([{ value: "a", count: 1 }]);
+			const { options: binding } = mount(backend(lookup), { eager: false });
+
+			act(() => binding()({ idle: ({ load }) => load() }));
+
+			await vi.waitFor(() => expect(binding()({ ready: ({ state }) => state })).toEqual([
+				{ value: "a", label: "a", count: 1, selected: false }
+			]));
+
+		});
+
+		it("should stay retrieved as the criteria change once asked for the options", async () => {
+
+			const lookup = options([{ value: "a", count: 1 }]);
+			const { collection, options: binding } = mount(backend(lookup), { eager: false });
+
+			act(() => binding()({ idle: ({ load }) => load() }));
+
+			await ready(binding);
+
+			act(() => void collection().filter({ "?region": ["r1"] }));
+
+			await vi.waitFor(() => expect(models(lookup)).toContainEqual(expect.objectContaining({
+				members: expect.objectContaining({ "?region": ["r1"] })
+			})));
+
+			expect(binding()({ idle: () => "idle" })).toBeUndefined();
+
+		});
+
+		it("should retrieve the options at once while a value is selected", async () => {
+
+			const lookup = options([{ value: "a", count: 1 }]);
+			const { options: binding } = mount(backend(lookup), { eager: false, criteria: { "?category": ["a"] } });
+
+			await vi.waitFor(() => expect(binding()({ ready: ({ state }) => state })).toEqual([
+				{ value: "a", label: "a", count: 1, selected: true }
+			]));
+
+		});
+
+		it("should retrieve the options as soon as a value is selected elsewhere", async () => {
+
+			const lookup = options([{ value: "a", count: 1 }]);
+			const { collection, options: binding } = mount(backend(lookup), { eager: false });
+
+			act(() => void collection().filter({ "?category": ["a"] }));
+
+			await ready(binding);
+
+		});
+
+		it("should be idle by default", async () => {
+
+			const lookup = options([{ value: "a", count: 1 }]);
+			const { options: binding } = mount(backend(lookup), { eager: null });
+
+			await act(async () => {});
+
+			expect(binding()({ idle: () => "idle" })).toBe("idle");
+			expect(lookup).not.toHaveBeenCalled();
+
+		});
+
+		it("should leave the options of an eager binding retrieved at once", async () => {
+
+			const lookup = options([{ value: "a", count: 1 }]);
+			const { options: binding } = mount(backend(lookup), { eager: true });
+
+			await ready(binding);
 
 		});
 

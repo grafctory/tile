@@ -128,6 +128,10 @@ function configure(): HTMLButtonElement | null {
 	return document.querySelector("tile-tally > header > button");
 }
 
+function spinner(): Element | null {
+	return document.querySelector("tile-tally > header > span > .lucide-refresh-cw");
+}
+
 function setting(name: string): HTMLInputElement | null {
 	return [...document.querySelectorAll("tile-tally > section label")]
 		.find(label => label.textContent === name)
@@ -158,6 +162,7 @@ function press(key: string): void {
 }
 
 async function ready(): Promise<void> {
+	await act(async () => {}); // lets an open facet ask for its options, which it does once drawn
 	await vi.waitFor(() => expect(facet()?.getAttribute("aria-busy")).not.toBe("true")); // the field shows from the start
 }
 
@@ -184,7 +189,7 @@ describe("Tally", () => {
 
 			mount(vi.fn(() => new Promise(() => {})));
 
-			expect(facet()?.getAttribute("aria-busy")).toBe("true");
+			await vi.waitFor(() => expect(facet()?.getAttribute("aria-busy")).toBe("true"));
 
 		});
 
@@ -195,6 +200,14 @@ describe("Tally", () => {
 			await ready();
 
 			expect(facet()?.getAttribute("aria-busy")).not.toBe("true");
+
+		});
+
+		it("should show no spinner while the options are retrieved at once", async () => {
+
+			mount(vi.fn(() => new Promise(() => {})));
+
+			expect(spinner()).toBeNull();
 
 		});
 
@@ -245,6 +258,113 @@ describe("Tally", () => {
 			await ready();
 
 			expect(disclosure()).toBeNull();
+
+		});
+
+	});
+
+	describe("retrieval", () => {
+
+		const rows: readonly Row[] = [{ value: "c1", label: "Arts", count: 1 }];
+
+		it("should retrieve the options at once while open, with no spinner", async () => {
+
+			mount(options(rows));
+
+			await vi.waitFor(() => expect(labels()).toEqual(["Arts 1"]));
+
+			expect(spinner()).toBeNull();
+
+		});
+
+		it("should retrieve nothing until focus enters the header", async () => {
+
+			const lookup = options(rows);
+
+			mount(lookup, { collapsed: true });
+
+			await act(async () => {}); // lets any retrieval due on mount start
+
+			expect(lookup).not.toHaveBeenCalled();
+
+		});
+
+		it("should be neither busy nor spinning while waiting", async () => {
+
+			mount(options(rows), { collapsed: true });
+
+			expect(facet()?.getAttribute("aria-busy")).not.toBe("true");
+			expect(spinner()).toBeNull();
+
+		});
+
+		it("should retrieve the options as the search field takes focus", async () => {
+
+			const lookup = options(rows);
+
+			mount(lookup, { collapsed: true });
+
+			focus(field(), "focusin");
+
+			await vi.waitFor(() => expect(labels()).toEqual(["Arts 1"]));
+
+		});
+
+		it("should show a spinner in place of the clear button while the options asked for are retrieved", async () => {
+
+			mount(vi.fn(() => new Promise(() => {})), { collapsed: true });
+
+			focus(field(), "focusin");
+
+			await vi.waitFor(() => expect(spinner()).not.toBeNull());
+
+			expect(spinner()?.getAttribute("aria-hidden")).toBe("true");
+
+		});
+
+		it("should show no spinner once the options asked for are retrieved", async () => {
+
+			mount(options(rows), { collapsed: true });
+
+			focus(field(), "focusin");
+
+			await vi.waitFor(() => expect(labels()).toEqual(["Arts 1"]));
+
+			expect(spinner()).toBeNull();
+
+		});
+
+		it("should show no spinner once the retrieval of the options asked for fails", async () => {
+
+			mount(vi.fn(async () => { throw new Error("failed"); }), { collapsed: true });
+
+			focus(field(), "focusin");
+
+			await vi.waitFor(() => expect(facet()?.querySelector("tile-note")).not.toBeNull());
+
+			expect(spinner()).toBeNull();
+
+		});
+
+		it("should retrieve nothing as the configure button takes focus", async () => {
+
+			const lookup = options(rows);
+
+			mount(lookup, { collapsed: true });
+
+			focus(configure(), "focusin");
+
+			await act(async () => {});
+
+			expect(lookup).not.toHaveBeenCalled();
+
+		});
+
+		it("should retrieve the options at once while one is ticked", async () => {
+
+			mount(options(rows), { collapsed: true, criteria: { "?category": ["c1"] } });
+
+			await vi.waitFor(() => expect(labels()).toEqual(["Arts 1"]));
 
 		});
 

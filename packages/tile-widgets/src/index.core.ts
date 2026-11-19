@@ -21,6 +21,9 @@
  * short until the reader turns to one of them, and whether it shows its settings instead. A rendering layer adopts it
  * and supplies the markup and the gestures opening, closing and configuring it, so any binding folds a facet alike.
  *
+ * A latch beside the fold remembers that a lazy facet asked for what it offers, so the wait the reader caused is shown
+ * apart from the retrieval an eager facet runs on its own, which the reader neither asked for nor has to watch.
+ *
  * @module
  */
 
@@ -83,6 +86,30 @@ export interface Fold {
 
 }
 
+/**
+ * Headless facet latch.
+ *
+ * Remembers that the reader made a facet ask for what it offers, so the facet shows only the waits the reader caused.
+ *
+ * A transition returns a new latch and leaves this one unchanged, or returns this latch itself where nothing changes.
+ */
+export interface Latch {
+
+	/**
+	 * Whether the facet asked for what it offers.
+	 */
+	readonly tripped: boolean;
+
+
+	/**
+	 * Records that the facet asked for what it offers.
+	 *
+	 * @returns A tripped latch, or this latch if already so
+	 */
+	trip(): this;
+
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -136,4 +163,21 @@ export function createFold({
 
 	});
 
+}
+
+/**
+ * Creates a headless facet latch.
+ *
+ * @returns An immutable {@link Latch}, not tripped yet
+ */
+export function createLatch(): Latch {
+	return createState<Latch>({
+
+		tripped: false,
+
+		trip() {
+			return { tripped: true };
+		}
+
+	});
 }

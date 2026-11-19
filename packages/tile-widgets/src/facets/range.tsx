@@ -33,8 +33,8 @@ import type { Type } from "@metreeca/tile/types";
 import { CalendarIcon, ClockIcon, HashIcon, TypeIcon, XCircleIcon } from "lucide-preact";
 import { type ComponentType, createElement } from "preact";
 import { useEffect, useId } from "preact/hooks";
-import { createFold } from "../index.core.js";
-import { AutoDelay, cancel, Configure, Failure, keys, leave, Settings } from "../index.js";
+import { createFold, createLatch } from "../index.core.js";
+import { AutoDelay, cancel, Configure, Failure, keys, leave, Settings, Spinner } from "../index.js";
 import "./range.css";
 
 
@@ -62,6 +62,11 @@ import "./range.css";
  * The facet folds down to its fields only while a bound is set. Clicking or tabbing to its header opens it while the
  * reader works on it. Focus leaving the facet closes it again while its `Collapse` setting is ticked, as `collapsed`
  * states from the start, and otherwise leaves it open with its fields shown, whether or not a bound is set.
+ *
+ * An open facet asks for its values at once, while a closed one asks only as focus first enters its header, the
+ * configure button aside, so a facet the reader never turns to costs the store nothing. A closed facet the reader turns
+ * to shows a spinner in place of the reset button until the values arrive or their retrieval fails and is reported. A
+ * range created `eager` has its values retrieved at once, whatever the facet does, and never shows the spinner.
  *
  * A button marked by the glyph of the value type shows the settings of the facet in place of its fields. A check mark
  * takes its place and ends the settings, as does focus leaving the facet, and the reset is withheld in the meantime.
@@ -128,6 +133,7 @@ export function Range({
 		open: !collapsed, collapsing: collapsed
 	}));
 
+	const { tripped, trip } = useModel(() => createLatch());
 	const { field: focused, enter, leave: quit } = useModel(() => createFocus());
 	const { edit, change, settle } = useModel(() => createPending());
 
@@ -146,9 +152,15 @@ export function Range({
 
 	const Glyph = Glyphs[type.label] ?? TypeIcon;
 
+	const idle = range({ idle: () => true }) ?? false;
+	const waiting = tripped && (range({ blank: () => true }) ?? false);
 	const bounded = range({ ready: ({ lower, upper }) => lower !== undefined || upper !== undefined }) ?? false;
 	const failed = range({ error: () => true }) ?? false;
 	const ready = range({ ready: () => true }) ?? false;
+
+	// the binding cannot be asked while rendering, so an open facet asks for its values once drawn open
+
+	useEffect(() => void (open && idle && range({ idle: ({ load }) => load() })), [open, idle]);
 
 	// the fields wait for the values on offer, so the facet never shows a strip it is about to fill
 
@@ -164,12 +176,14 @@ export function Range({
 
 		/*
 		 * The header takes focus as clicked or tabbed to, so a collapsed facet with no bound set is still reached from
-		 * the keyboard; it opens the facet only as it takes focus itself, any other part leaves it as it stands.
+		 * the keyboard; it opens the facet only as it takes focus itself, any other part leaves it as it stands. Beside
+		 * the configure button, it is all the header of a waiting facet offers, so it asks for the values as well.
 		 */
 
 		"onFocusIn": (event: FocusEvent) => {
 			if ( event.target instanceof HTMLElement && event.target.localName === "header" ) {
 				expand();
+				range({ idle: ({ load }) => { trip(); load(); } });
 			}
 		},
 
@@ -189,7 +203,7 @@ export function Range({
 
 				{/* Safari leaves buttons off the keyboard path unless the reader opts in, so it states its place on it */}
 
-				{bounded && !configuring && <button type="button" tabIndex={0}
+				{waiting ? <Spinner/> : bounded && !configuring && <button type="button" tabIndex={0}
 
 					title={"Reset"}
 

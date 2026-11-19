@@ -123,6 +123,10 @@ function configure(): HTMLButtonElement | null {
 	return document.querySelector("tile-range > header > button");
 }
 
+function spinner(): Element | null {
+	return document.querySelector("tile-range > header > span > .lucide-refresh-cw");
+}
+
 function setting(name: string): HTMLInputElement | null {
 	return [...document.querySelectorAll("tile-range > section label")]
 		.find(label => label.textContent === name)
@@ -153,6 +157,7 @@ async function ready(): Promise<void> {
 }
 
 async function loaded(): Promise<void> {
+	await act(async () => {}); // lets an open facet ask for its values, which it does once drawn
 	await vi.waitFor(() => expect(facet()?.getAttribute("aria-busy")).not.toBe("true"));
 }
 
@@ -182,7 +187,7 @@ describe("Range", () => {
 
 			mount(vi.fn(() => new Promise(() => {})));
 
-			expect(facet()?.getAttribute("aria-busy")).toBe("true");
+			await vi.waitFor(() => expect(facet()?.getAttribute("aria-busy")).toBe("true"));
 
 		});
 
@@ -202,6 +207,14 @@ describe("Range", () => {
 			await ready();
 
 			expect(facet()?.getAttribute("aria-busy")).not.toBe("true");
+
+		});
+
+		it("should show no spinner while the values are retrieved at once", async () => {
+
+			mount(vi.fn(() => new Promise(() => {})));
+
+			expect(spinner()).toBeNull();
 
 		});
 
@@ -230,6 +243,113 @@ describe("Range", () => {
 			await loaded();
 
 			expect(disclosure()).toBeNull();
+
+		});
+
+	});
+
+	describe("retrieval", () => {
+
+		it("should retrieve the values at once while open, with no spinner", async () => {
+
+			mount(bounds(1990, 2020));
+
+			await ready();
+
+			expect(spinner()).toBeNull();
+
+		});
+
+		it("should retrieve nothing until focus enters the header", async () => {
+
+			const lookup = bounds(1990, 2020);
+
+			mount(lookup, { collapsed: true });
+
+			await act(async () => {}); // lets any retrieval due on mount start
+
+			expect(lookup).not.toHaveBeenCalled();
+
+		});
+
+		it("should be neither busy nor spinning while waiting", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true });
+
+			expect(facet()?.getAttribute("aria-busy")).not.toBe("true");
+			expect(spinner()).toBeNull();
+
+		});
+
+		it("should retrieve the values as the header takes focus", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true });
+
+			focus(header(), "focusin");
+
+			await ready();
+
+			expect(lower()?.placeholder).toBe((1990).toLocaleString());
+
+		});
+
+		it("should show a spinner in place of the reset button while the values asked for are retrieved", async () => {
+
+			mount(vi.fn(() => new Promise(() => {})), { collapsed: true });
+
+			focus(header(), "focusin");
+
+			await vi.waitFor(() => expect(spinner()).not.toBeNull());
+
+			expect(spinner()?.getAttribute("aria-hidden")).toBe("true");
+
+		});
+
+		it("should show no spinner once the values asked for are retrieved", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true });
+
+			focus(header(), "focusin");
+
+			await ready();
+
+			expect(spinner()).toBeNull();
+
+		});
+
+		it("should show no spinner once the retrieval of the values asked for fails", async () => {
+
+			mount(vi.fn(async () => { throw new Error("failed"); }), { collapsed: true });
+
+			focus(header(), "focusin");
+
+			await vi.waitFor(() => expect(facet()?.querySelector("tile-note")).not.toBeNull());
+
+			expect(spinner()).toBeNull();
+
+		});
+
+		it("should retrieve nothing as the configure button takes focus", async () => {
+
+			const lookup = bounds(1990, 2020);
+
+			mount(lookup, { collapsed: true });
+
+			focus(configure(), "focusin");
+
+			await act(async () => {});
+
+			expect(lookup).not.toHaveBeenCalled();
+
+		});
+
+		it("should retrieve the values at once while a bound is set", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true, criteria: { ">=year": 2000 } });
+
+			await ready();
+
+			expect(lower()?.value).toBe("2000");
 
 		});
 

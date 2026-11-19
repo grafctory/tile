@@ -43,7 +43,7 @@ export function Range() {
 
 	const collection = useCollection({ entry, shape: Products });
 
-	const range = useRange(collection, "price");
+	const range = useRange(collection, "price", { eager: true });
 	const count = useCount(collection);
 
 	return <>

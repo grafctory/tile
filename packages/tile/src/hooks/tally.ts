@@ -41,7 +41,7 @@ import {
 	type Template
 } from "@metreeca/qest/model";
 import type { Collection, Collections } from "./collection.core.js";
-import { useEntry } from "../index.core.js";
+import { createLatch, useEntry } from "../index.core.js";
 import { useStore } from "../index.js";
 import { createTally } from "./tally.core.js";
 
@@ -50,6 +50,18 @@ import { createTally } from "./tally.core.js";
  * Shared collection tally cases.
  */
 export type TallyCases = {
+
+	/**
+	 * The options wait to be asked for, as the binding is not `eager` and no value is selected yet.
+	 */
+	readonly idle: {
+
+		/**
+		 * Starts retrieving the options, which the binding keeps up to date from then on, as one created `eager` does.
+		 */
+		load(): void
+
+	}
 
 	/**
 	 * The options are being retrieved for the first time.
@@ -202,13 +214,18 @@ export type TallyBucket = {
  * The expression reaches either literals, shown, searched and ordered as they stand, or linked resources, shown,
  * searched and ordered by the label the caller names; choosing a target the shape admits as a facet is the caller's.
  *
+ * Unless created `eager`, the binding waits in `idle` and retrieves nothing until asked for the options, sparing the
+ * store the requests of a facet the reader never turns to. It waits only while no value is selected, as the facet then
+ * has the selected values to show at once, and once asked it keeps the options up to date as an eager binding does.
+ *
  * @typeParam S The shape describing the resource holding the collection
  * @typeParam P The property of the resource collecting the items
  *
  * @param collection The collection narrowed, as handed by {@link "collection"!useCollection useCollection}
  * @param expression The expression the options are values of, as a property path possibly behind a transform pipe, as
  *     in `university` or `year:released`, relative to the items of the collection
- * @param options The label of resource options and the number of options on show, all of them where omitted or zero
+ * @param options The label of resource options, the number of options on show, all of them where omitted or zero, and
+ *     whether the options are retrieved at once rather than as the facet showing them asks for them
  *
  * @returns A {@link Relay} over the {@link TallyCases} of the binding
  *
@@ -225,7 +242,8 @@ export function useTally<S extends Lazy<ResourceShape>, P extends Collections<S>
 	{
 
 		label,
-		size
+		size,
+		eager = false
 
 	}: {
 
@@ -243,6 +261,14 @@ export function useTally<S extends Lazy<ResourceShape>, P extends Collections<S>
 		 */
 		readonly size?: number
 
+		/**
+		 * Whether the options are retrieved at once rather than waiting in `idle` until asked for. A binding that no
+		 * facet shows needs them at once, since nothing else would ever ask for them on its behalf.
+		 *
+		 * @defaultValue false
+		 */
+		readonly eager?: boolean
+
 	} = {}
 
 ): Relay<TallyCases> {
@@ -257,9 +283,12 @@ export function useTally<S extends Lazy<ResourceShape>, P extends Collections<S>
 	const key: `?${Expression}` = `?${expression}`;
 
 	const options = useModel(() => createTally({ size }), [entry, field, expression, size]);
+	const latch = useModel(() => createLatch());
 
 	const selected = values(criteria[key]);
 	const others = Object.fromEntries(Object.entries(criteria).filter(([criterion]) => criterion !== key));
+
+	const idle = !eager && !latch.tripped && selected.length === 0;
 
 	const specs = {
 
@@ -278,7 +307,8 @@ export function useTally<S extends Lazy<ResourceShape>, P extends Collections<S>
 	const baseline = useBuckets({ ...scope, ...specs });
 	const matching = useBuckets({ ...others, ...scope, ...specs });
 
-	return createRelay(baseline<Outcome<TallyCases>>({
+	return createRelay<TallyCases>(idle ? immutable({ idle: { load: () => void latch.trip() } })
+		: baseline<Outcome<TallyCases>>({
 
 		blank: () => ({ blank: undefined }),
 		error: ({ state }) => ({ error: { state, reload } }),
@@ -307,6 +337,7 @@ export function useTally<S extends Lazy<ResourceShape>, P extends Collections<S>
 			store,
 			entry,
 			model: { [field]: { ...slot, "@": options.offset, "#": options.limit } }, // the options on show
+			idle,
 
 			lookup: () => Promise.all(batches().map(batch => retrieve({ ...slot, ...batch })))
 				.then(rows => rows.every(rows => rows !== undefined) ? rows.flat() : undefined),

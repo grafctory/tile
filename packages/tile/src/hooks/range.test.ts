@@ -47,10 +47,11 @@ describe("useRange()", () => {
 		return vi.fn(async () => immutable({ id: entry, members: [{ min, max }] }));
 	}
 
-	function mount(store: Backend, { scope = {}, criteria = {} }: {
+	function mount(store: Backend, { scope = {}, criteria = {}, eager = true }: {
 
 		readonly scope?: Criteria
 		readonly criteria?: Criteria
+		readonly eager?: null | boolean // eager if omitted, null leaving it to the hook default
 
 	} = {}): {
 
@@ -67,7 +68,7 @@ describe("useRange()", () => {
 			const collection = useCollection({ entry, shape: Catalogue, scope, query: criteria });
 
 			collections(collection);
-			ranges(useRange(collection, "year"));
+			ranges(useRange(collection, "year", eager === null ? {} : { eager }));
 
 			return null;
 
@@ -226,6 +227,103 @@ describe("useRange()", () => {
 			act(() => range()({ ready: ({ clear }) => clear() }));
 
 			await vi.waitFor(() => expect(collection().query).toEqual({ "?university": ["u1"] }));
+
+		});
+
+	});
+
+	describe("idle", () => {
+
+		it("should be idle, retrieving nothing and tracking no change, until asked for the range", async () => {
+
+			const lookup = spanning(1, 9);
+			const observe = vi.fn(() => () => {});
+
+			const { range } = mount(backend(lookup, observe), { eager: false });
+
+			await act(async () => {}); // lets any retrieval due on mount start
+
+			expect(range()({ idle: () => "idle" })).toBe("idle");
+			expect(lookup).not.toHaveBeenCalled();
+			expect(observe).not.toHaveBeenCalled();
+
+		});
+
+		it("should be blank while the range asked for is retrieved for the first time", async () => {
+
+			const lookup = vi.fn(() => new Promise(() => {}));
+			const { range } = mount(backend(lookup), { eager: false });
+
+			act(() => range()({ idle: ({ load }) => load() }));
+
+			await vi.waitFor(() => expect(lookup).toHaveBeenCalled());
+
+			expect(range()({ blank: () => "blank" })).toBe("blank");
+
+		});
+
+		it("should retrieve the range as an eager binding does once asked for it", async () => {
+
+			const { range } = mount(backend(spanning(1, 9)), { eager: false });
+
+			act(() => range()({ idle: ({ load }) => load() }));
+
+			await vi.waitFor(() => expect(range()({ ready: ({ state }) => state })).toEqual({ min: 1, max: 9 }));
+
+		});
+
+		it("should stay retrieved as the criteria change once asked for the range", async () => {
+
+			const lookup = spanning(1, 9);
+			const { collection, range } = mount(backend(lookup), { eager: false });
+
+			act(() => range()({ idle: ({ load }) => load() }));
+
+			await vi.waitFor(() => expect(range()({ ready: () => true })).toBe(true));
+
+			act(() => void collection().filter({ "?university": ["u1"] }));
+
+			await vi.waitFor(() => expect(lookup).toHaveBeenCalledTimes(2));
+
+			expect(range()({ idle: () => "idle" })).toBeUndefined();
+
+		});
+
+		it("should retrieve the range at once while a bound is set", async () => {
+
+			const { range } = mount(backend(spanning(1, 9)), { eager: false, criteria: { "<=year": 7 } });
+
+			await vi.waitFor(() => expect(range()({ ready: ({ upper }) => upper })).toBe(7));
+
+		});
+
+		it("should retrieve the range as soon as a bound is set elsewhere", async () => {
+
+			const { collection, range } = mount(backend(spanning(1, 9)), { eager: false });
+
+			act(() => void collection().filter({ ">=year": 3 }));
+
+			await vi.waitFor(() => expect(range()({ ready: ({ lower }) => lower })).toBe(3));
+
+		});
+
+		it("should be idle by default", async () => {
+
+			const lookup = spanning(1, 9);
+			const { range } = mount(backend(lookup), { eager: null });
+
+			await act(async () => {});
+
+			expect(range()({ idle: () => "idle" })).toBe("idle");
+			expect(lookup).not.toHaveBeenCalled();
+
+		});
+
+		it("should leave the range of an eager binding retrieved at once", async () => {
+
+			const { range } = mount(backend(spanning(1, 9)), { eager: true });
+
+			await vi.waitFor(() => expect(range()({ ready: () => true })).toBe(true));
 
 		});
 

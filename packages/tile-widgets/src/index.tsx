@@ -180,6 +180,17 @@ export function More({
 }
 
 /**
+ * Creates the mark of a facet waiting for the values it asked for.
+ *
+ * @returns A spinning glyph, hidden from assistive technology, which hears of the wait from the facet marked busy
+ */
+export function Spinner() {
+
+	return <RefreshCwIcon aria-hidden="true"/>;
+
+}
+
+/**
  * Creates the configure button of a facet.
  *
  * Leads the facet header, marked by the glyph of the facet while the facet shows what it offers and by a check mark

@@ -1,6 +1,6 @@
 {
   "name": "@metreeca/tile-widgets",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Preact linked data widgets for @metreeca/tile.",
   "keywords": [
     "typescript",
@@ -124,7 +124,7 @@
     "@metreeca/core": "^0.14.0",
     "@metreeca/qest": "^0.14.0",
     "@metreeca/skin": "^0.3.0",
-    "@metreeca/tile": "^0.7.0"
+    "@metreeca/tile": "^0.8.0"
   },
   "devDependencies": {
     "@metreeca/keep": "^0.13.0",

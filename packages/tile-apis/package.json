@@ -1,6 +1,6 @@
 {
   "name": "@metreeca/tile-apis",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Preact API documentation widgets for @metreeca/tile.",
   "keywords": [
     "typescript",

@@ -1,6 +1,6 @@
 {
   "name": "@metreeca/tile",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Preact linked data store and shape-driven value types for @metreeca/tile.",
   "keywords": [
     "typescript",

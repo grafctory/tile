@@ -1,6 +1,6 @@
 {
   "name": "@metreeca/tile-topics",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Preact SKOS topic widgets for @metreeca/tile.",
   "keywords": [
     "typescript",

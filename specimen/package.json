@@ -21,8 +21,8 @@
     "@metreeca/keep-suite": "^0.13.0",
     "@metreeca/qest": "^0.14.0",
     "@metreeca/skin": "^0.3.0",
-    "@metreeca/tile": "^0.7.0",
-    "@metreeca/tile-widgets": "^0.7.0",
+    "@metreeca/tile": "file:../packages/tile",
+    "@metreeca/tile-widgets": "file:../packages/tile-widgets",
     "@metreeca/wire-sparql-oxigraph": "^0.13.0",
     "lucide-preact": "^1.47.0",
     "oxigraph": "^0.5.13",
@@ -33,9 +33,6 @@
     "@preact/preset-vite": "^2.10.6",
     "typescript": "^6.0.3",
     "vite": "^8.3.5"
-  },
-  "overrides": {
-    "@metreeca/clay": "$@metreeca/clay"
   },
   "private": true
 }

@@ -255,8 +255,8 @@ environment.
 # Version Management
 
 All workspace packages share the root `package.json` version. Beyond the `version` fields the release flow already
-cascades, update the internal `@metreeca/tile*` dependency ranges in every `packages/**/package.json` to match, and
-in `specimen/package.json` as well: the specimen is a self-standing app outside the workspaces, with its own lockfile
-and its own `setup` linking the local checkouts, so the release flow never reaches its ranges on its own.
+cascades, update the internal `@metreeca/tile*` dependency ranges in every `packages/**/package.json` to match. The
+specimen, a self-standing app outside the workspaces, takes the packages it shows through `file:` links rather than
+ranges, so it follows every version without being touched.
 
 When adding, removing, or renaming packages, update the package table in the root `README.md` Usage section to match.

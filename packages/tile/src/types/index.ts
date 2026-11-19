@@ -30,10 +30,9 @@
 
 import { getShapeBranches, getStateBranch } from "@metreeca/blue/union";
 import type { Shape } from "@metreeca/blue/value";
-import { eager, type Lazy, opt, type Optional } from "@metreeca/core";
+import { eager, type Lazy, opt, type Optional, safe } from "@metreeca/core";
 import { xsd } from "@metreeca/core/datatype";
 import { immutable } from "@metreeca/core/values";
-import { attempt } from "../_/core/index.js";
 import { boolean } from "./boolean.js";
 import { date } from "./date.js";
 import { decimal } from "./decimal.js";
@@ -230,7 +229,7 @@ export function toType(shape: Lazy<Shape>): Type {
 			parse(text, options) {
 
 				const parsed = types.reduce<Optional<{ readonly value: unknown }>>((parsed, type) =>
-					parsed ?? attempt(() => ({ value: type.parse(text, options) })), undefined
+					parsed ?? safe(() => ({ value: type.parse(text, options) })), undefined
 				);
 
 				return parsed === undefined ? malformed("union", text) : parsed.value;

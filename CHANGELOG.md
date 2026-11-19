@@ -7,6 +7,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.9.0](https://github.com/metreeca/tile/compare/v0.8.0...HEAD)
 
+### Changed
+
+- **Breaking**: Upgrade `@metreeca/blue` and `@metreeca/qest` to `^0.15.0`, and `@metreeca/keep` and
+  `@metreeca/keep-rest` to `^0.14.0`; projects using them alongside these packages raise their own ranges to match as
+  well, so that each of them is shared by both as a single copy. `useQuery` now keeps the page criteria in the browser
+  location in the plainer encoding `@metreeca/qest` writes, while locations bookmarked earlier keep being read
+
 ## [0.8.0](https://github.com/metreeca/tile/compare/v0.7.0...v0.8.0) - 2026-11-19
 
 ### Changed

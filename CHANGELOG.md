@@ -11,6 +11,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - **Breaking**: Upgrade `@metreeca/clay` to `^0.2.1`; projects using it alongside these packages raise their own range
   to match as well, so that it is shared by both as a single copy and the contexts it provides reach every binding
+- **Breaking**: `@metreeca/tile` takes `@metreeca/clay` as a peer dependency, and `@metreeca/tile-widgets` takes both
+  `@metreeca/clay` and `@metreeca/tile`, so that an app installs a single copy of each and every widget reads the
+  router, client and store the app sets up; apps declare these packages among their own dependencies
 
 ## [0.7.0](https://github.com/metreeca/tile/compare/v0.6.1...v0.7.0) - 2026-11-17
 

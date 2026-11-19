@@ -24,6 +24,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `eager` or narrowing the collection already, and the `Tally` and `Range` facets ask only once open or turned to, so
   that a page whose facets the reader never opens costs the store nothing; code matching every case of either binding
   handles `idle` as well, calling its `load` function to have the values retrieved ([#9](https://github.com/metreeca/tile/issues/9))
+- `Tally` scrolls its values back to the top as one is ticked or unticked, so the reader sees at once the values
+  ticked, which lead the list, without hunting for them in a list scrolled down to reach the value just changed
 
 ## [0.9.0](https://github.com/metreeca/tile/compare/v0.8.0...v0.9.0) - 2026-11-19
 

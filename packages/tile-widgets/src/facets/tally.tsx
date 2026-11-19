@@ -45,7 +45,8 @@ import "./tally.css";
  * leaves its checkbox as it stands. The items holding none of the values are offered as `‹blank›`, a name the facet
  * supplies itself. A value no item lets through under the other criteria stays on offer with a count of `0`, so the
  * list holds still, every value in its place, as other facets narrow the collection; its checkbox is disabled unless
- * ticked, since ticking it would empty the collection, while a ticked one stays enabled to be unticked.
+ * ticked, since ticking it would empty the collection, while a ticked one stays enabled to be unticked. The values
+ * ticked lead the list, and ticking or unticking one scrolls the list back to its top, bringing them into view.
  *
  * A search field narrows the values on offer once the reader pauses typing, at once on `Enter`, and `Escape` empties
  * it, as does a button marked by the clear glyph, shown while text is typed. While the field is empty, a button marked
@@ -136,7 +137,8 @@ export function Tally({
 	const keywords = tally({ ready: ({ keywords }) => keywords }) ?? "";
 
 	const idle = tally({ idle: () => true }) ?? false;
-	const waiting = tripped && (tally({ blank: () => true }) ?? false);
+	const blank = tally({ blank: () => true });
+	const waiting = tripped && (blank ?? false);
 	const failed = tally({ error: () => true }) ?? false;
 	const filled = tally({ ready: ({ state }) => state.length > 0 }) ?? false;
 	const ticked = tally({ ready: ({ state }) => state.some(({ selected }) => selected) }) ?? false;
@@ -162,7 +164,7 @@ export function Tally({
 
 		"role": "group",
 		"aria-label": name,
-		"aria-busy": tally({ blank: () => true }),
+		"aria-busy": blank,
 
 		/*
 		 * Safari leaves focus off the checkboxes and buttons a reader presses, so a press within the facet would read
@@ -248,7 +250,10 @@ export function Tally({
 
 							<input type="checkbox" checked={bucket.selected}
 								disabled={bucket.count === 0 && !bucket.selected}
-								onChange={event => select(bucket.value, event.currentTarget.checked)}
+								onChange={event => {
+									document.getElementById(id)?.scrollTo({ top: 0 }); // scroll offset is not rendered state
+									select(bucket.value, event.currentTarget.checked);
+								}}
 							/>
 
 							<span>{isReference(bucket.value)

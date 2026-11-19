@@ -979,6 +979,38 @@ describe("Tally", () => {
 
 		});
 
+		it("should scroll the options back to the top as an option is ticked", async () => {
+
+			mount(options([{ value: "c1", label: "Arts", count: 1 }]));
+
+			await vi.waitFor(() => expect(checkboxes()).toHaveLength(1));
+
+			const section = facet()?.querySelector("section");
+
+			section?.scrollTo({ top: 100 });
+
+			act(() => checkboxes()[0]?.click());
+
+			await vi.waitFor(() => expect(section?.scrollTop).toBe(0));
+
+		});
+
+		it("should scroll the options back to the top as an option is unticked", async () => {
+
+			mount(options([{ value: "c1", label: "Arts", count: 1 }]), { criteria: { "?category": ["c1"] } });
+
+			await vi.waitFor(() => expect(checkboxes()[0]?.checked).toBe(true));
+
+			const section = facet()?.querySelector("section");
+
+			section?.scrollTo({ top: 100 });
+
+			act(() => checkboxes()[0]?.click());
+
+			await vi.waitFor(() => expect(section?.scrollTop).toBe(0));
+
+		});
+
 	});
 
 	describe("search", () => {

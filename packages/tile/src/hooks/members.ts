@@ -29,6 +29,7 @@ import { useModel } from "@metreeca/clay/model";
 import { type Lazy, opt, type Optional } from "@metreeca/core";
 import { createRelay, type Option, type Relay } from "@metreeca/core/relay";
 import { equals, immutable } from "@metreeca/core/values";
+import { useEffect, useState } from "preact/hooks";
 import type { Problem } from "@metreeca/http/success";
 import type { Template } from "@metreeca/qest/model";
 import type { Collection, Collections } from "./collection.core.js";
@@ -77,8 +78,8 @@ export type MembersCases<S extends Lazy<ResourceShape>, P extends Collections<S>
 		sort(order: Ordering): void
 
 		/**
-		 * Sorts the items again in the order they started in, starting over the first batch; offered while they are
-		 * shown in another order, so that a lens offers a reset control for as long as it is offered.
+		 * Sorts the items again in the order the page shows them in by default, starting over the first batch; offered
+		 * while they are shown in another order, so that a lens offers a reset control for as long as it is offered.
 		 */
 		reset?(): void
 
@@ -137,22 +138,36 @@ export type Admitted<S extends Lazy<ResourceShape>, P extends Collections<S>, T>
  *
  * Retrieves from the store offered by the innermost enclosing {@link "index"!Store Store} context the first items of
  * the collection, narrowed by the collection criteria, one more batch each time the lens asks for more. The members
- * start over the first batch, and again whenever the collection criteria, the model or the sort order change; the
- * model and the sort order are compared by content, so they may be written inline.
+ * start over the first batch, and again whenever the collection criteria, the model or the batch size change. The
+ * model is compared by content, so it may be written inline, and so may the sort orders.
  *
  * Every batch on show is retrieved again as the store signals a change, so that no item on show goes stale.
+ *
+ * A page restoring a catalogue the reader returns to keeps the sort order and the number of items on show wherever it
+ * likes, handing them back as the members bind, so that the catalogue grows back to where the reader left it:
+ *
+ * ```tsx
+ * const [order, setOrder] = useState<Ordering>({ startDate: "asc" }); // or wherever the page keeps them
+ * const [limit, setLimit] = useState(100);
+ *
+ * const members = useMembers(collection, {
+ *     model, basis: { startDate: "asc" }, order, limit,
+ *     onChange: (order, limit) => { setOrder(order); setLimit(limit); }
+ * });
+ * ```
  *
  * @typeParam S The shape describing the resource holding the collection
  * @typeParam P The property of the resource collecting the items
  * @typeParam T The template or projection stating the values wanted from each item
  *
  * @param collection The collection whose members are retrieved
- * @param options The values wanted from each item, the sort order the items start in, and the size of each batch
+ * @param options The values wanted from each item, the sort orders the items start in and return to, the number of
+ *     items they start over, the size of each batch, and the handler taking the order and number as they change
  *
  * @returns A {@link Relay} over the {@link MembersCases} of the binding
  *
  * @throws {@link !Error Error} If called outside any {@link "index"!Store Store} context
- * @throws {@link !TypeError TypeError} If `batch` isn't a positive integer
+ * @throws {@link !TypeError TypeError} If `limit` or `batch` isn't a positive integer
  */
 export function useMembers<
 	S extends Lazy<ResourceShape>,
@@ -161,8 +176,14 @@ export function useMembers<
 >(collection: Collection<S, P>, {
 
 	model,
+
+	basis,
 	order,
-	batch
+
+	limit,
+	batch,
+
+	onChange
 
 }: {
 
@@ -172,10 +193,31 @@ export function useMembers<
 	 */
 	readonly model: T & Admitted<S, P, T>
 
+
 	/**
-	 * The sort order the items start in, as expressions mapped to their direction: `{ label: "asc" }`.
+	 * The sort order the page shows the items in by default, which `reset` restores, as expressions mapped to their
+	 * direction: `{ label: "asc" }`. A page restoring the sort order of the reader states it too, otherwise `reset`
+	 * restores the order of the reader rather than the one the page shows the items in by default.
+	 *
+	 * @defaultValue `order`
+	 */
+	readonly basis?: Ordering
+
+	/**
+	 * The sort order the items start in. It is read again only as the members start over, so a page handing back the
+	 * order `onChange` takes doesn't retrieve the items twice. A page sorting the items again from outside the lens
+	 * calls the `sort` function the members hand over, which takes effect immediately.
 	 */
 	readonly order?: Ordering
+
+
+	/**
+	 * The number of items the members start over, rounded up to whole batches. It is read only as the members bind,
+	 * so members starting over for new criteria, a new model or a new batch size start over a single batch.
+	 *
+	 * @defaultValue `batch`
+	 */
+	readonly limit?: number
 
 	/**
 	 * The number of items in each batch. Each batch is retrieved by a request of its own, so a batch size within
@@ -185,31 +227,67 @@ export function useMembers<
 	 */
 	readonly batch?: number
 
+
+	/**
+	 * Takes the sort order the items are shown in and the number of items requested from the start of the collection,
+	 * once for every change to either, so that a page may keep them wherever it likes. Changes come as the items are
+	 * sorted, a batch is loaded or the members start over. The order and number the members bind with are never
+	 * handed back, since the page handed them over itself and already keeps them where it took them from.
+	 */
+	readonly onChange?: (order: Ordering, limit: number) => void
+
 }): Relay<MembersCases<S, P, T>> {
 
 	const store = useStore();
 
 	const { target: { entry, shape, field }, scope, query: criteria } = collection;
 
-	const members = useModel(() => createMembers({ order, batch }), [entry, field, scope, criteria, model, order, batch]);
+	const dependencies = [entry, field, scope, criteria, model, batch];
+
+	// the dependencies of the first render alone, so that only the members created as the hook binds take the limit
+
+	const [bound] = useState(() => dependencies);
+
+	const members = useModel(() => createMembers({
+		order,
+		limit: dependencies === bound ? limit : undefined,
+		batch
+	}), dependencies);
+
+	// the order and limit last handed over, first those the members start with, so that only changes reach onChange
+
+	const shown = { order: members.order, limit: members.limit };
+
+	const [notified, setNotified] = useState(shown);
+
+	useEffect(() => {
+
+		if ( !equals(notified, shown) ) {
+			setNotified(shown);
+			onChange?.(shown.order, shown.limit);
+		}
+
+	}, [members.order, members.limit]);
+
+	const $basis = basis ?? order ?? {};
 
 	const holder: Lazy<ResourceShape> = shape; // the generic shape accepts any model: the items are typed by the
 											   // signature
 
 	const query = { ...model, ...criteria, ...scope, ...ranks(members.order) };
-	const basis = { entry, field, query }; // the collection the items on show are drawn from
+	const source = { entry, field, query }; // the collection the items on show are drawn from
 
-	const binding = createRelay(useEntry<Batch, { readonly basis: typeof basis, readonly limit: number }>({
+	const binding = createRelay(useEntry<Batch, { readonly source: typeof source, readonly limit: number }>({
 
 		store,
 		entry,
 		model: { [field]: { ...query, "#": members.limit } }, // the items on show, retrieved again as they change
 
-		lookup: shown => shown && equals(shown.basis, basis) && shown.limit === members.limit-members.batch
+		lookup: shown => shown && equals(shown.source, source) && shown.limit === members.limit-members.batch
 			? page(shown.limit).then(items => opt(items, items => [...shown.state, ...items]))
 			: pages(members.limit),
 
-		modify: () => ({ basis, limit: members.limit }) // what this render asks for, as the items it retrieves answer
+		modify: () => ({ source, limit: members.limit }) // what this render asks for, as the items it retrieves answer
 														// it
 
 	}));
@@ -227,8 +305,8 @@ export function useMembers<
 				...(state.length < limit ? {} : {
 					load: () => limit === members.limit ? void members.load() : undefined
 				}),
-				...(equals(members.order, order ?? {}) ? {} : {
-					reset: () => void members.sort(order ?? {})
+				...(equals(members.order, $basis) ? {} : {
+					reset: () => void members.sort($basis)
 				}),
 				sort: (order: Ordering) => void members.sort(order)
 

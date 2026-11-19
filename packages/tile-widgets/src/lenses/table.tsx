@@ -88,7 +88,7 @@ export type Column<I> = {
  * each further activation, its tooltip naming the order it applies next. Every column the items are sorted on is
  * marked by the direction they are sorted in, and the one they are sorted on first is announced as sorted. A button
  * marked by the sort glyph at the end of the header row, its tooltip naming it as resetting the sort order, restores
- * the order the items were first shown in, and is disabled while they are shown in that order already.
+ * the order the page shows the items in by default, and is disabled while they are shown in that order already.
  *
  * Items carrying an identifier end their row with a link to the resource it names, taking the reader to its details,
  * unless `link` is turned off for screens where the items have no details of their own to open.

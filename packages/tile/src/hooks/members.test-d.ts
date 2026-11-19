@@ -19,7 +19,7 @@ import { id, multiple, optional, required, resource } from "@metreeca/blue/resou
 import { string } from "@metreeca/blue/string";
 import { describe, expectTypeOf, it } from "vitest";
 import { useCollection } from "./collection.js";
-import { useMembers } from "./members.js";
+import { type Ordering, useMembers } from "./members.js";
 
 
 const Item = resource({ id: id(), label: required(string()), notes: optional(string()) });
@@ -39,6 +39,16 @@ describe("useMembers()", () => {
 		// @ts-expect-error unknown item member
 		useMembers(collection, { model: { title: {} } });
 
+	});
+
+	it("should hand the sort order and the limit to the change handler", async () => {
+		useMembers(collection, {
+			model: { label: {} },
+			onChange: (order, limit) => {
+				expectTypeOf(order).toEqualTypeOf<Ordering>();
+				expectTypeOf(limit).toEqualTypeOf<number>();
+			}
+		});
 	});
 
 	it("should type the items with the values the model asks for", async () => {

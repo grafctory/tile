@@ -27,7 +27,7 @@ import { type Collection } from "./collection.core.js";
 import { useCollection } from "./collection.js";
 import { Store } from "../index.js";
 import { createMembers } from "./members.core.js";
-import { useMembers } from "./members.js";
+import { type Ordering, useMembers } from "./members.js";
 
 
 const batch = 10;
@@ -62,6 +62,18 @@ describe("createMembers()", () => {
 
 		it.each([0, -1, 1.5])("should reject a batch size of %s", async batch => {
 			expect(() => createMembers({ batch })).toThrow(TypeError);
+		});
+
+		it("should start over the given number of items", async () => {
+			expect(createMembers({ limit: 2*batch, batch }).limit).toBe(2*batch);
+		});
+
+		it("should round the given number of items up to whole batches", async () => {
+			expect(createMembers({ limit: batch+1, batch }).limit).toBe(2*batch);
+		});
+
+		it.each([0, -1, 1.5])("should reject a limit of %s", async limit => {
+			expect(() => createMembers({ limit, batch })).toThrow(TypeError);
 		});
 
 	});
@@ -136,11 +148,25 @@ describe("useMembers()", () => {
 		}));
 	}
 
-	function mount(lookup: unknown, criteria = {}, scope = {}): {
+	/**
+	 * The members options a test hands over beside those every test shares.
+	 */
+	type Options = {
+
+		readonly basis?: Ordering
+		readonly order?: Ordering
+		readonly limit?: number
+
+		readonly onChange?: (order: Ordering, limit: number) => void
+
+	}
+
+	function mount(lookup: unknown, criteria = {}, scope = {}, options: Options = {}): {
 
 		collection: () => Collection<typeof Catalogue, "members">
 		members: () => Binding
 
+		update(options: Options): void
 		signal(): void
 
 	} {
@@ -150,7 +176,9 @@ describe("useMembers()", () => {
 		const collections = vi.fn<(collection: Collection<typeof Catalogue, "members">) => void>();
 		const bindings = vi.fn<(members: Binding) => void>();
 
-		function Probe() {
+		const factory = () => backend(lookup, observers);
+
+		function Probe(options: Options) {
 
 			const collection = useCollection({ entry, shape: Catalogue, scope, query: criteria });
 
@@ -159,21 +187,24 @@ describe("useMembers()", () => {
 			bindings(useMembers(collection, {
 				model: { label: {} },
 				order: { label: "asc" },
-				batch
+				batch,
+				...options
 			}));
 
 			return null;
 
 		}
 
-		act(() => render(createElement(Store, {
-			factory: () => backend(lookup, observers),
-			children: createElement(Probe, {})
-		}), document.body));
+		function show(options: Options) {
+			act(() => render(createElement(Store, { factory, children: createElement(Probe, options) }), document.body));
+		}
+
+		show(options);
 
 		return {
 			collection: () => collections.mock.lastCall![0], // test harness: Probe has rendered at least once
 			members: () => bindings.mock.lastCall![0],
+			update: show,
 			signal: () => act(() => observers.forEach(observer => observer()))
 		};
 	}
@@ -184,6 +215,10 @@ describe("useMembers()", () => {
 
 	function load(members: Binding) {
 		return members({ ready: ({ load }) => load });
+	}
+
+	function reset(members: Binding) {
+		return members({ ready: ({ reset }) => reset });
 	}
 
 
@@ -422,13 +457,76 @@ describe("useMembers()", () => {
 
 		});
 
+		it("should retrieve the items in the given order", async () => {
+
+			const lookup = catalogue();
+
+			mount(lookup, {}, {}, { order: { label: "desc" } });
+
+			await vi.waitFor(() => expect(models(lookup)).toContainEqual({
+				members: expect.objectContaining({ "^label": "desc", "@": 0 })
+			}));
+
+		});
+
+		it("should keep the items as they stand as the order handed over changes", async () => {
+
+			const lookup = catalogue();
+			const { members, update } = mount(lookup);
+
+			await vi.waitFor(() => expect(members()({ ready: () => true })).toBe(true));
+
+			const calls = lookup.mock.calls.length;
+
+			update({ order: { label: "desc" } });
+
+			await act(async () => {}); // let any retrieval the update asked for start
+
+			expect(members()({ ready: ({ order }) => order })).toEqual({ label: "asc" });
+			expect(lookup.mock.calls.length).toBe(calls);
+
+		});
+
+	});
+
+	describe("limit", () => {
+
+		it("should retrieve as many batches as the given limit at the start", async () => {
+
+			const lookup = catalogue(3*batch);
+			const { members } = mount(lookup, {}, {}, { limit: 2*batch });
+
+			await vi.waitFor(() => expect(members()({ ready: ({ state }) => state })).toEqual(items(2*batch)));
+
+			expect(models(lookup)).toEqual([
+				{ members: expect.objectContaining({ "@": 0, "#": batch }) },
+				{ members: expect.objectContaining({ "@": batch, "#": batch }) }
+			]);
+
+		});
+
+		it("should start again over a single batch as the criteria change", async () => {
+
+			const lookup = catalogue(3*batch);
+			const { collection, members } = mount(lookup, {}, {}, { limit: 2*batch });
+
+			await vi.waitFor(() => expect(members()({ ready: ({ state }) => state.length })).toBe(2*batch));
+
+			const calls = lookup.mock.calls.length;
+
+			act(() => void collection().filter({ "~label": "item" }));
+
+			await vi.waitFor(() => expect(members()({ ready: ({ state }) => state.length })).toBe(batch));
+
+			expect(models(lookup).slice(calls)).toEqual([
+				{ members: expect.objectContaining({ "~label": "item", "@": 0, "#": batch }) }
+			]);
+
+		});
+
 	});
 
 	describe("reset()", () => {
-
-		function reset(members: Binding) {
-			return members({ ready: ({ reset }) => reset });
-		}
 
 		it("should be withheld while the items are in the starting order", async () => {
 
@@ -457,6 +555,97 @@ describe("useMembers()", () => {
 
 			expect(models(lookup).at(-1)).toMatchObject({ members: { "^label": "asc", "@": 0, "#": batch } });
 			expect(reset(members())).toBeUndefined();
+
+		});
+
+		it("should be offered while the items start in an order other than the basis", async () => {
+
+			const { members } = mount(catalogue(), {}, {}, { basis: { label: "asc" }, order: { label: "desc" } });
+
+			await vi.waitFor(() => expect(reset(members())).toBeTypeOf("function"));
+
+		});
+
+		it("should restore the basis order", async () => {
+
+			const { members } = mount(catalogue(), {}, {}, { basis: { label: "asc" }, order: { label: "desc" } });
+
+			await vi.waitFor(() => expect(reset(members())).toBeTypeOf("function"));
+
+			act(() => reset(members())!());
+
+			await vi.waitFor(() => expect(members()({ ready: ({ order }) => order })).toEqual({ label: "asc" }));
+
+			expect(reset(members())).toBeUndefined();
+
+		});
+
+	});
+
+	describe("onChange", () => {
+
+		it("should take the order and the limit once as a new order starts over the first batch", async () => {
+
+			const onChange = vi.fn();
+			const { members } = mount(catalogue(3*batch), {}, {}, { limit: 2*batch, onChange });
+
+			await vi.waitFor(() => expect(members()({ ready: ({ state }) => state.length })).toBe(2*batch));
+
+			act(() => members()({ ready: ({ sort }) => sort({ label: "desc" }) }));
+
+			await vi.waitFor(() => expect(onChange).toHaveBeenCalledWith({ label: "desc" }, batch));
+
+			expect(onChange).toHaveBeenCalledOnce();
+
+		});
+
+		it("should take the basis order as it is restored", async () => {
+
+			const onChange = vi.fn();
+			const { members } = mount(catalogue(), {}, {}, { basis: { label: "asc" }, order: { label: "desc" }, onChange });
+
+			await vi.waitFor(() => expect(reset(members())).toBeTypeOf("function"));
+
+			act(() => reset(members())!());
+
+			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({ label: "asc" }, batch));
+
+		});
+
+		it("should take the limit as a batch is loaded", async () => {
+
+			const onChange = vi.fn();
+			const { members } = mount(catalogue(3*batch), {}, {}, { onChange });
+
+			await vi.waitFor(() => expect(load(members())).toBeTypeOf("function"));
+
+			act(() => load(members())!());
+
+			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({ label: "asc" }, 2*batch));
+
+		});
+
+		it("should take the limit as new criteria start over the first batch", async () => {
+
+			const onChange = vi.fn();
+			const { collection, members } = mount(catalogue(3*batch), {}, {}, { limit: 2*batch, onChange });
+
+			await vi.waitFor(() => expect(members()({ ready: ({ state }) => state.length })).toBe(2*batch));
+
+			act(() => void collection().filter({ "~label": "item" }));
+
+			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({ label: "asc" }, batch));
+
+		});
+
+		it("should not be called with the order and the limit the members start with", async () => {
+
+			const onChange = vi.fn();
+			const { members } = mount(catalogue(3*batch), {}, {}, { limit: 2*batch, onChange });
+
+			await vi.waitFor(() => expect(members()({ ready: ({ state }) => state.length })).toBe(2*batch));
+
+			expect(onChange).not.toHaveBeenCalled();
 
 		});
 

@@ -85,34 +85,39 @@ export type Ordering = {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Creates collection members over the first batch.
+ * Creates collection members.
  *
- * @param options The sort order the items start in and the number of items in each batch
+ * @param options The sort order the items start in, the number of items they start over, rounded up to whole
+ *     batches so that a count stored under another batch size still reaches as far, and the size of each batch
  *
- * @returns The members over the first batch
+ * @returns The members over the first batches up to `limit`
  *
- * @throws {@link !TypeError TypeError} If `batch` isn't a positive integer
+ * @throws {@link !TypeError TypeError} If `limit` or `batch` isn't a positive integer
  */
 export function createMembers({
 
 	order = {},
+	limit,
 	batch = 100
 
 }: {
 
 	readonly order?: Optional<Ordering>
+	readonly limit?: Optional<number>
 	readonly batch?: Optional<number>
 
 } = {}): Members {
 
 	const $batch = assert(batch, batch => Number.isInteger(batch) && batch > 0, `illegal batch size <${batch}>`);
 
+	const $limit = assert(limit ?? $batch, limit => Number.isInteger(limit) && limit > 0, `illegal limit <${limit}>`);
+
 	return createState<Members>({
 
 		order,
 
 		batch: $batch,
-		limit: $batch,
+		limit: Math.ceil($limit/$batch)*$batch,
 
 		load() {
 			return { limit: this.limit+$batch };

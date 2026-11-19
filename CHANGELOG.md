@@ -5,11 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.8.0](https://github.com/metreeca/tile/compare/v0.7.0...HEAD)
+## [Unreleased](https://github.com/metreeca/tile/compare/v0.8.0...HEAD)
+
+## [0.8.0](https://github.com/metreeca/tile/compare/v0.7.0...v0.8.0) - 2026-11-19
 
 ### Changed
 
-- **Breaking**: Upgrade `@metreeca/clay` to `^0.2.1`; projects using it alongside these packages raise their own range
+- **Breaking**: Upgrade `@metreeca/clay` to `^0.3.0`; projects using it alongside these packages raise their own range
   to match as well, so that it is shared by both as a single copy and the contexts it provides reach every binding
 - **Breaking**: `@metreeca/tile` takes `@metreeca/clay` as a peer dependency, and `@metreeca/tile-widgets` takes both
   `@metreeca/clay` and `@metreeca/tile`, so that an app installs a single copy of each and every widget reads the

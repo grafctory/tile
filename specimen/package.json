@@ -12,8 +12,8 @@
   },
   "dependencies": {
     "@metreeca/blue": "^0.14.0",
-    "@metreeca/clay": "^0.1.0",
-    "@metreeca/clay-widgets": "^0.1.0",
+    "@metreeca/clay": "^0.2.1",
+    "@metreeca/clay-widgets": "^0.2.1",
     "@metreeca/core": "^0.14.0",
     "@metreeca/http": "^0.6.0",
     "@metreeca/keep": "^0.13.0",
@@ -33,6 +33,9 @@
     "@preact/preset-vite": "^2.10.6",
     "typescript": "^6.0.3",
     "vite": "^8.3.5"
+  },
+  "overrides": {
+    "@metreeca/clay": "$@metreeca/clay"
   },
   "private": true
 }

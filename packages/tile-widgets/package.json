@@ -120,7 +120,7 @@
   },
   "dependencies": {
     "@metreeca/blue": "^0.14.0",
-    "@metreeca/clay": "^0.1.0",
+    "@metreeca/clay": "^0.2.1",
     "@metreeca/core": "^0.14.0",
     "@metreeca/qest": "^0.14.0",
     "@metreeca/skin": "^0.3.0",

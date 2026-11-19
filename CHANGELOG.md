@@ -7,6 +7,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/metreeca/tile/compare/v0.7.0...HEAD)
 
+### Changed
+
+- **Breaking**: Upgrade `@metreeca/clay` to `^0.2.1`; projects using it alongside these packages raise their own range
+  to match as well, so that it is shared by both as a single copy and the contexts it provides reach every binding
+
 ## [0.7.0](https://github.com/metreeca/tile/compare/v0.6.1...v0.7.0) - 2026-11-17
 
 ### Added

@@ -62,7 +62,7 @@
   },
   "dependencies": {
     "@metreeca/blue": "^0.14.0",
-    "@metreeca/clay": "^0.1.0",
+    "@metreeca/clay": "^0.2.1",
     "@metreeca/core": "^0.14.0",
     "@metreeca/http": "^0.6.0",
     "@metreeca/keep": "^0.13.0",

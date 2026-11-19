@@ -102,7 +102,7 @@ describe("useQuery()", () => {
 
 			mount();
 
-			expect(location.search).toBe("?~label=session");
+			expect(location.search).toBe("?~label=%22session%22");
 
 		});
 
@@ -128,7 +128,7 @@ describe("useQuery()", () => {
 
 			act(() => query()[1]({ "~label": "art" }));
 
-			expect(`${location.pathname}${location.search}${location.hash}`).toBe(`${route}?~label=art#top`);
+			expect(`${location.pathname}${location.search}${location.hash}`).toBe(`${route}?~label=%22art%22#top`);
 
 		});
 
@@ -138,7 +138,7 @@ describe("useQuery()", () => {
 
 			act(() => query()[1]({ "?university": [`${location.origin}/universities/coimbra`] }));
 
-			expect(location.search).toBe("?university=/universities/coimbra");
+			expect(location.search).toBe("?%3Funiversity=%22%2Funiversities%2Fcoimbra%22");
 
 		});
 
@@ -162,7 +162,7 @@ describe("useQuery()", () => {
 
 			act(() => query()[1]({ "~label": "art" }));
 
-			expect(sessionStorage.getItem(key)).toBe("~label=art");
+			expect(sessionStorage.getItem(key)).toBe("~label=%22art%22");
 
 		});
 

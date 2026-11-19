@@ -33,7 +33,7 @@
  */
 
 import { useRoute } from "@metreeca/clay/router";
-import type { Optional } from "@metreeca/core";
+import { isDefined, isString, type Optional } from "@metreeca/core";
 import { type Criteria, decodeCriteria, encodeCriteria } from "@metreeca/qest/model";
 import { useEffect, useState } from "preact/hooks";
 
@@ -45,9 +45,15 @@ import { useEffect, useState } from "preact/hooks";
  *
  * - the location query, as when the page is reloaded, reached through a link carrying the criteria, or reached again
  *   through the history, whose entry for the page keeps the query last written there
+ * - the criteria last written for the history entry in the session, as when the page is reached again through the
+ *   history after its criteria were emptied, so the entry comes back as the reader left it
  * - the criteria last written for the route in the session, as when the page is reached through a plain link
  *
- * Writing the criteria replaces them in both places without adding a history entry or touching its state, so the
+ * Criteria are kept for each history entry only on browsers supporting the
+ * [Navigation API](https://developer.mozilla.org/en-US/docs/Web/API/Navigation_API): elsewhere, an entry reached
+ * again through the history with no query falls back to the criteria last written for the route.
+ *
+ * Writing the criteria replaces them in every place without adding a history entry or touching its state, so the
  * history keeps one entry per page however many times the reader narrows it. Writing the criteria never mounts the
  * component again, so its state survives the change: only a navigation to another query mounts it again, as
  * described by {@link @metreeca/clay!router.Routes Routes}. The component renders below a
@@ -61,7 +67,7 @@ import { useEffect, useState } from "preact/hooks";
  */
 export function useQuery(): [Criteria, (criteria: Criteria) => void] {
 
-	const key = `${useRoute()}#query`;
+	const keys = [globalThis.navigation?.currentEntry?.key, useRoute()].filter(key => isDefined(key)).map(key => `${key}#query`); // most specific first
 
 	const [query, setQuery] = useState(read);
 
@@ -76,7 +82,9 @@ export function useQuery(): [Criteria, (criteria: Criteria) => void] {
 	}
 
 	function read(): Criteria {
-		return decode(location.search.substring(1)) ?? decode(sessionStorage.getItem(key) ?? "") ?? {};
+		return decode(location.search.substring(1))
+			?? decode(keys.map(key => sessionStorage.getItem(key)).find(isString) ?? "") // empty criteria shadow the route too
+			?? {};
 	}
 
 	function write(criteria: Criteria): void {
@@ -87,7 +95,7 @@ export function useQuery(): [Criteria, (criteria: Criteria) => void] {
 			`${location.pathname}${encoded ? `?${encoded}` : ""}${location.hash}`
 		);
 
-		sessionStorage.setItem(key, encoded);
+		keys.forEach(key => sessionStorage.setItem(key, encoded)); // storage side effect, nothing to collect
 
 	}
 

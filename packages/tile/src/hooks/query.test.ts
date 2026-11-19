@@ -180,4 +180,71 @@ describe("useQuery()", () => {
 
 	});
 
+	describe("history entries", () => {
+
+		/**
+		 * A stand-in for the Navigation API, which happy-dom lacks: the hook reads only the key of the current entry.
+		 */
+		const navigation = Object.assign(new EventTarget(), { currentEntry: { key: "entry" } });
+
+		beforeEach(async () => {
+			vi.stubGlobal("navigation", navigation);
+		});
+
+		afterEach(async () => {
+			vi.unstubAllGlobals();
+		});
+
+
+		it("should read empty criteria on an entry recorded with none, whatever the session holds for the route", async () => {
+
+			sessionStorage.setItem("entry#query", "");
+			sessionStorage.setItem(key, "~label=%22session%22");
+
+			expect(mount()()[0]).toEqual({});
+
+		});
+
+		it("should leave the location of an entry recorded with no criteria unchanged", async () => {
+
+			sessionStorage.setItem("entry#query", "");
+			sessionStorage.setItem(key, "~label=%22session%22");
+
+			mount();
+
+			expect(location.search).toBe("");
+
+		});
+
+		it("should read the location query first on a recorded entry", async () => {
+
+			history.replaceState(null, "", `${route}?~label=%22query%22`);
+			sessionStorage.setItem("entry#query", "");
+
+			expect(mount()()[0]).toEqual({ "~label": "query" });
+
+		});
+
+		it("should read the criteria last written for the route on an entry not recorded yet", async () => {
+
+			sessionStorage.setItem("other#query", "");
+			sessionStorage.setItem(key, "~label=%22session%22");
+
+			expect(mount()()[0]).toEqual({ "~label": "session" });
+
+		});
+
+		it("should keep the criteria written in the session, under the entry", async () => {
+
+			const query = mount();
+
+			act(() => query()[1]({ "~label": "art" }));
+			act(() => query()[1]({}));
+
+			expect(sessionStorage.getItem("entry#query")).toBe("");
+
+		});
+
+	});
+
 });

@@ -26,6 +26,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   handles `idle` as well, calling its `load` function to have the values retrieved ([#9](https://github.com/metreeca/tile/issues/9))
 - `Tally` scrolls its values back to the top as one is ticked or unticked, so the reader sees at once the values
   ticked, which lead the list, without hunting for them in a list scrolled down to reach the value just changed
+- `useQuery` keeps the criteria of each history entry on browsers supporting the Navigation API, so that a page reached
+  again through the history comes back as the reader left it, even after they emptied its criteria there
 
 ## [0.9.0](https://github.com/metreeca/tile/compare/v0.8.0...v0.9.0) - 2026-11-19
 

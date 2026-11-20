@@ -64,19 +64,19 @@
     "@metreeca/blue": "^0.15.0",
     "@metreeca/core": "^0.14.0",
     "@metreeca/http": "^0.6.0",
-    "@metreeca/keep": "^0.14.0",
-    "@metreeca/keep-rest": "^0.14.0",
+    "@metreeca/keep": "^0.14.1",
+    "@metreeca/keep-rest": "^0.14.1",
     "@metreeca/qest": "^0.15.0"
   },
   "devDependencies": {
-    "@metreeca/clay": "^0.3.0",
+    "@metreeca/clay": "^0.4.0",
     "happy-dom": "^21.0.4",
     "preact": "^10.29.8",
     "typescript": "^6.0.3",
     "vitest": "^5.0.5"
   },
   "peerDependencies": {
-    "@metreeca/clay": "^0.3.0",
+    "@metreeca/clay": "^0.4.0",
     "preact": "^10.27.2"
   }
 }

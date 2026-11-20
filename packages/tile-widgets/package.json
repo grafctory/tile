@@ -125,8 +125,8 @@
     "@metreeca/skin": "^0.3.0"
   },
   "devDependencies": {
-    "@metreeca/clay": "^0.3.0",
-    "@metreeca/keep": "^0.14.0",
+    "@metreeca/clay": "^0.4.0",
+    "@metreeca/keep": "^0.14.1",
     "@metreeca/tile": "^0.10.0",
     "happy-dom": "^21.0.4",
     "lucide-preact": "^1.47.0",
@@ -136,7 +136,7 @@
     "vitest": "^5.0.5"
   },
   "peerDependencies": {
-    "@metreeca/clay": "^0.3.0",
+    "@metreeca/clay": "^0.4.0",
     "@metreeca/tile": "^0.10.0",
     "lucide-preact": "^1.47.0",
     "preact": "^10.27.2"

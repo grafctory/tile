@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.10.0](https://github.com/metreeca/tile/compare/v0.9.0...HEAD)
+## [Unreleased](https://github.com/metreeca/tile/compare/v0.10.0...HEAD)
+
+## [0.10.0](https://github.com/metreeca/tile/compare/v0.9.0...v0.10.0) - 2026-11-20
 
 ### Added
 
@@ -17,6 +19,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Breaking**: Upgrade `@metreeca/clay` to `^0.4.0`; projects using it alongside these packages raise their own range
+  to match as well, so that it is shared by both as a single copy and the contexts it provides reach every binding
 - **Breaking**: `useMembers` reads `order` only as the members start over, no longer whenever it changes, so that a
   page handing back what `onChange` takes doesn't retrieve the items twice; a page sorting the items again from outside
   its lens calls the `sort` function the members hand over instead of handing over a new `order`

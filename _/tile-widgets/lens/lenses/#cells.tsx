@@ -15,11 +15,11 @@
  */
 
 import { isTemporal } from "../../type/src/index.js";
-import { isBoolean } from "@metreeca/core/boolean";
-import { date } from "@metreeca/core/date";
-import { toDateTimeString } from "@metreeca/core/dateTime";
-import { isNumber } from "@metreeca/core/number";
-import { isTime, toTimeString } from "@metreeca/core/time";
+import { isBoolean } from "@grafctory/core/boolean";
+import { date } from "@grafctory/core/date";
+import { toDateTimeString } from "@grafctory/core/dateTime";
+import { isNumber } from "@grafctory/core/number";
+import { isTime, toTimeString } from "@grafctory/core/time";
 import { toLocaleNumberString } from "@metreeca/view/fields/decimal";
 import { Check } from "lucide-react";
 import React from "react";

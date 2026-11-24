@@ -24,12 +24,12 @@
  * @module collection
  */
 
-import type { ResourceShape } from "@metreeca/blue/resource";
-import { useModel } from "@metreeca/clay/model";
-import type { Lazy } from "@metreeca/core";
-import type { IRI } from "@metreeca/core/resource";
-import { equals } from "@metreeca/core/values";
-import type { Criteria } from "@metreeca/qest/model";
+import type { ResourceShape } from "@grafctory/blue/resource";
+import { useModel } from "@grafctory/clay/model";
+import type { Lazy } from "@grafctory/core";
+import type { IRI } from "@grafctory/core/resource";
+import { equals } from "@grafctory/core/values";
+import type { Criteria } from "@grafctory/qest/model";
 import { useEffect, useState } from "preact/hooks";
 import { type Collection, type Collections, createCollection, getCollection, type Sole } from "./collection.core.js";
 import { resolveTarget } from "../index.core.js";

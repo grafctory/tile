@@ -15,8 +15,8 @@
  */
 
 import { asArray } from "../../type/src/index.js";
-import { Entry } from "@metreeca/core/entry";
-import { Value } from "@metreeca/core/value";
+import { Entry } from "@grafctory/core/entry";
+import { Value } from "@grafctory/core/value";
 import { useGraph } from "@metreeca/data/contexts/graph";
 import { useTrace } from "@metreeca/data/contexts/trace";
 

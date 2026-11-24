@@ -23,12 +23,12 @@
  * @module sheet
  */
 
-import type { ResourceShape } from "@metreeca/blue/resource";
-import type { Frame } from "@metreeca/blue/value";
-import { isObject, isString, type Lazy } from "@metreeca/core";
-import type { Relay } from "@metreeca/core/relay";
-import type { Collections } from "@metreeca/tile/collection";
-import type { MembersCases } from "@metreeca/tile/members";
+import type { ResourceShape } from "@grafctory/blue/resource";
+import type { Frame } from "@grafctory/blue/value";
+import { isObject, isString, type Lazy } from "@grafctory/core";
+import type { Relay } from "@grafctory/core/relay";
+import type { Collections } from "@grafctory/tile/collection";
+import type { MembersCases } from "@grafctory/tile/members";
 import { type ComponentChildren, createElement, Fragment } from "preact";
 import { Failure, Hint } from "../index.js";
 import "./sheet.css";
@@ -70,7 +70,7 @@ export function Sheet<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 }: {
 
 	/**
-	 * The collection members listed, as handed by {@link @metreeca/tile!members.useMembers useMembers}.
+	 * The collection members listed, as handed by {@link @grafctory/tile!members.useMembers useMembers}.
 	 */
 	members: Relay<MembersCases<S, P, T>>
 

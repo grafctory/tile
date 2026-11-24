@@ -20,7 +20,7 @@
  * @module
  */
 
-import { Page, type Sample } from "@metreeca/specimen/index.core.js";
+import { Page, type Sample } from "@grafctory/specimen/index.core.js";
 
 
 const samples: readonly Sample[] = [];
@@ -32,7 +32,7 @@ export function TileApis() {
 
 	return <Page
 
-		eyebrow="@metreeca/tile-apis"
+		eyebrow="@grafctory/tile-apis"
 		title="API Documentation"
 		lead={<>
 			The documentation of a linked data API, drawn from the shapes it serves: the resources it exposes, the

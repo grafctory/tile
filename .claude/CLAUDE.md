@@ -16,14 +16,14 @@ of the stack already speaks into what an interface shows, narrows and writes bac
 state packages and the rendering-layer bindings, each sitting directly under `packages/` (for example
 `packages/tile-widgets/`).
 
-Resource shapes come from `@metreeca/blue` and queries from `@metreeca/qest`: this repository **NEVER** defines a
+Resource shapes come from `@grafctory/blue` and queries from `@grafctory/qest`: this repository **NEVER** defines a
 parallel model of its own, and a control offered for a property is decided by the shape describing it rather than by a
 hand-written mapping.
 
-Reads and writes go through a `@metreeca/keep` store: caching, batching and validation belong there, and this
+Reads and writes go through a `@grafctory/keep` store: caching, batching and validation belong there, and this
 repository **NEVER** reimplements them behind the interface.
 
-What an interface draws rests on Preact and the `@metreeca/skin` design system, running within the `@metreeca/clay`
+What an interface draws rests on Preact and the `@grafctory/skin` design system, running within the `@grafctory/clay`
 toolkit: Tile adds the linked data layer over the general-purpose contexts and hooks Clay provides, and **NEVER**
 restates them.
 
@@ -31,21 +31,21 @@ restates them.
 
 - [Preact](https://preactjs.com/guide/v10/getting-started) - Fast 3kB alternative to React with the same API, the
   rendering layer every binding package renders with and takes as a peer dependency
-- [@metreeca/core](https://github.com/metreeca/core) - Core utilities and shared types, providing the state primitives
+- [@grafctory/core](https://github.com/grafctory/core) - Core utilities and shared types, providing the state primitives
   the headless components are built on
-- [@metreeca/clay](https://github.com/metreeca/clay) - Minimalist UI toolkit for Preact, providing the fetch,
+- [@grafctory/clay](https://github.com/grafctory/clay) - Minimalist UI toolkit for Preact, providing the fetch,
   routing, board and model hooks the bindings are wired to
-- [@metreeca/http](https://github.com/metreeca/http) - Composable middleware for the standard fetch API, providing the
+- [@grafctory/http](https://github.com/grafctory/http) - Composable middleware for the standard fetch API, providing the
   client the store exchanges resources through
-- [@metreeca/qest](https://github.com/metreeca/qest) - Foundations for client-driven, queryable REST/JSON APIs,
+- [@grafctory/qest](https://github.com/grafctory/qest) - Foundations for client-driven, queryable REST/JSON APIs,
   providing the query model the state components expose
-- [@metreeca/blue](https://github.com/metreeca/blue) - Declarative blueprints for model-driven linked data processing,
+- [@grafctory/blue](https://github.com/grafctory/blue) - Declarative blueprints for model-driven linked data processing,
   providing the shapes that decide what an interface offers
-- [@metreeca/keep](https://github.com/metreeca/keep) - Model-driven storage API, providing the store the interface
+- [@grafctory/keep](https://github.com/grafctory/keep) - Model-driven storage API, providing the store the interface
   reads from and writes to
-- [@metreeca/gate](https://github.com/metreeca/gate) - Zero-code model-driven endpoints for linked data resources, the
+- [@grafctory/gate](https://github.com/grafctory/gate) - Zero-code model-driven endpoints for linked data resources, the
   server counterpart this layer talks to
-- [@metreeca/skin](https://github.com/metreeca/skin) - Essential design tokens and styles, providing the token contract
+- [@grafctory/skin](https://github.com/grafctory/skin) - Essential design tokens and styles, providing the token contract
   and the stylesheet every component sheet reads from
 
 # NPM Scripts
@@ -75,7 +75,7 @@ immediately under `packages/` (for example `packages/tile-widgets`).
 A package compiles against its siblings through their `dist`, so each `tsconfig.build.json` is `composite` and names
 those siblings under `references`, and the package `build` runs `tsc -b`: the compiler settles the order and brings a
 stale sibling up to date first, whatever order the workspaces are visited in. A package added here declares a
-reference for every `@metreeca/tile*` dependency it takes, or it compiles against whatever its sibling last left
+reference for every `@grafctory/tile*` dependency it takes, or it compiles against whatever its sibling last left
 behind. The build is incremental, its cache being the `tsconfig.build.tsbuildinfo` each package's `clean` removes
 alongside `dist`: deleting `dist` by hand leaves that cache claiming the outputs are current, and the next build
 emits nothing.
@@ -83,15 +83,15 @@ emits nothing.
 Headless packages carry **NO** dependency on a rendering framework: Preact, and any other rendering layer added later,
 appears **ONLY** in its own binding packages (`tile` for the store bindings a component is wired to, `tile-widgets`
 for the lenses, facets and fields built over them). A binding package adds observation and rendering over
-state it never redefines: behaviour lives in framework-agnostic `@metreeca/core` state objects, so a second binding
+state it never redefines: behaviour lives in framework-agnostic `@grafctory/core` state objects, so a second binding
 reaches the same behaviour without restating it.
 
-A binding package styles what it draws through the `@metreeca/skin` tokens, so the interface follows whatever theme an
-app sets there. A general-purpose context or hook a binding package needs belongs to `@metreeca/clay`, **NEVER** to a
+A binding package styles what it draws through the `@grafctory/skin` tokens, so the interface follows whatever theme an
+app sets there. A general-purpose context or hook a binding package needs belongs to `@grafctory/clay`, **NEVER** to a
 Tile package.
 
 > [!CAUTION]
-> Every sheet here is built on `@metreeca/skin`: activate `css-developer` before touching one. Its `skin`, `meaning`,
+> Every sheet here is built on `@grafctory/skin`: activate `css-developer` before touching one. Its `skin`, `meaning`,
 > `palettes` and `viewports` task skills carry the design system discipline and vocabularies a Tile widget follows.
 
 ## Package Distribution
@@ -101,7 +101,7 @@ track. Bundle weight never justifies a split, since every module keeps its own s
 what it imports.
 
 - **Store apart**: `tile` holds the store, the resource and collection bindings, the value types and the headless
-  state they adopt, and is the only package taking the `@metreeca/keep` stack; every other package builds on it
+  state they adopt, and is the only package taking the `@grafctory/keep` stack; every other package builds on it
 - **One widget package**: lenses, facets and fields share `tile-widgets` whatever their role. They share one stack,
   and fields reuse what lenses draw, so a split by role spares nobody an install and forces a placement call on every
   new widget. Within the package, each role takes a folder of its own: `lenses` for the widgets presenting a resource,
@@ -109,7 +109,7 @@ what it imports.
   widgets narrowing a collection, and `fields` for the widgets writing resources back, while the parts they draw alike
   stay at the package root. Prose keeps to the same terms: a lens presents, a facet narrows, a field writes, and
   *widget* names any of them. Folders **NEVER** appear in
-  import paths: `exports` lists every module, and its stylesheet, as a flat subpath (`@metreeca/tile-widgets/tally`),
+  import paths: `exports` lists every module, and its stylesheet, as a flat subpath (`@grafctory/tile-widgets/tally`),
   so module names stay unique across folders and a module added to a folder is reachable only once listed there
 - **Heavy stacks apart**: a module group gets a package of its own when it is the only reason its neighbours would
   install a third-party stack, as `tile-charts` does for its plotting and mapping engines
@@ -126,13 +126,13 @@ with.
 
 Every package states its summary in three places, which **MUST** be kept aligned:
 
-- `packages/<package>/package.json` `description` - `<summary> for @metreeca/tile.`
-- `packages/<package>/README.md`, first line after the badge - the same sentence, with `@metreeca/tile` linked to the
+- `packages/<package>/package.json` `description` - `<summary> for @grafctory/tile.`
+- `packages/<package>/README.md`, first line after the badge - the same sentence, with `@grafctory/tile` linked to the
   project repository
 - the root `README.md` package table - `<summary>` with the rendering layer left off, since the rows sit under prose
   that already states it (`Linked data widgets`, not `Preact linked data widgets`)
 
-The suffix names the project repository as `@metreeca/tile`, for every package alike.
+The suffix names the project repository as `@grafctory/tile`, for every package alike.
 
 A package carrying a `src/index.ts` states it in a fourth place, that module's doc definition line, as `<summary>.`
 without the family suffix. The file is **NEVER** added for the sake of the summary: it earns its place by holding the
@@ -146,7 +146,7 @@ Revising one **ALWAYS** means revising the others.
 A package `README.md` **Usage** section opens with a note pointing at the API reference, then carries the real thing:
 what a consumer has to know to put the package to work, stubbed as `{TBD: usage overview and examples}` until written.
 The note links the root of the package reference,
-`https://metreeca.github.io/tile/modules/_metreeca_<package>.html`, and **NEVER** the site root, a module page, or a
+`https://grafctory.github.io/tile/modules/_grafctory_<package>.html`, and **NEVER** the site root, a module page, or a
 table of them: the catalogue grows with every module added, and the generated navigation already carries it. Usage
 samples for a single module belong to that module's own documentation. The section **NEVER** stands in for the
 generated index.
@@ -168,8 +168,8 @@ Metreeca register.
 
 # Component State
 
-A component holding state declares it as a `@metreeca/core` state object and adopts it with `useModel` from
-`@metreeca/clay/model`, reading data and transitions straight off the model:
+A component holding state declares it as a `@grafctory/core` state object and adopts it with `useModel` from
+`@grafctory/clay/model`, reading data and transitions straight off the model:
 
 ```tsx
 const { open, expand, collapse, configure } = useModel(() => createFold());
@@ -212,7 +212,7 @@ component, which the module path already places: `Table` in `table.tsx`, renderi
 
 # Shared Utilities
 
-Reach for `@metreeca/core` before writing a helper: its `state`, `strings`, `arrays` and `structures` entry points
+Reach for `@grafctory/core` before writing a helper: its `state`, `strings`, `arrays` and `structures` entry points
 already cover the state primitives alongside the common collection and value operations. A hand-rolled equivalent
 duplicates tested code and drifts from it, missing the edge cases the shared one handles.
 
@@ -222,19 +222,19 @@ is, so the next reader doesn't take it for an oversight.
 # Immutable Results
 
 Every object or array a public API hands out, hook results, tuples and context values included, **MUST** be passed
-through `immutable()` from `@metreeca/core/values`, so a consumer can never change state it does not own. Values taken
+through `immutable()` from `@grafctory/core/values`, so a consumer can never change state it does not own. Values taken
 from outside, such as parsed JSON or a caller's initial value, are frozen too before they are handed back; an array
 rebuilt by a transition is frozen anew, while one left unchanged keeps its identity so the context renders nothing.
 
 # Testing
 
-The root `vitest.config.ts` resolves imports of symlinked `@metreeca/*` packages, both workspace packages and siblings
-linked by `npm run setup`, to the TypeScript source their `@metreeca/source` export entries declare, so tests run
+The root `vitest.config.ts` resolves imports of symlinked `@grafctory/*` packages, both workspace packages and siblings
+linked by `npm run setup`, to the TypeScript source their `@grafctory/source` export entries declare, so tests run
 against `src/` without a prior build. Packages installed from the registry keep resolving to their published `dist`.
 An export entry lacking the condition falls back to `dist` as well, and tests then see that package as last built.
 
 > [!CAUTION]
-> **NEVER** enable `@metreeca/source` through vitest `resolve.conditions`. Published manifests carry the condition
+> **NEVER** enable `@grafctory/source` through vitest `resolve.conditions`. Published manifests carry the condition
 > while their packages ship no `src/`, and Vite does not fall back to `default` on a missing target, so a global
 > condition breaks every package installed from the registry that declares it, as happens under `npm ci` in CI.
 
@@ -255,7 +255,7 @@ environment.
 # Version Management
 
 All workspace packages share the root `package.json` version. Beyond the `version` fields the release flow already
-cascades, update the internal `@metreeca/tile*` dependency ranges in every `packages/**/package.json` to match. The
+cascades, update the internal `@grafctory/tile*` dependency ranges in every `packages/**/package.json` to match. The
 specimen, a self-standing app outside the workspaces, takes the packages it shows through `file:` links rather than
 ranges, so it follows every version without being touched.
 

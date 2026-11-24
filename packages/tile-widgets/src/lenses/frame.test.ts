@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { id, required, resource } from "@metreeca/blue/resource";
-import { string } from "@metreeca/blue/string";
-import { immutable } from "@metreeca/core/values";
-import type { Store as Backend } from "@metreeca/keep";
-import { Store } from "@metreeca/tile";
-import { useResource } from "@metreeca/tile/resource";
+import { id, required, resource } from "@grafctory/blue/resource";
+import { string } from "@grafctory/blue/string";
+import { immutable } from "@grafctory/core/values";
+import type { Store as Backend } from "@grafctory/keep";
+import { Store } from "@grafctory/tile";
+import { useResource } from "@grafctory/tile/resource";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";

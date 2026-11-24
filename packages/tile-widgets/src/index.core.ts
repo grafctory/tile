@@ -27,7 +27,7 @@
  * @module
  */
 
-import { createState } from "@metreeca/core/state";
+import { createState } from "@grafctory/core/state";
 
 
 /**

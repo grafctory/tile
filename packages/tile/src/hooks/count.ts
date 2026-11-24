@@ -23,12 +23,12 @@
  * @module count
  */
 
-import type { ResourceShape } from "@metreeca/blue/resource";
-import { items } from "@metreeca/blue/value";
-import { isNumber, isObject, type Lazy, opt } from "@metreeca/core";
-import { createRelay, type Relay } from "@metreeca/core/relay";
-import type { Problem } from "@metreeca/http/success";
-import type { Template } from "@metreeca/qest/model";
+import type { ResourceShape } from "@grafctory/blue/resource";
+import { items } from "@grafctory/blue/value";
+import { isNumber, isObject, type Lazy, opt } from "@grafctory/core";
+import { createRelay, type Relay } from "@grafctory/core/relay";
+import type { Problem } from "@grafctory/http/success";
+import type { Template } from "@grafctory/qest/model";
 import type { Collection, Collections } from "./collection.core.js";
 import { useEntry } from "../index.core.js";
 import { useStore } from "../index.js";

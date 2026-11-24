@@ -20,7 +20,7 @@
     "skipLibCheck": true,
     "types": [],
     "customConditions": [
-      "@metreeca/source"
+      "@grafctory/source"
     ]
   },
   "include": [

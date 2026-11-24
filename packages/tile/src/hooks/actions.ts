@@ -23,16 +23,16 @@
  * @module actions
  */
 
-import type { ResourceShape } from "@metreeca/blue/resource";
-import { blueprint, type Draft } from "@metreeca/blue/value";
-import type { Lazy, Optional } from "@metreeca/core";
-import { some } from "@metreeca/core/arrays";
-import { type IRI, resolve } from "@metreeca/core/resource";
-import { immutable } from "@metreeca/core/values";
-import { Conflict, NotFound } from "@metreeca/http";
-import { type Problem, toProblem } from "@metreeca/http/success";
-import type { Template } from "@metreeca/qest/model";
-import type { Reference } from "@metreeca/qest/state";
+import type { ResourceShape } from "@grafctory/blue/resource";
+import { blueprint, type Draft } from "@grafctory/blue/value";
+import type { Lazy, Optional } from "@grafctory/core";
+import { some } from "@grafctory/core/arrays";
+import { type IRI, resolve } from "@grafctory/core/resource";
+import { immutable } from "@grafctory/core/values";
+import { Conflict, NotFound } from "@grafctory/http";
+import { type Problem, toProblem } from "@grafctory/http/success";
+import type { Template } from "@grafctory/qest/model";
+import type { Reference } from "@grafctory/qest/state";
 import type { Collection, Collections } from "./collection.core.js";
 import { useStore } from "../index.js";
 

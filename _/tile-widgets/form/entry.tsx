@@ -15,7 +15,7 @@
  */
 
 
-import { Entry, toEntryString } from "@metreeca/core/entry";
+import { Entry, toEntryString } from "@grafctory/core/entry";
 import { Setter } from "@metreeca/data/hooks";
 import { Matches } from "@metreeca/data/models/matches";
 import { createField, Field } from "@metreeca/view/fields/index";

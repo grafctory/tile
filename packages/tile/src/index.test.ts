@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { reference } from "@metreeca/blue/reference";
-import { id, multiple, optional, required, resource as shaped, type ResourceShape } from "@metreeca/blue/resource";
-import { string } from "@metreeca/blue/string";
-import { Conflict, NotFound } from "@metreeca/http";
-import type { Store as Backend, StoreObserver } from "@metreeca/keep";
-import type { Items } from "@metreeca/blue/value";
-import type { Template } from "@metreeca/qest/model";
+import { reference } from "@grafctory/blue/reference";
+import { id, multiple, optional, required, resource as shaped, type ResourceShape } from "@grafctory/blue/resource";
+import { string } from "@grafctory/blue/string";
+import { Conflict, NotFound } from "@grafctory/http";
+import type { Store as Backend, StoreObserver } from "@grafctory/keep";
+import type { Items } from "@grafctory/blue/value";
+import type { Template } from "@grafctory/qest/model";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from "vitest";

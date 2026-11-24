@@ -17,7 +17,7 @@
 /**
  * Preact linked data store and shape-driven value types.
  *
- * Offers the components of an interface one shared [store](https://metreeca.github.io/keep/) to read linked data
+ * Offers the components of an interface one shared [store](https://grafctory.github.io/keep/) to read linked data
  * resources from and write them back to. The store is configured once, where the interface is assembled, rather than
  * at every call site. Components bind to the resources and collections it holds, so that every widget stays in step
  * with the store and none has to drive exchanges of its own, or track the changes made by others.
@@ -25,12 +25,12 @@
  * @module index
  */
 
-import { useFetch } from "@metreeca/clay/fetch";
-import { error, type Optional } from "@metreeca/core";
-import type { Tag } from "@metreeca/core/language";
-import type { Fetch } from "@metreeca/http";
-import type { Store } from "@metreeca/keep";
-import { createRESTStore } from "@metreeca/keep-rest";
+import { useFetch } from "@grafctory/clay/fetch";
+import { error, type Optional } from "@grafctory/core";
+import type { Tag } from "@grafctory/core/language";
+import type { Fetch } from "@grafctory/http";
+import type { Store } from "@grafctory/keep";
+import { createRESTStore } from "@grafctory/keep-rest";
 import { type ComponentChildren, createContext, createElement } from "preact";
 import { useContext, useState } from "preact/hooks";
 import { localise, toLocale } from "./index.core.js";
@@ -45,7 +45,7 @@ const Context = createContext<Optional<Store>>(undefined);
  * Offers a shared resource store to nested components.
  *
  * The store performs its exchanges through the fetch client of the innermost enclosing
- * {@link @metreeca/clay!fetch.Fetch Fetch} context, so they share the services configured there, such as
+ * {@link @grafctory/clay!fetch.Fetch Fetch} context, so they share the services configured there, such as
  * authentication and progress tracking, with every other exchange the app performs.
  *
  * Localised content is retrieved in the languages the reader prefers, so every component shows, searches and sorts

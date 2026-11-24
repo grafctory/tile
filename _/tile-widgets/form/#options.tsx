@@ -15,7 +15,7 @@
  */
 
 // @ts-ignore
-import { Input, TileInput, TilePlaceholder } from "@metreeca/tile/inputs/input";
+import { Input, TileInput, TilePlaceholder } from "@grafctory/tile/inputs/input";
 import "./input.css";
 import "./#options.css";
 import * as React from "react";

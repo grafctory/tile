@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { reference } from "@metreeca/blue/reference";
-import { id, multiple, optional, required, resource } from "@metreeca/blue/resource";
-import { string } from "@metreeca/blue/string";
+import { reference } from "@grafctory/blue/reference";
+import { id, multiple, optional, required, resource } from "@grafctory/blue/resource";
+import { string } from "@grafctory/blue/string";
 import { describe, expectTypeOf, it } from "vitest";
 import { useCollection } from "./collection.js";
 import { type Ordering, useMembers } from "./members.js";

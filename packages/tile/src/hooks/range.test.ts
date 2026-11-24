@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { number } from "@metreeca/blue/number";
-import { reference } from "@metreeca/blue/reference";
-import { id, multiple, required, resource } from "@metreeca/blue/resource";
-import type { Relay } from "@metreeca/core/relay";
-import { immutable } from "@metreeca/core/values";
-import type { Store as Backend } from "@metreeca/keep";
-import type { Criteria } from "@metreeca/qest/model";
+import { number } from "@grafctory/blue/number";
+import { reference } from "@grafctory/blue/reference";
+import { id, multiple, required, resource } from "@grafctory/blue/resource";
+import type { Relay } from "@grafctory/core/relay";
+import { immutable } from "@grafctory/core/values";
+import type { Store as Backend } from "@grafctory/keep";
+import type { Criteria } from "@grafctory/qest/model";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";

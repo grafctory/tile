@@ -17,14 +17,14 @@
 /**
  * Widget parts.
  *
- * Draws the parts the widgets share out of plain markup styled by `@metreeca/skin`, so a lens, a facet or a field
+ * Draws the parts the widgets share out of plain markup styled by `@grafctory/skin`, so a lens, a facet or a field
  * marks loading, emptiness and failure alike, and opens, closes, grows and turns to its settings alike, whichever
  * widget it is, so a reader learns these gestures once for every widget the package offers.
  *
  * @module
  */
 
-import { opt, type Optional } from "@metreeca/core";
+import { opt, type Optional } from "@grafctory/core";
 import { CheckIcon, CircleAlertIcon, RefreshCwIcon } from "lucide-preact";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId } from "preact/hooks";

@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-import { reference } from "@metreeca/blue/reference";
-import { id, multiple, optional, resource } from "@metreeca/blue/resource";
-import { string } from "@metreeca/blue/string";
+import { reference } from "@grafctory/blue/reference";
+import { id, multiple, optional, resource } from "@grafctory/blue/resource";
+import { string } from "@grafctory/blue/string";
 import { AutoDelay } from "../index.js";
-import { immutable } from "@metreeca/core/values";
-import type { Store as Backend } from "@metreeca/keep";
-import type { Criteria, Option } from "@metreeca/qest/model";
-import { Store } from "@metreeca/tile";
-import { useCollection } from "@metreeca/tile/collection";
-import { useTally } from "@metreeca/tile/tally";
-import type { TallyBucket } from "@metreeca/tile/tally";
+import { immutable } from "@grafctory/core/values";
+import type { Store as Backend } from "@grafctory/keep";
+import type { Criteria, Option } from "@grafctory/qest/model";
+import { Store } from "@grafctory/tile";
+import { useCollection } from "@grafctory/tile/collection";
+import { useTally } from "@grafctory/tile/tally";
+import type { TallyBucket } from "@grafctory/tile/tally";
 import { type ComponentChildren, createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";

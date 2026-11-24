@@ -23,18 +23,18 @@
  * @module
  */
 
-import "@metreeca/skin/presets/roboto.css";
-import { Fetch } from "@metreeca/clay/fetch";
-import { host } from "@metreeca/clay";
-import { Router, Routes } from "@metreeca/clay/router";
-import { createFetch } from "@metreeca/http";
-import { mock } from "@metreeca/http/mock";
-import { Root, TileApisPath, TilePath, TileWidgetsPath } from "@metreeca/specimen/index.core.js";
-import { Tile } from "@metreeca/specimen/tile/index.js";
-import { TileApis } from "@metreeca/specimen/tile-apis/index.js";
-import { TileWidgets } from "@metreeca/specimen/tile-widgets/index.js";
-import { toys } from "@metreeca/specimen/toys.js";
-import { Store } from "@metreeca/tile";
+import "@grafctory/skin/presets/roboto.css";
+import { Fetch } from "@grafctory/clay/fetch";
+import { host } from "@grafctory/clay";
+import { Router, Routes } from "@grafctory/clay/router";
+import { createFetch } from "@grafctory/http";
+import { mock } from "@grafctory/http/mock";
+import { Root, TileApisPath, TilePath, TileWidgetsPath } from "@grafctory/specimen/index.core.js";
+import { Tile } from "@grafctory/specimen/tile/index.js";
+import { TileApis } from "@grafctory/specimen/tile-apis/index.js";
+import { TileWidgets } from "@grafctory/specimen/tile-widgets/index.js";
+import { toys } from "@grafctory/specimen/toys.js";
+import { Store } from "@grafctory/tile";
 import { render } from "preact";
 import "./index.css";
 

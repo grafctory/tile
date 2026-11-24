@@ -20,10 +20,10 @@
  * @module
  */
 
-import { isObject, isString } from "@metreeca/core";
-import { getIRILabel, isIRI } from "@metreeca/core/resource";
-import { immutable } from "@metreeca/core/values";
-import { isDictionary, type Reference, type Resource } from "@metreeca/qest/state";
+import { isObject, isString } from "@grafctory/core";
+import { getIRILabel, isIRI } from "@grafctory/core/resource";
+import { immutable } from "@grafctory/core/values";
+import { isDictionary, type Reference, type Resource } from "@grafctory/qest/state";
 import type { Type } from "./index.js";
 import { malformed, mismatched, inconvertible } from "./index.core.js";
 import { text } from "./text.js";

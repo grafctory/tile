@@ -20,14 +20,14 @@
  * @module
  */
 
-import { entry, Faceted } from "@metreeca/specimen/tile-widgets/facets.js";
-import { Sample } from "@metreeca/specimen/tile-widgets/sample.js";
-import { Products } from "@metreeca/specimen/toys.js";
-import { useCollection } from "@metreeca/tile/collection";
-import { useRange } from "@metreeca/tile/range";
-import { date } from "@metreeca/tile/types/date";
-import { decimal } from "@metreeca/tile/types/decimal";
-import { Range } from "@metreeca/tile-widgets/range";
+import { entry, Faceted } from "@grafctory/specimen/tile-widgets/facets.js";
+import { Sample } from "@grafctory/specimen/tile-widgets/sample.js";
+import { Products } from "@grafctory/specimen/toys.js";
+import { useCollection } from "@grafctory/tile/collection";
+import { useRange } from "@grafctory/tile/range";
+import { date } from "@grafctory/tile/types/date";
+import { decimal } from "@grafctory/tile/types/decimal";
+import { Range } from "@grafctory/tile-widgets/range";
 
 
 /**

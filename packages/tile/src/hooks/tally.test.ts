@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-import { dictionary } from "@metreeca/blue/dictionary";
-import { number } from "@metreeca/blue/number";
-import { reference } from "@metreeca/blue/reference";
-import { id, multiple, optional, required, resource } from "@metreeca/blue/resource";
-import { string } from "@metreeca/blue/string";
-import { union } from "@metreeca/blue/union";
-import { isNumber } from "@metreeca/core";
-import type { Relay } from "@metreeca/core/relay";
-import { immutable } from "@metreeca/core/values";
-import type { Store as Backend } from "@metreeca/keep";
-import type { Criteria, Option } from "@metreeca/qest/model";
+import { dictionary } from "@grafctory/blue/dictionary";
+import { number } from "@grafctory/blue/number";
+import { reference } from "@grafctory/blue/reference";
+import { id, multiple, optional, required, resource } from "@grafctory/blue/resource";
+import { string } from "@grafctory/blue/string";
+import { union } from "@grafctory/blue/union";
+import { isNumber } from "@grafctory/core";
+import type { Relay } from "@grafctory/core/relay";
+import { immutable } from "@grafctory/core/values";
+import type { Store as Backend } from "@grafctory/keep";
+import type { Criteria, Option } from "@grafctory/qest/model";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";

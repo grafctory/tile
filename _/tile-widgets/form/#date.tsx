@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Input, TileInput, TilePlaceholder } from "@metreeca/tile/inputs/input";
+import { Input, TileInput, TilePlaceholder } from "@grafctory/tile/inputs/input";
 import "./#date.css";
 import * as React from "react";
 import { createElement } from "react";

@@ -1,7 +1,7 @@
 {
-  "name": "@metreeca/tile-apis",
+  "name": "@grafctory/tile-apis",
   "version": "0.10.1",
-  "description": "Preact API documentation widgets for @metreeca/tile.",
+  "description": "Preact API documentation widgets for @grafctory/tile.",
   "keywords": [
     "typescript",
     "preact",
@@ -10,9 +10,9 @@
     "ui",
     "api-documentation"
   ],
-  "homepage": "https://metreeca.github.io/tile/",
+  "homepage": "https://grafctory.github.io/tile/",
   "bugs": {
-    "url": "https://github.com/metreeca/tile/issues",
+    "url": "https://github.com/grafctory/tile/issues",
     "email": "info@metreeca.com"
   },
   "license": "Apache-2.0",
@@ -23,14 +23,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/metreeca/tile.git",
+    "url": "git+https://github.com/grafctory/tile.git",
     "directory": "packages/tile-apis"
   },
   "type": "module",
   "sideEffects": false,
   "exports": {
     ".": {
-      "@metreeca/source": "./src/index.ts",
+      "@grafctory/source": "./src/index.ts",
       "default": "./dist/index.js"
     }
   },

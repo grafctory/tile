@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { reference } from "@metreeca/blue/reference";
-import { id, multiple, required, resource } from "@metreeca/blue/resource";
-import { string } from "@metreeca/blue/string";
-import type { Criteria } from "@metreeca/qest/model";
-import { useCollection } from "@metreeca/tile/collection";
-import { useSearch } from "@metreeca/tile/search";
+import { reference } from "@grafctory/blue/reference";
+import { id, multiple, required, resource } from "@grafctory/blue/resource";
+import { string } from "@grafctory/blue/string";
+import type { Criteria } from "@grafctory/qest/model";
+import { useCollection } from "@grafctory/tile/collection";
+import { useSearch } from "@grafctory/tile/search";
 import { createElement, Fragment, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Input, TileInput, TilePlaceholder } from "@metreeca/tile/inputs/input";
+import { Input, TileInput, TilePlaceholder } from "@grafctory/tile/inputs/input";
 import "./#check.css";
 import { Maybe } from "mesh";
 import * as React from "react";

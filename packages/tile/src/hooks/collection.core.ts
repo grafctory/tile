@@ -25,15 +25,15 @@
  * @module collection.core
  */
 
-import { getShapeTarget } from "@metreeca/blue/reference";
-import { getShapeProperties, type ResourceShape } from "@metreeca/blue/resource";
-import { getShapeBranches } from "@metreeca/blue/union";
-import type { Draft, State } from "@metreeca/blue/value";
-import { type Eager, error, type Identifier, type Lazy, type Optional } from "@metreeca/core";
-import { createState } from "@metreeca/core/state";
-import { equals } from "@metreeca/core/values";
-import type { Criteria } from "@metreeca/qest/model";
-import type { Reference } from "@metreeca/qest/state";
+import { getShapeTarget } from "@grafctory/blue/reference";
+import { getShapeProperties, type ResourceShape } from "@grafctory/blue/resource";
+import { getShapeBranches } from "@grafctory/blue/union";
+import type { Draft, State } from "@grafctory/blue/value";
+import { type Eager, error, type Identifier, type Lazy, type Optional } from "@grafctory/core";
+import { createState } from "@grafctory/core/state";
+import { equals } from "@grafctory/core/values";
+import type { Criteria } from "@grafctory/qest/model";
+import type { Reference } from "@grafctory/qest/state";
 
 
 /**

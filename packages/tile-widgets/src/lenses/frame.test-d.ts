@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { id, required, resource } from "@metreeca/blue/resource";
-import { string } from "@metreeca/blue/string";
-import { useResource } from "@metreeca/tile/resource";
+import { id, required, resource } from "@grafctory/blue/resource";
+import { string } from "@grafctory/blue/string";
+import { useResource } from "@grafctory/tile/resource";
 import { describe, expectTypeOf, it } from "vitest";
 import { Frame } from "./frame.js";
 

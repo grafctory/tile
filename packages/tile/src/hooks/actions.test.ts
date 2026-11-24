@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { reference } from "@metreeca/blue/reference";
-import { id, multiple, required, resource } from "@metreeca/blue/resource";
-import { string } from "@metreeca/blue/string";
-import { Conflict, NotFound } from "@metreeca/http";
-import type { Store as Backend } from "@metreeca/keep";
+import { reference } from "@grafctory/blue/reference";
+import { id, multiple, required, resource } from "@grafctory/blue/resource";
+import { string } from "@grafctory/blue/string";
+import { Conflict, NotFound } from "@grafctory/http";
+import type { Store as Backend } from "@grafctory/keep";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";

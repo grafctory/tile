@@ -23,15 +23,15 @@
  * @module tally
  */
 
-import type { ResourceShape } from "@metreeca/blue/resource";
-import { getShapeBranches } from "@metreeca/blue/union";
-import { effective, items, type Range } from "@metreeca/blue/value";
-import { useModel } from "@metreeca/clay/model";
-import { error, isArray, isNumber, isObject, isString, type Lazy, opt, type Optional } from "@metreeca/core";
-import { ascending, by } from "@metreeca/core/order";
-import { createRelay, type Option as Outcome, type Relay } from "@metreeca/core/relay";
-import { equals, immutable } from "@metreeca/core/values";
-import type { Problem } from "@metreeca/http/success";
+import type { ResourceShape } from "@grafctory/blue/resource";
+import { getShapeBranches } from "@grafctory/blue/union";
+import { effective, items, type Range } from "@grafctory/blue/value";
+import { useModel } from "@grafctory/clay/model";
+import { error, isArray, isNumber, isObject, isString, type Lazy, opt, type Optional } from "@grafctory/core";
+import { ascending, by } from "@grafctory/core/order";
+import { createRelay, type Option as Outcome, type Relay } from "@grafctory/core/relay";
+import { equals, immutable } from "@grafctory/core/values";
+import type { Problem } from "@grafctory/http/success";
 import {
 	type Criteria,
 	decodeProbe,
@@ -39,7 +39,7 @@ import {
 	isOption,
 	type Option,
 	type Template
-} from "@metreeca/qest/model";
+} from "@grafctory/qest/model";
 import type { Collection, Collections } from "./collection.core.js";
 import { createLatch, useEntry } from "../index.core.js";
 import { useStore } from "../index.js";

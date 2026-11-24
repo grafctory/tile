@@ -23,13 +23,13 @@
  * @module range
  */
 
-import { useModel } from "@metreeca/clay/model";
-import { opt, type Optional } from "@metreeca/core";
-import type { Relay } from "@metreeca/core/relay";
-import { createState } from "@metreeca/core/state";
-import { isLiteral, type Literal } from "@metreeca/qest/state";
-import type { RangeCases } from "@metreeca/tile/range";
-import type { Type } from "@metreeca/tile/types";
+import { useModel } from "@grafctory/clay/model";
+import { opt, type Optional } from "@grafctory/core";
+import type { Relay } from "@grafctory/core/relay";
+import { createState } from "@grafctory/core/state";
+import { isLiteral, type Literal } from "@grafctory/qest/state";
+import type { RangeCases } from "@grafctory/tile/range";
+import type { Type } from "@grafctory/tile/types";
 import { CalendarIcon, ClockIcon, HashIcon, TypeIcon, XCircleIcon } from "lucide-preact";
 import { type ComponentType, createElement } from "preact";
 import { useEffect, useId } from "preact/hooks";
@@ -114,14 +114,14 @@ export function Range({
 	/**
 	 * The type of the bounded values, choosing the native input the fields work on and how values are shown and read.
 	 *
-	 * The default type for a shape is picked by {@link @metreeca/tile!types.toType toType}. A type shown as another
+	 * The default type for a shape is picked by {@link @grafctory/tile!types.toType toType}. A type shown as another
 	 * offers a different input over the same values, as `instant.as(date)` bounds instants by day. The `To` field reads
 	 * its text as an upper bound, so a day or a year typed there takes in all of it.
 	 */
 	type: Type
 
 	/**
-	 * The range offered, as handed by {@link @metreeca/tile!range.useRange useRange}.
+	 * The range offered, as handed by {@link @grafctory/tile!range.useRange useRange}.
 	 */
 	range: Relay<RangeCases>
 

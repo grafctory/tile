@@ -20,8 +20,8 @@
  * @module
  */
 
-import { isBoolean } from "@metreeca/core";
-import { immutable } from "@metreeca/core/values";
+import { isBoolean } from "@grafctory/core";
+import { immutable } from "@grafctory/core/values";
 import type { Type } from "./index.js";
 import { malformed, mismatched, inconvertible } from "./index.core.js";
 

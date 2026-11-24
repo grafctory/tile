@@ -23,15 +23,15 @@
  * @module table
  */
 
-import type { ResourceShape } from "@metreeca/blue/resource";
-import { useModel } from "@metreeca/clay/model";
-import type { Frame } from "@metreeca/blue/value";
-import { isNumber, isObject, isString, type Lazy, opt, type Optional } from "@metreeca/core";
-import type { Relay } from "@metreeca/core/relay";
-import { createState } from "@metreeca/core/state";
-import { type Expression, getOrderDirection, getOrderPrecedence, type Order } from "@metreeca/qest/model";
-import type { Collections } from "@metreeca/tile/collection";
-import type { MembersCases, Ordering } from "@metreeca/tile/members";
+import type { ResourceShape } from "@grafctory/blue/resource";
+import { useModel } from "@grafctory/clay/model";
+import type { Frame } from "@grafctory/blue/value";
+import { isNumber, isObject, isString, type Lazy, opt, type Optional } from "@grafctory/core";
+import type { Relay } from "@grafctory/core/relay";
+import { createState } from "@grafctory/core/state";
+import { type Expression, getOrderDirection, getOrderPrecedence, type Order } from "@grafctory/qest/model";
+import type { Collections } from "@grafctory/tile/collection";
+import type { MembersCases, Ordering } from "@grafctory/tile/members";
 import { ChevronDownIcon, ChevronRightIcon, ChevronsUpDownIcon, ChevronUpIcon } from "lucide-preact";
 import { type ComponentChildren, createElement, type TargetedMouseEvent } from "preact";
 import { classes, Failure, Hint } from "../index.js";
@@ -154,7 +154,7 @@ export function Table<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 
 
 	/**
-	 * The collection members shown, as handed by {@link @metreeca/tile!members.useMembers useMembers}.
+	 * The collection members shown, as handed by {@link @grafctory/tile!members.useMembers useMembers}.
 	 */
 	members: Relay<MembersCases<S, P, T>>
 

@@ -1,7 +1,7 @@
 {
-  "name": "@metreeca/tile",
+  "name": "@grafctory/tile",
   "version": "0.10.1",
-  "description": "Preact linked data store and shape-driven value types for @metreeca/tile.",
+  "description": "Preact linked data store and shape-driven value types for @grafctory/tile.",
   "keywords": [
     "typescript",
     "preact",
@@ -9,9 +9,9 @@
     "model-driven",
     "ui"
   ],
-  "homepage": "https://metreeca.github.io/tile/",
+  "homepage": "https://grafctory.github.io/tile/",
   "bugs": {
-    "url": "https://github.com/metreeca/tile/issues",
+    "url": "https://github.com/grafctory/tile/issues",
     "email": "info@metreeca.com"
   },
   "license": "Apache-2.0",
@@ -22,27 +22,27 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/metreeca/tile.git",
+    "url": "git+https://github.com/grafctory/tile.git",
     "directory": "packages/tile"
   },
   "type": "module",
   "sideEffects": false,
   "exports": {
     ".": {
-      "@metreeca/source": "./src/index.ts",
+      "@grafctory/source": "./src/index.ts",
       "default": "./dist/index.js"
     },
     "./types": {
-      "@metreeca/source": "./src/types/index.ts",
+      "@grafctory/source": "./src/types/index.ts",
       "default": "./dist/types/index.js"
     },
     "./types/*": {
-      "@metreeca/source": "./src/types/*.ts",
+      "@grafctory/source": "./src/types/*.ts",
       "default": "./dist/types/*.js"
     },
     "./types/*.core": null,
     "./*": {
-      "@metreeca/source": "./src/hooks/*.ts",
+      "@grafctory/source": "./src/hooks/*.ts",
       "default": "./dist/hooks/*.js"
     },
     "./*.core": null
@@ -61,22 +61,22 @@
     "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests --environment happy-dom run"
   },
   "dependencies": {
-    "@metreeca/blue": "^0.15.0",
-    "@metreeca/core": "^0.14.0",
-    "@metreeca/http": "^0.6.0",
-    "@metreeca/keep": "^0.14.1",
-    "@metreeca/keep-rest": "^0.14.1",
-    "@metreeca/qest": "^0.15.0"
+    "@grafctory/blue": "^0.15.0",
+    "@grafctory/core": "^0.14.0",
+    "@grafctory/http": "^0.6.0",
+    "@grafctory/keep": "^0.14.1",
+    "@grafctory/keep-rest": "^0.14.1",
+    "@grafctory/qest": "^0.15.0"
   },
   "devDependencies": {
-    "@metreeca/clay": "^0.4.0",
+    "@grafctory/clay": "^0.4.0",
     "happy-dom": "^21.0.4",
     "preact": "^10.29.8",
     "typescript": "^6.0.3",
     "vitest": "^5.0.5"
   },
   "peerDependencies": {
-    "@metreeca/clay": "^0.4.0",
+    "@grafctory/clay": "^0.4.0",
     "preact": "^10.27.2"
   }
 }

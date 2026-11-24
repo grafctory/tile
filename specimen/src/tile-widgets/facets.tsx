@@ -20,16 +20,16 @@
  * @module
  */
 
-import { Strip } from "@metreeca/clay-widgets/strip";
-import { base, Products } from "@metreeca/specimen/toys.js";
-import type { Collection } from "@metreeca/tile/collection";
-import { useCount } from "@metreeca/tile/count";
-import { useMembers } from "@metreeca/tile/members";
-import { text } from "@metreeca/tile/types/text";
-import { Clear } from "@metreeca/tile-widgets/clear";
-import { Facets } from "@metreeca/tile-widgets/facets";
-import { Count } from "@metreeca/tile-widgets/count";
-import { Table } from "@metreeca/tile-widgets/table";
+import { Strip } from "@grafctory/clay-widgets/strip";
+import { base, Products } from "@grafctory/specimen/toys.js";
+import type { Collection } from "@grafctory/tile/collection";
+import { useCount } from "@grafctory/tile/count";
+import { useMembers } from "@grafctory/tile/members";
+import { text } from "@grafctory/tile/types/text";
+import { Clear } from "@grafctory/tile-widgets/clear";
+import { Facets } from "@grafctory/tile-widgets/facets";
+import { Count } from "@grafctory/tile-widgets/count";
+import { Table } from "@grafctory/tile-widgets/table";
 import { TableIcon } from "lucide-preact";
 import type { ComponentChildren } from "preact";
 

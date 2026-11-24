@@ -20,14 +20,14 @@
  * @module
  */
 
-import { Page, type Sample } from "@metreeca/specimen/index.core.js";
-import { Frames } from "@metreeca/specimen/tile-widgets/frames.js";
-import { Ranges } from "@metreeca/specimen/tile-widgets/ranges.js";
-import { Searches } from "@metreeca/specimen/tile-widgets/searches.js";
-import { Sheets } from "@metreeca/specimen/tile-widgets/sheets.js";
-import { Tables } from "@metreeca/specimen/tile-widgets/tables.js";
-import { Tallies } from "@metreeca/specimen/tile-widgets/tallies.js";
-import "@metreeca/specimen/tile-widgets/index.css";
+import { Page, type Sample } from "@grafctory/specimen/index.core.js";
+import { Frames } from "@grafctory/specimen/tile-widgets/frames.js";
+import { Ranges } from "@grafctory/specimen/tile-widgets/ranges.js";
+import { Searches } from "@grafctory/specimen/tile-widgets/searches.js";
+import { Sheets } from "@grafctory/specimen/tile-widgets/sheets.js";
+import { Tables } from "@grafctory/specimen/tile-widgets/tables.js";
+import { Tallies } from "@grafctory/specimen/tile-widgets/tallies.js";
+import "@grafctory/specimen/tile-widgets/index.css";
 
 
 const samples: readonly Sample[] = [
@@ -49,7 +49,7 @@ export function TileWidgets() {
 
 	return <Page
 
-		eyebrow="@metreeca/tile-widgets"
+		eyebrow="@grafctory/tile-widgets"
 		title="Linked Data Widgets"
 		lead={<>
 			The pieces a linked data interface is assembled from, each driven by the shape and the query of the

@@ -28,11 +28,11 @@
  * @module types
  */
 
-import { getShapeBranches, getStateBranch } from "@metreeca/blue/union";
-import type { Shape } from "@metreeca/blue/value";
-import { eager, type Lazy, opt, type Optional, safe } from "@metreeca/core";
-import { xsd } from "@metreeca/core/datatype";
-import { immutable } from "@metreeca/core/values";
+import { getShapeBranches, getStateBranch } from "@grafctory/blue/union";
+import type { Shape } from "@grafctory/blue/value";
+import { eager, type Lazy, opt, type Optional, safe } from "@grafctory/core";
+import { xsd } from "@grafctory/core/datatype";
+import { immutable } from "@grafctory/core/values";
 import { boolean } from "./boolean.js";
 import { date } from "./date.js";
 import { decimal } from "./decimal.js";

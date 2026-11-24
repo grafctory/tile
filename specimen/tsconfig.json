@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
     "paths": {
-      "@metreeca/specimen/*": [
+      "@grafctory/specimen/*": [
         "./src/*"
       ]
     },
     "customConditions": [
-      "@metreeca/source"
+      "@grafctory/source"
     ],
     "noEmit": true,
     "strict": true,

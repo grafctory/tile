@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import * as blue from "@metreeca/blue/boolean";
-import { dictionary } from "@metreeca/blue/dictionary";
-import * as numbers from "@metreeca/blue/number";
-import { reference as link } from "@metreeca/blue/reference";
-import { id, optional, resource } from "@metreeca/blue/resource";
-import * as strings from "@metreeca/blue/string";
-import { union } from "@metreeca/blue/union";
+import * as blue from "@grafctory/blue/boolean";
+import { dictionary } from "@grafctory/blue/dictionary";
+import * as numbers from "@grafctory/blue/number";
+import { reference as link } from "@grafctory/blue/reference";
+import { id, optional, resource } from "@grafctory/blue/resource";
+import * as strings from "@grafctory/blue/string";
+import { union } from "@grafctory/blue/union";
 import { describe, expect, it } from "vitest";
 
 import { boolean } from "./boolean.js";

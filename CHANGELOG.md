@@ -5,7 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/metreeca/tile/compare/v0.10.1...HEAD)
+> [!NOTE]
+> Packages published under the `@grafctory` scope from version 0.10.1; earlier versions were published under `@metreeca`.
+
+## [Unreleased](https://github.com/grafctory/tile/compare/v0.10.1...HEAD)
 
 ## [0.10.1](https://github.com/metreeca/tile/compare/v0.10.0...v0.10.1) - 2026-11-24
 

@@ -23,9 +23,9 @@
  * @module clear
  */
 
-import type { ResourceShape } from "@metreeca/blue/resource";
-import type { Lazy } from "@metreeca/core";
-import type { Collection, Collections } from "@metreeca/tile/collection";
+import type { ResourceShape } from "@grafctory/blue/resource";
+import type { Lazy } from "@grafctory/core";
+import type { Collection, Collections } from "@grafctory/tile/collection";
 import { XCircleIcon } from "lucide-preact";
 import { createElement } from "preact";
 import "../index.css";
@@ -58,7 +58,7 @@ export function Clear<S extends Lazy<ResourceShape>, P extends Collections<S>>({
 }: {
 
 	/**
-	 * The collection reset, as handed by {@link @metreeca/tile!collection.useCollection useCollection}.
+	 * The collection reset, as handed by {@link @grafctory/tile!collection.useCollection useCollection}.
 	 */
 	collection: Collection<S, P>
 

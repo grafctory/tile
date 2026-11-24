@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { reference } from "@metreeca/blue/reference";
-import { id, multiple, required, resource } from "@metreeca/blue/resource";
-import { string } from "@metreeca/blue/string";
-import { useCollection } from "@metreeca/tile/collection";
-import { useMembers } from "@metreeca/tile/members";
+import { reference } from "@grafctory/blue/reference";
+import { id, multiple, required, resource } from "@grafctory/blue/resource";
+import { string } from "@grafctory/blue/string";
+import { useCollection } from "@grafctory/tile/collection";
+import { useMembers } from "@grafctory/tile/members";
 import { describe, expectTypeOf, it } from "vitest";
 import { Sheet } from "./sheet.js";
 

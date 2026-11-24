@@ -23,15 +23,15 @@
  * @module members
  */
 
-import type { ResourceShape } from "@metreeca/blue/resource";
-import { type Items, items, type Slice } from "@metreeca/blue/value";
-import { useModel } from "@metreeca/clay/model";
-import { type Lazy, opt, type Optional } from "@metreeca/core";
-import { createRelay, type Option, type Relay } from "@metreeca/core/relay";
-import { equals, immutable } from "@metreeca/core/values";
+import type { ResourceShape } from "@grafctory/blue/resource";
+import { type Items, items, type Slice } from "@grafctory/blue/value";
+import { useModel } from "@grafctory/clay/model";
+import { type Lazy, opt, type Optional } from "@grafctory/core";
+import { createRelay, type Option, type Relay } from "@grafctory/core/relay";
+import { equals, immutable } from "@grafctory/core/values";
 import { useEffect, useState } from "preact/hooks";
-import type { Problem } from "@metreeca/http/success";
-import type { Template } from "@metreeca/qest/model";
+import type { Problem } from "@grafctory/http/success";
+import type { Template } from "@grafctory/qest/model";
 import type { Collection, Collections } from "./collection.core.js";
 import { useEntry } from "../index.core.js";
 import { useStore } from "../index.js";

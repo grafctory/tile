@@ -20,12 +20,12 @@
  * @module
  */
 
-import { Button } from "@metreeca/clay-widgets/button";
-import { Sample } from "@metreeca/specimen/tile-widgets/sample.js";
-import { base, Products } from "@metreeca/specimen/toys.js";
-import { useCollection } from "@metreeca/tile/collection";
-import { useCount } from "@metreeca/tile/count";
-import { useTally } from "@metreeca/tile/tally";
+import { Button } from "@grafctory/clay-widgets/button";
+import { Sample } from "@grafctory/specimen/tile-widgets/sample.js";
+import { base, Products } from "@grafctory/specimen/toys.js";
+import { useCollection } from "@grafctory/tile/collection";
+import { useCount } from "@grafctory/tile/count";
+import { useTally } from "@grafctory/tile/tally";
 import "../tile-widgets/index.css";
 
 

@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import { integer } from "@metreeca/blue/number";
-import { reference } from "@metreeca/blue/reference";
-import { id, multiple, required, resource } from "@metreeca/blue/resource";
-import { string } from "@metreeca/blue/string";
-import { immutable } from "@metreeca/core/values";
-import type { Store as Backend } from "@metreeca/keep";
-import type { Order } from "@metreeca/qest/model";
-import { Store } from "@metreeca/tile";
-import { useCollection } from "@metreeca/tile/collection";
-import { useMembers } from "@metreeca/tile/members";
+import { integer } from "@grafctory/blue/number";
+import { reference } from "@grafctory/blue/reference";
+import { id, multiple, required, resource } from "@grafctory/blue/resource";
+import { string } from "@grafctory/blue/string";
+import { immutable } from "@grafctory/core/values";
+import type { Store as Backend } from "@grafctory/keep";
+import type { Order } from "@grafctory/qest/model";
+import { Store } from "@grafctory/tile";
+import { useCollection } from "@grafctory/tile/collection";
+import { useMembers } from "@grafctory/tile/members";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";

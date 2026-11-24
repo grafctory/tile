@@ -23,11 +23,11 @@
  * @module tally
  */
 
-import { useModel } from "@metreeca/clay/model";
-import type { Optional } from "@metreeca/core";
-import type { Relay } from "@metreeca/core/relay";
-import { isReference } from "@metreeca/qest/state";
-import type { TallyBucket, TallyCases } from "@metreeca/tile/tally";
+import { useModel } from "@grafctory/clay/model";
+import type { Optional } from "@grafctory/core";
+import type { Relay } from "@grafctory/core/relay";
+import { isReference } from "@grafctory/qest/state";
+import type { TallyBucket, TallyCases } from "@grafctory/tile/tally";
 import { SquareCheckBigIcon, XCircleIcon, XIcon } from "lucide-preact";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId, useState } from "preact/hooks";
@@ -109,12 +109,12 @@ export function Tally({
 	name: string
 
 	/**
-	 * The tally offered, as handed by {@link @metreeca/tile!tally.useTally useTally}.
+	 * The tally offered, as handed by {@link @grafctory/tile!tally.useTally useTally}.
 	 */
 	tally: Relay<TallyCases>
 
 	/**
-	 * Renders the name of a value; the {@link @metreeca/tile!tally.TallyBucket.label label} of the value if omitted.
+	 * Renders the name of a value; the {@link @grafctory/tile!tally.TallyBucket.label label} of the value if omitted.
 	 *
 	 * The items holding none of the values are always named `‹blank›` by the facet, so the reader can tell that name
 	 * from the values in the data. The name of a linked resource is set within a link to it, so the rendered name must

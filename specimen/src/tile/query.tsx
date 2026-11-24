@@ -20,11 +20,11 @@
  * @module
  */
 
-import { Button } from "@metreeca/clay-widgets/button";
-import { Sample } from "@metreeca/specimen/tile-widgets/sample.js";
-import { base, Products } from "@metreeca/specimen/toys.js";
-import { useCollection } from "@metreeca/tile/collection";
-import { useQuery } from "@metreeca/tile/query";
+import { Button } from "@grafctory/clay-widgets/button";
+import { Sample } from "@grafctory/specimen/tile-widgets/sample.js";
+import { base, Products } from "@grafctory/specimen/toys.js";
+import { useCollection } from "@grafctory/tile/collection";
+import { useQuery } from "@grafctory/tile/query";
 import "../tile-widgets/index.css";
 
 

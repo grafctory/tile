@@ -20,12 +20,12 @@
  * @module
  */
 
-import { entry, Faceted } from "@metreeca/specimen/tile-widgets/facets.js";
-import { Sample } from "@metreeca/specimen/tile-widgets/sample.js";
-import { Products } from "@metreeca/specimen/toys.js";
-import { useCollection } from "@metreeca/tile/collection";
-import { useTally } from "@metreeca/tile/tally";
-import { Tally } from "@metreeca/tile-widgets/tally";
+import { entry, Faceted } from "@grafctory/specimen/tile-widgets/facets.js";
+import { Sample } from "@grafctory/specimen/tile-widgets/sample.js";
+import { Products } from "@grafctory/specimen/toys.js";
+import { useCollection } from "@grafctory/tile/collection";
+import { useTally } from "@grafctory/tile/tally";
+import { Tally } from "@grafctory/tile-widgets/tally";
 
 
 /**

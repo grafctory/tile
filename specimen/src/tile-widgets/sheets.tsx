@@ -20,13 +20,13 @@
  * @module
  */
 
-import { Card } from "@metreeca/clay-widgets/card";
-import { Sample } from "@metreeca/specimen/tile-widgets/sample.js";
-import { base, Products } from "@metreeca/specimen/toys.js";
-import { useCollection } from "@metreeca/tile/collection";
-import { useMembers } from "@metreeca/tile/members";
-import { text } from "@metreeca/tile/types/text";
-import { Sheet } from "@metreeca/tile-widgets/sheet";
+import { Card } from "@grafctory/clay-widgets/card";
+import { Sample } from "@grafctory/specimen/tile-widgets/sample.js";
+import { base, Products } from "@grafctory/specimen/toys.js";
+import { useCollection } from "@grafctory/tile/collection";
+import { useMembers } from "@grafctory/tile/members";
+import { text } from "@grafctory/tile/types/text";
+import { Sheet } from "@grafctory/tile-widgets/sheet";
 import { BikeIcon, BlocksIcon, DicesIcon, ListIcon, ShieldIcon, SparklesIcon } from "lucide-preact";
 
 

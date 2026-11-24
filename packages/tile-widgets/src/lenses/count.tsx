@@ -23,11 +23,11 @@
  * @module count
  */
 
-import type { ResourceShape } from "@metreeca/blue/resource";
-import type { Lazy } from "@metreeca/core";
-import type { Relay } from "@metreeca/core/relay";
-import type { Collection, Collections } from "@metreeca/tile/collection";
-import type { CountCases } from "@metreeca/tile/count";
+import type { ResourceShape } from "@grafctory/blue/resource";
+import type { Lazy } from "@grafctory/core";
+import type { Relay } from "@grafctory/core/relay";
+import type { Collection, Collections } from "@grafctory/tile/collection";
+import type { CountCases } from "@grafctory/tile/count";
 import { createElement } from "preact";
 import "./count.css";
 
@@ -82,12 +82,12 @@ export function Count<S extends Lazy<ResourceShape>, P extends Collections<S>>({
 }: {
 
 	/**
-	 * The collection counted, as handed by {@link @metreeca/tile!collection.useCollection useCollection}.
+	 * The collection counted, as handed by {@link @grafctory/tile!collection.useCollection useCollection}.
 	 */
 	collection: Collection<S, P>
 
 	/**
-	 * The count of the collection, as handed by {@link @metreeca/tile!count.useCount useCount}.
+	 * The count of the collection, as handed by {@link @grafctory/tile!count.useCount useCount}.
 	 *
 	 * The counter speaks of matches for a filtered count and of items otherwise. The wording follows the count on
 	 * show, so it always agrees with the number, even while the items are counted again under new filters.

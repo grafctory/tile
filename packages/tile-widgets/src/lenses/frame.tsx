@@ -23,11 +23,11 @@
  * @module frame
  */
 
-import type { ResourceShape } from "@metreeca/blue/resource";
-import type { Match, Model } from "@metreeca/blue/value";
-import type { Lazy } from "@metreeca/core";
-import type { Relay } from "@metreeca/core/relay";
-import type { ResourceCases } from "@metreeca/tile/resource";
+import type { ResourceShape } from "@grafctory/blue/resource";
+import type { Match, Model } from "@grafctory/blue/value";
+import type { Lazy } from "@grafctory/core";
+import type { Relay } from "@grafctory/core/relay";
+import type { ResourceCases } from "@grafctory/tile/resource";
 import { type ComponentChildren, createElement } from "preact";
 import { Failure, Hint } from "../index.js";
 import "./frame.css";
@@ -65,7 +65,7 @@ export function Frame<S extends Lazy<ResourceShape>, T extends Model<S, T>>({
 }: {
 
 	/**
-	 * The resource shown, as handed by {@link @metreeca/tile!resource.useResource useResource}.
+	 * The resource shown, as handed by {@link @grafctory/tile!resource.useResource useResource}.
 	 */
 	resource: Relay<ResourceCases<S, T>>
 

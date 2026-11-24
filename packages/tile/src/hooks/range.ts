@@ -23,15 +23,15 @@
  * @module range
  */
 
-import type { ResourceShape } from "@metreeca/blue/resource";
-import { items } from "@metreeca/blue/value";
-import { useModel } from "@metreeca/clay/model";
-import { isObject, type Lazy, opt, type Optional } from "@metreeca/core";
-import { createRelay, type Relay } from "@metreeca/core/relay";
-import { immutable } from "@metreeca/core/values";
-import type { Problem } from "@metreeca/http/success";
-import type { Criteria, Expression, Template } from "@metreeca/qest/model";
-import { isLiteral, type Literal } from "@metreeca/qest/state";
+import type { ResourceShape } from "@grafctory/blue/resource";
+import { items } from "@grafctory/blue/value";
+import { useModel } from "@grafctory/clay/model";
+import { isObject, type Lazy, opt, type Optional } from "@grafctory/core";
+import { createRelay, type Relay } from "@grafctory/core/relay";
+import { immutable } from "@grafctory/core/values";
+import type { Problem } from "@grafctory/http/success";
+import type { Criteria, Expression, Template } from "@grafctory/qest/model";
+import { isLiteral, type Literal } from "@grafctory/qest/state";
 import type { Collection, Collections } from "./collection.core.js";
 import { createLatch, useEntry } from "../index.core.js";
 import { useStore } from "../index.js";

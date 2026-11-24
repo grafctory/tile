@@ -1,20 +1,20 @@
-# @metreeca/tile-widgets
+# @grafctory/tile-widgets
 
-[![npm](https://img.shields.io/npm/v/@metreeca/tile-widgets)](https://www.npmjs.com/package/@metreeca/tile-widgets)
+[![npm](https://img.shields.io/npm/v/@grafctory/tile-widgets)](https://www.npmjs.com/package/@grafctory/tile-widgets)
 
-Preact linked data widgets for [@metreeca/tile](https://github.com/metreeca/tile).
+Preact linked data widgets for [@grafctory/tile](https://github.com/grafctory/tile).
 
 Lenses presenting resources and their collections, facets narrowing those collections and fields writing resources
 back, all driven by shapes: the model decides which properties are shown, how each value reads and how a collection is
 narrowed, so a model change reaches every screen showing the affected resources with no widget code to update by hand.
 
-Widgets read their data through the [@metreeca/tile](https://github.com/metreeca/tile) store the app provides, and
-take their look from the [@metreeca/skin](https://metreeca.github.io/skin/) tokens an app restates for its brand.
+Widgets read their data through the [@grafctory/tile](https://github.com/grafctory/tile) store the app provides, and
+take their look from the [@grafctory/skin](https://grafctory.github.io/skin/) tokens an app restates for its brand.
 
 # Installation
 
 ```shell
-npm install @metreeca/tile-widgets  # this package
+npm install @grafctory/tile-widgets  # this package
 npm install preact                  # peer dependency
 npm install lucide-preact           # peer dependency
 ```
@@ -29,19 +29,19 @@ npm install lucide-preact           # peer dependency
 > [!NOTE]
 >
 > This section introduces essential concepts; for complete coverage, see the
-> [API reference](https://metreeca.github.io/tile/modules/_metreeca_tile-widgets.html).
+> [API reference](https://grafctory.github.io/tile/modules/_grafctory_tile-widgets.html).
 
 {TBD: usage overview and examples}
 
 # Support
 
-- open an [issue](https://github.com/metreeca/tile/issues) to report a problem or to suggest a new feature
-- start a [discussion](https://github.com/metreeca/tile/discussions) to ask a how-to question or to share an idea
+- open an [issue](https://github.com/grafctory/tile/issues) to report a problem or to suggest a new feature
+- start a [discussion](https://github.com/grafctory/tile/discussions) to ask a how-to question or to share an idea
 
 # License
 
 This project is licensed under the Apache 2.0 License –
-see [LICENSE](https://github.com/metreeca/tile?tab=Apache-2.0-1-ov-file) file for details.
+see [LICENSE](https://github.com/grafctory/tile?tab=Apache-2.0-1-ov-file) file for details.
 
 The widgets draw their glyphs with [Lucide](https://lucide.dev/), licensed under ISC, with the icons derived from
 [Feather](https://feathericons.com/) under MIT. An app distributing a build that includes the widgets must ship both

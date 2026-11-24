@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { reference } from "@metreeca/blue/reference";
-import { id, multiple, optional, required, resource, type ResourceShape } from "@metreeca/blue/resource";
-import { string } from "@metreeca/blue/string";
+import { reference } from "@grafctory/blue/reference";
+import { id, multiple, optional, required, resource, type ResourceShape } from "@grafctory/blue/resource";
+import { string } from "@grafctory/blue/string";
 import { describe, expectTypeOf, it } from "vitest";
 import { useActions } from "./actions.js";
 import { type Collections, createCollection, type Sole } from "./collection.core.js";

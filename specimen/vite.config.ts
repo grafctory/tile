@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { symlinks } from "@metreeca/rack/vite";
+import { symlinks } from "@grafctory/rack/vite";
 import preact from "@preact/preset-vite";
 import { resolve } from "path";
 import { defineConfig } from "vite";
@@ -31,7 +31,7 @@ export default defineConfig(() => ({ // https://vite.dev/config/
     },
 
     plugins: [
-        symlinks({ conditions: "@metreeca/source" }), // workspace packages from their sources
+        symlinks({ conditions: "@grafctory/source" }), // workspace packages from their sources
         preact()
     ],
 
@@ -55,7 +55,7 @@ export default defineConfig(() => ({ // https://vite.dev/config/
 
     resolve: {
         alias: [
-            { find: /^@metreeca\/specimen\/(.*)$/, replacement: resolve("src", "$1") }
+            { find: /^@grafctory\/specimen\/(.*)$/, replacement: resolve("src", "$1") }
         ]
     }
 

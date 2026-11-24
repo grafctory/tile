@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-import { number } from "@metreeca/blue/number";
-import { reference } from "@metreeca/blue/reference";
-import { id, multiple, optional, resource } from "@metreeca/blue/resource";
+import { number } from "@grafctory/blue/number";
+import { reference } from "@grafctory/blue/reference";
+import { id, multiple, optional, resource } from "@grafctory/blue/resource";
 import { AutoDelay } from "../index.js";
-import { immutable } from "@metreeca/core/values";
-import type { Store as Backend } from "@metreeca/keep";
-import type { Criteria } from "@metreeca/qest/model";
-import { Store } from "@metreeca/tile";
-import { useCollection } from "@metreeca/tile/collection";
-import { useRange } from "@metreeca/tile/range";
-import type { Type } from "@metreeca/tile/types";
-import { date } from "@metreeca/tile/types/date";
-import { decimal } from "@metreeca/tile/types/decimal";
-import { instant } from "@metreeca/tile/types/instant";
-import { integer } from "@metreeca/tile/types/integer";
-import { string } from "@metreeca/tile/types/string";
-import { time } from "@metreeca/tile/types/time";
-import { year } from "@metreeca/tile/types/year";
+import { immutable } from "@grafctory/core/values";
+import type { Store as Backend } from "@grafctory/keep";
+import type { Criteria } from "@grafctory/qest/model";
+import { Store } from "@grafctory/tile";
+import { useCollection } from "@grafctory/tile/collection";
+import { useRange } from "@grafctory/tile/range";
+import type { Type } from "@grafctory/tile/types";
+import { date } from "@grafctory/tile/types/date";
+import { decimal } from "@grafctory/tile/types/decimal";
+import { instant } from "@grafctory/tile/types/instant";
+import { integer } from "@grafctory/tile/types/integer";
+import { string } from "@grafctory/tile/types/string";
+import { time } from "@grafctory/tile/types/time";
+import { year } from "@grafctory/tile/types/year";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";

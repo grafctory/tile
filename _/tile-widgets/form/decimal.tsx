@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { asDecimal, toDecimalString } from "@metreeca/core/decimal";
-import { asInteger, isInteger } from "@metreeca/core/integer";
+import { asDecimal, toDecimalString } from "@grafctory/core/decimal";
+import { asInteger, isInteger } from "@grafctory/core/integer";
 import { Setter } from "@metreeca/data/hooks";
 import { createField, createPlaceholder, Field } from "@metreeca/view/fields/index";
 import { focus, input } from "@metreeca/view/widgets/form";

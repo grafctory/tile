@@ -20,10 +20,10 @@
  * @module
  */
 
-import { isString } from "@metreeca/core";
-import { isTag, matchTag } from "@metreeca/core/language";
-import { immutable } from "@metreeca/core/values";
-import { type Dictionary, isDictionary } from "@metreeca/qest/state";
+import { isString } from "@grafctory/core";
+import { isTag, matchTag } from "@grafctory/core/language";
+import { immutable } from "@grafctory/core/values";
+import { type Dictionary, isDictionary } from "@grafctory/qest/state";
 import { inconvertible, mismatched } from "./index.core.js";
 import type { Type } from "./index.js";
 

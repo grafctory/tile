@@ -23,13 +23,13 @@
  * @module resource
  */
 
-import type { ResourceShape } from "@metreeca/blue/resource";
-import type { Draft, Match, Model } from "@metreeca/blue/value";
-import type { Lazy } from "@metreeca/core";
-import { createRelay, type Relay } from "@metreeca/core/relay";
-import { getIRIParent, type IRI } from "@metreeca/core/resource";
-import type { Problem } from "@metreeca/http/success";
-import type { Reference } from "@metreeca/qest/state";
+import type { ResourceShape } from "@grafctory/blue/resource";
+import type { Draft, Match, Model } from "@grafctory/blue/value";
+import type { Lazy } from "@grafctory/core";
+import { createRelay, type Relay } from "@grafctory/core/relay";
+import { getIRIParent, type IRI } from "@grafctory/core/resource";
+import type { Problem } from "@grafctory/http/success";
+import type { Reference } from "@grafctory/qest/state";
 import { resolveTarget, useEntry } from "../index.core.js";
 import { useStore } from "../index.js";
 
@@ -117,7 +117,7 @@ export type ResourceCases<S extends Lazy<ResourceShape>, T extends Model<S, T>> 
  * rejects with the same {@link Problem}, so that the widget waiting on it can tell success from failure. A failed
  * exchange no widget called for, retrieving the resource as the component renders or after the store signals a change,
  * is reported through the binding alone and never reaches the page: only a missing {@link "index"!Store Store} context
- * or an unforeseen failure does, for an enclosing {@link @metreeca/clay!board.Board Board} context to take up and
+ * or an unforeseen failure does, for an enclosing {@link @grafctory/clay!board.Board Board} context to take up and
  * state to the reader along with every other issue the interface raises, rather than leaving it to the console.
  *
  * The template may be fixed or replaced at runtime, and one stating something different has the resource retrieved

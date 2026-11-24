@@ -22,7 +22,7 @@
  * @module
  */
 
-import { error } from "@metreeca/core";
+import { error } from "@grafctory/core";
 
 
 /**

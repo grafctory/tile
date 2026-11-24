@@ -24,17 +24,17 @@
  * @module
  */
 
-import { app } from "@metreeca/clay";
-import { isContent } from "@metreeca/clay-widgets";
-import { Button } from "@metreeca/clay-widgets/button";
-import { Choice } from "@metreeca/clay-widgets/choice";
-import { Icon } from "@metreeca/clay-widgets/icon";
-import { Link } from "@metreeca/clay-widgets/link";
-import { Strip } from "@metreeca/clay-widgets/strip";
-import { TOC, type TOCEntry } from "@metreeca/clay-widgets/toc";
-import { Tool } from "@metreeca/clay-widgets/tool";
-import { useRouter } from "@metreeca/clay/router";
-import { useStorage } from "@metreeca/clay/storage";
+import { app } from "@grafctory/clay";
+import { isContent } from "@grafctory/clay-widgets";
+import { Button } from "@grafctory/clay-widgets/button";
+import { Choice } from "@grafctory/clay-widgets/choice";
+import { Icon } from "@grafctory/clay-widgets/icon";
+import { Link } from "@grafctory/clay-widgets/link";
+import { Strip } from "@grafctory/clay-widgets/strip";
+import { TOC, type TOCEntry } from "@grafctory/clay-widgets/toc";
+import { Tool } from "@grafctory/clay-widgets/tool";
+import { useRouter } from "@grafctory/clay/router";
+import { useStorage } from "@grafctory/clay/storage";
 import { type ComponentChildren, createElement, Fragment } from "preact";
 import { useEffect } from "preact/hooks";
 
@@ -117,9 +117,9 @@ export function Page({
 	return <Tool
 
 		meta={<Button
-			icon={<span class="brand">@metreeca/<strong>tile</strong></span>}
+			icon={<span class="brand">@grafctory/<strong>tile</strong></span>}
 			look="subtle"
-			name="@metreeca/tile"
+			name="@grafctory/tile"
 			onClick={() => router(Root)}
 		/>}
 

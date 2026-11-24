@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Router } from "@metreeca/clay/router";
+import { Router } from "@grafctory/clay/router";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";

@@ -23,8 +23,8 @@
  * @module search
  */
 
-import type { Optional } from "@metreeca/core";
-import type { Search as Model } from "@metreeca/tile/search";
+import type { Optional } from "@grafctory/core";
+import type { Search as Model } from "@grafctory/tile/search";
 import { SearchIcon, XCircleIcon } from "lucide-preact";
 import { createElement } from "preact";
 import { useEffect, useState } from "preact/hooks";
@@ -70,7 +70,7 @@ export function Search({
 	name: string
 
 	/**
-	 * The search narrowing the collection, as handed by {@link @metreeca/tile!search.useSearch useSearch}.
+	 * The search narrowing the collection, as handed by {@link @grafctory/tile!search.useSearch useSearch}.
 	 */
 	search: Model
 

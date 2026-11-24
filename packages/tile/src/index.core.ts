@@ -24,20 +24,20 @@
  * @module
  */
 
-import type { ResourceShape } from "@metreeca/blue/resource";
-import { getShapeBranches } from "@metreeca/blue/union";
-import { effective, type Range } from "@metreeca/blue/value";
-import { isArray, isIdentifier, isObject, isString, type Lazy, type Optional } from "@metreeca/core";
-import type { Tag } from "@metreeca/core/language";
-import type { Option } from "@metreeca/core/relay";
-import { createState } from "@metreeca/core/state";
-import { type IRI, isIRI, resolve } from "@metreeca/core/resource";
-import { equals, immutable } from "@metreeca/core/values";
-import { NotFound } from "@metreeca/http";
-import { type Problem, toProblem } from "@metreeca/http/success";
-import type { Store, StoreClient } from "@metreeca/keep";
-import { decodeProbe, isBinding, isSelector, type Probe } from "@metreeca/qest/model";
-import type { Reference } from "@metreeca/qest/state";
+import type { ResourceShape } from "@grafctory/blue/resource";
+import { getShapeBranches } from "@grafctory/blue/union";
+import { effective, type Range } from "@grafctory/blue/value";
+import { isArray, isIdentifier, isObject, isString, type Lazy, type Optional } from "@grafctory/core";
+import type { Tag } from "@grafctory/core/language";
+import type { Option } from "@grafctory/core/relay";
+import { createState } from "@grafctory/core/state";
+import { type IRI, isIRI, resolve } from "@grafctory/core/resource";
+import { equals, immutable } from "@grafctory/core/values";
+import { NotFound } from "@grafctory/http";
+import { type Problem, toProblem } from "@grafctory/http/success";
+import type { Store, StoreClient } from "@grafctory/keep";
+import { decodeProbe, isBinding, isSelector, type Probe } from "@grafctory/qest/model";
+import type { Reference } from "@grafctory/qest/state";
 import { useEffect, useState } from "preact/hooks";
 
 

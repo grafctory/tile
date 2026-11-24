@@ -17,15 +17,15 @@
 /**
  * Toys store.
  *
- * Offers the specimen sections a store holding the toys sample dataset of `@metreeca/keep-suite`, kept in memory in
+ * Offers the specimen sections a store holding the toys sample dataset of `@grafctory/keep-suite`, kept in memory in
  * the page by an Oxigraph repository, so the specimen runs against a real store with no server behind it. The module
  * resolves once the store is seeded, so a section importing it never meets an empty store.
  *
  * @module
  */
 
-import type { Store } from "@metreeca/keep";
-import { createSPARQLStore } from "@metreeca/keep-sparql";
+import type { Store } from "@grafctory/keep";
+import { createSPARQLStore } from "@grafctory/keep-sparql";
 import {
 	catalogues,
 	Categories,
@@ -37,12 +37,12 @@ import {
 	Vendor,
 	Vendors,
 	Video
-} from "@metreeca/keep-suite/toys";
-import { createOxiRepository } from "@metreeca/wire-sparql-oxigraph";
+} from "@grafctory/keep-suite/toys";
+import { createOxiRepository } from "@grafctory/wire-sparql-oxigraph";
 import init from "oxigraph/web.js";
 
 
-export { base, Categories, Category, Product, Products, Vendor } from "@metreeca/keep-suite/toys";
+export { base, Categories, Category, Product, Products, Vendor } from "@grafctory/keep-suite/toys";
 
 
 await init(); // loads the Oxigraph WebAssembly module, which the repository needs before it opens

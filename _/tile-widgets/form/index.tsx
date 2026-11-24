@@ -15,10 +15,10 @@
  */
 
 import { isArray, isDefined, isEmpty, isObject } from "../type/src/index.js";
-import { Frame } from "@metreeca/core/frame";
-import { isNumber } from "@metreeca/core/number";
-import { isString } from "@metreeca/core/string";
-import { Value } from "@metreeca/core/value";
+import { Frame } from "@grafctory/core/frame";
+import { isNumber } from "@grafctory/core/number";
+import { isString } from "@grafctory/core/string";
+import { Value } from "@grafctory/core/value";
 import { Setter } from "@metreeca/data/hooks";
 import { focus, input } from "@metreeca/view/widgets/form";
 import { ClearIcon, RemoveIcon } from "@metreeca/view/widgets/icon";

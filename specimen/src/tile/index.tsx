@@ -20,17 +20,17 @@
  * @module
  */
 
-import { Page, type Sample } from "@metreeca/specimen/index.core.js";
-import { Actions } from "@metreeca/specimen/tile/actions.js";
-import { Collection } from "@metreeca/specimen/tile/collection.js";
-import { Count } from "@metreeca/specimen/tile/count.js";
-import { Search } from "@metreeca/specimen/tile/search.js";
-import { Members } from "@metreeca/specimen/tile/members.js";
-import { Query } from "@metreeca/specimen/tile/query.js";
-import { Range } from "@metreeca/specimen/tile/range.js";
-import { Resource } from "@metreeca/specimen/tile/resource.js";
-import { Store } from "@metreeca/specimen/tile/store.js";
-import { Tally } from "@metreeca/specimen/tile/tally.js";
+import { Page, type Sample } from "@grafctory/specimen/index.core.js";
+import { Actions } from "@grafctory/specimen/tile/actions.js";
+import { Collection } from "@grafctory/specimen/tile/collection.js";
+import { Count } from "@grafctory/specimen/tile/count.js";
+import { Search } from "@grafctory/specimen/tile/search.js";
+import { Members } from "@grafctory/specimen/tile/members.js";
+import { Query } from "@grafctory/specimen/tile/query.js";
+import { Range } from "@grafctory/specimen/tile/range.js";
+import { Resource } from "@grafctory/specimen/tile/resource.js";
+import { Store } from "@grafctory/specimen/tile/store.js";
+import { Tally } from "@grafctory/specimen/tile/tally.js";
 
 
 const samples: readonly Sample[] = [
@@ -58,7 +58,7 @@ export function Tile() {
 
 	return <Page
 
-		eyebrow="@metreeca/tile"
+		eyebrow="@grafctory/tile"
 		title="Store and Bindings"
 		lead={<>
 			The linked data behaviour an interface is wired to, with no rendering of its own: one shared store, the

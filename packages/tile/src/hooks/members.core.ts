@@ -23,10 +23,10 @@
  * @module members.core
  */
 
-import { assert, type Optional } from "@metreeca/core";
-import { createState } from "@metreeca/core/state";
-import { equals } from "@metreeca/core/values";
-import type { Expression, Order } from "@metreeca/qest/model";
+import { assert, type Optional } from "@grafctory/core";
+import { createState } from "@grafctory/core/state";
+import { equals } from "@grafctory/core/values";
+import type { Expression, Order } from "@grafctory/qest/model";
 
 
 /**

@@ -20,8 +20,8 @@
  * @module
  */
 
-import { isString } from "@metreeca/core";
-import { immutable } from "@metreeca/core/values";
+import { isString } from "@grafctory/core";
+import { immutable } from "@grafctory/core/values";
 import { decodeDuration, encodeDuration } from "../_/core/temporal.js";
 import { inconvertible, mismatched } from "./index.core.js";
 import type { Type } from "./index.js";

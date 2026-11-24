@@ -24,7 +24,7 @@
  * @module
  */
 
-import { error, type Optional } from "@metreeca/core";
+import { error, type Optional } from "@grafctory/core";
 import { malformed } from "../../types/index.core.js";
 
 

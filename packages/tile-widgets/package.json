@@ -1,7 +1,7 @@
 {
-  "name": "@metreeca/tile-widgets",
+  "name": "@grafctory/tile-widgets",
   "version": "0.10.1",
-  "description": "Preact linked data widgets for @metreeca/tile.",
+  "description": "Preact linked data widgets for @grafctory/tile.",
   "keywords": [
     "typescript",
     "preact",
@@ -9,9 +9,9 @@
     "model-driven",
     "ui"
   ],
-  "homepage": "https://metreeca.github.io/tile/",
+  "homepage": "https://grafctory.github.io/tile/",
   "bugs": {
-    "url": "https://github.com/metreeca/tile/issues",
+    "url": "https://github.com/grafctory/tile/issues",
     "email": "info@metreeca.com"
   },
   "license": "Apache-2.0",
@@ -22,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/metreeca/tile.git",
+    "url": "git+https://github.com/grafctory/tile.git",
     "directory": "packages/tile-widgets"
   },
   "type": "module",
@@ -31,75 +31,75 @@
   ],
   "exports": {
     "./count": {
-      "@metreeca/source": "./src/lenses/count.tsx",
+      "@grafctory/source": "./src/lenses/count.tsx",
       "default": "./dist/lenses/count.js"
     },
     "./count.css": {
-      "@metreeca/source": "./src/lenses/count.css",
+      "@grafctory/source": "./src/lenses/count.css",
       "default": "./dist/lenses/count.css"
     },
     "./frame": {
-      "@metreeca/source": "./src/lenses/frame.tsx",
+      "@grafctory/source": "./src/lenses/frame.tsx",
       "default": "./dist/lenses/frame.js"
     },
     "./frame.css": {
-      "@metreeca/source": "./src/lenses/frame.css",
+      "@grafctory/source": "./src/lenses/frame.css",
       "default": "./dist/lenses/frame.css"
     },
     "./sheet": {
-      "@metreeca/source": "./src/lenses/sheet.tsx",
+      "@grafctory/source": "./src/lenses/sheet.tsx",
       "default": "./dist/lenses/sheet.js"
     },
     "./sheet.css": {
-      "@metreeca/source": "./src/lenses/sheet.css",
+      "@grafctory/source": "./src/lenses/sheet.css",
       "default": "./dist/lenses/sheet.css"
     },
     "./table": {
-      "@metreeca/source": "./src/lenses/table.tsx",
+      "@grafctory/source": "./src/lenses/table.tsx",
       "default": "./dist/lenses/table.js"
     },
     "./table.css": {
-      "@metreeca/source": "./src/lenses/table.css",
+      "@grafctory/source": "./src/lenses/table.css",
       "default": "./dist/lenses/table.css"
     },
     "./clear": {
-      "@metreeca/source": "./src/facets/clear.tsx",
+      "@grafctory/source": "./src/facets/clear.tsx",
       "default": "./dist/facets/clear.js"
     },
     "./facets": {
-      "@metreeca/source": "./src/facets/facets.tsx",
+      "@grafctory/source": "./src/facets/facets.tsx",
       "default": "./dist/facets/facets.js"
     },
     "./facets.css": {
-      "@metreeca/source": "./src/facets/facets.css",
+      "@grafctory/source": "./src/facets/facets.css",
       "default": "./dist/facets/facets.css"
     },
     "./range": {
-      "@metreeca/source": "./src/facets/range.tsx",
+      "@grafctory/source": "./src/facets/range.tsx",
       "default": "./dist/facets/range.js"
     },
     "./range.css": {
-      "@metreeca/source": "./src/facets/range.css",
+      "@grafctory/source": "./src/facets/range.css",
       "default": "./dist/facets/range.css"
     },
     "./search": {
-      "@metreeca/source": "./src/facets/search.tsx",
+      "@grafctory/source": "./src/facets/search.tsx",
       "default": "./dist/facets/search.js"
     },
     "./search.css": {
-      "@metreeca/source": "./src/facets/search.css",
+      "@grafctory/source": "./src/facets/search.css",
       "default": "./dist/facets/search.css"
     },
     "./tally": {
-      "@metreeca/source": "./src/facets/tally.tsx",
+      "@grafctory/source": "./src/facets/tally.tsx",
       "default": "./dist/facets/tally.js"
     },
     "./tally.css": {
-      "@metreeca/source": "./src/facets/tally.css",
+      "@grafctory/source": "./src/facets/tally.css",
       "default": "./dist/facets/tally.css"
     },
     "./index.css": {
-      "@metreeca/source": "./src/index.css",
+      "@grafctory/source": "./src/index.css",
       "default": "./dist/index.css"
     },
     "./*.core": null,
@@ -119,15 +119,15 @@
     "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests --environment happy-dom run"
   },
   "dependencies": {
-    "@metreeca/blue": "^0.15.0",
-    "@metreeca/core": "^0.14.0",
-    "@metreeca/qest": "^0.15.0",
-    "@metreeca/skin": "^0.3.0"
+    "@grafctory/blue": "^0.15.0",
+    "@grafctory/core": "^0.14.0",
+    "@grafctory/qest": "^0.15.0",
+    "@grafctory/skin": "^0.3.0"
   },
   "devDependencies": {
-    "@metreeca/clay": "^0.4.0",
-    "@metreeca/keep": "^0.14.1",
-    "@metreeca/tile": "^0.10.1",
+    "@grafctory/clay": "^0.4.0",
+    "@grafctory/keep": "^0.14.1",
+    "@grafctory/tile": "^0.10.1",
     "happy-dom": "^21.0.4",
     "lucide-preact": "^1.47.0",
     "preact": "^10.29.8",
@@ -136,8 +136,8 @@
     "vitest": "^5.0.5"
   },
   "peerDependencies": {
-    "@metreeca/clay": "^0.4.0",
-    "@metreeca/tile": "^0.10.1",
+    "@grafctory/clay": "^0.4.0",
+    "@grafctory/tile": "^0.10.1",
     "lucide-preact": "^1.47.0",
     "preact": "^10.27.2"
   }

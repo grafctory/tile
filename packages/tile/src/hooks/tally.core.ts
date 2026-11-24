@@ -23,8 +23,8 @@
  * @module tally.core
  */
 
-import type { Optional } from "@metreeca/core";
-import { createState } from "@metreeca/core/state";
+import type { Optional } from "@grafctory/core";
+import { createState } from "@grafctory/core/state";
 
 
 /**

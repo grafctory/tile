@@ -20,12 +20,12 @@
  * @module
  */
 
-import { Infobox } from "@metreeca/clay-widgets/infobox";
-import { base, Product } from "@metreeca/specimen/toys.js";
-import { Sample } from "@metreeca/specimen/tile-widgets/sample.js";
-import { useResource } from "@metreeca/tile/resource";
-import { text } from "@metreeca/tile/types/text";
-import { Frame } from "@metreeca/tile-widgets/frame";
+import { Infobox } from "@grafctory/clay-widgets/infobox";
+import { base, Product } from "@grafctory/specimen/toys.js";
+import { Sample } from "@grafctory/specimen/tile-widgets/sample.js";
+import { useResource } from "@grafctory/tile/resource";
+import { text } from "@grafctory/tile/types/text";
+import { Frame } from "@grafctory/tile-widgets/frame";
 import { FileIcon } from "lucide-preact";
 
 

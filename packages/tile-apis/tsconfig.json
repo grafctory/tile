@@ -22,7 +22,7 @@
       "vite/client"
     ],
     "customConditions": [
-      "@metreeca/source"
+      "@grafctory/source"
     ]
   },
   "include": [

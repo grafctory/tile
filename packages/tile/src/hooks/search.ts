@@ -23,10 +23,10 @@
  * @module search
  */
 
-import type { ResourceShape } from "@metreeca/blue/resource";
-import type { Lazy } from "@metreeca/core";
-import { immutable } from "@metreeca/core/values";
-import type { Criteria, Expression } from "@metreeca/qest/model";
+import type { ResourceShape } from "@grafctory/blue/resource";
+import type { Lazy } from "@grafctory/core";
+import { immutable } from "@grafctory/core/values";
+import type { Criteria, Expression } from "@grafctory/qest/model";
 import type { Collection, Collections } from "./collection.core.js";
 
 

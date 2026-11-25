@@ -11,7 +11,7 @@
 
 # Overview
 
-Metreeca Tile is the user interface layer of the Metreeca model-driven stack: it turns the shapes and queries the rest
+Grafctory Tile is the user interface layer of the Grafctory model-driven stack: it turns the shapes and queries the rest
 of the stack already speaks into what an interface shows, narrows and writes back. The monorepo collects the headless
 state packages and the rendering-layer bindings, each sitting directly under `packages/` (for example
 `packages/tile-widgets/`).
@@ -64,7 +64,7 @@ restates them.
 >
 > Several Vite servers may run side by side (other apps built on Tile among them), so the specimen holds **NO** fixed
 > port: `5173` may well serve another app. Before checking anything, list the listening ports
-> (`lsof -iTCP -sTCP:LISTEN -P`) and pick the one whose page is titled `Metreeca/Tile`; the facets are under
+> (`lsof -iTCP -sTCP:LISTEN -P`) and pick the one whose page is titled `Grafctory/Tile`; the facets are under
 > `/tile-widgets/`.
 
 # Package Layout
@@ -164,7 +164,7 @@ contract or a theming question:
 Upstream precedent is an argument, never a mandate. Tile is shape-driven: where a control is decided by the shape
 describing a property, an Atlassian page describing a hand-wired mapping does not transfer. Ideas travel freely, while
 prose, tables and figures stay upstream: link them, never reproduce them, and write whatever is borrowed in the
-Metreeca register.
+Grafctory register.
 
 # Component State
 

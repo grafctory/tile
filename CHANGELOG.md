@@ -10,21 +10,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/grafctory/tile/compare/v0.10.1...HEAD)
 
-## [0.10.1](https://github.com/metreeca/tile/compare/v0.10.0...v0.10.1) - 2026-11-24
+## [0.10.1](https://github.com/grafctory/tile/compare/v0.10.0...v0.10.1) - 2026-11-24
 
 ### Changed
 
 - Maintenance release with no change to the published API or behaviour
 
-## [0.10.0](https://github.com/metreeca/tile/compare/v0.9.0...v0.10.0) - 2026-11-20
+## [0.10.0](https://github.com/grafctory/tile/compare/v0.9.0...v0.10.0) - 2026-11-20
 
 ### Added
 
 - `useMembers` lets a page keep the sort order and the number of items on show wherever it likes, so that a catalogue
   the reader returns to grows back to where they left it: `order` and `limit` restore them as the members bind,
-  `onChange` takes both once for every change, and `basis` states the order `reset` restores ([#8](https://github.com/metreeca/tile/issues/8))
+  `onChange` takes both once for every change, and `basis` states the order `reset` restores ([#8](https://github.com/grafctory/tile/issues/8))
 - `useTally` and `useRange` take an `eager` option retrieving the values at once, for a binding that no facet shows
-  and so nothing else would ever ask for its values ([#9](https://github.com/metreeca/tile/issues/9))
+  and so nothing else would ever ask for its values ([#9](https://github.com/grafctory/tile/issues/9))
 
 ### Changed
 
@@ -36,13 +36,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **Breaking**: `useTally` and `useRange` wait in a new `idle` case until asked for their values, unless created
   `eager` or narrowing the collection already, and the `Tally` and `Range` facets ask only once open or turned to, so
   that a page whose facets the reader never opens costs the store nothing; code matching every case of either binding
-  handles `idle` as well, calling its `load` function to have the values retrieved ([#9](https://github.com/metreeca/tile/issues/9))
+  handles `idle` as well, calling its `load` function to have the values retrieved ([#9](https://github.com/grafctory/tile/issues/9))
 - `Tally` scrolls its values back to the top as one is ticked or unticked, so the reader sees at once the values
   ticked, which lead the list, without hunting for them in a list scrolled down to reach the value just changed
 - `useQuery` keeps the criteria of each history entry on browsers supporting the Navigation API, so that a page reached
   again through the history comes back as the reader left it, even after they emptied its criteria there
 
-## [0.9.0](https://github.com/metreeca/tile/compare/v0.8.0...v0.9.0) - 2026-11-19
+## [0.9.0](https://github.com/grafctory/tile/compare/v0.8.0...v0.9.0) - 2026-11-19
 
 ### Changed
 
@@ -51,7 +51,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   well, so that each of them is shared by both as a single copy. `useQuery` now keeps the page criteria in the browser
   location in the plainer encoding `@metreeca/qest` writes, while locations bookmarked earlier keep being read
 
-## [0.8.0](https://github.com/metreeca/tile/compare/v0.7.0...v0.8.0) - 2026-11-19
+## [0.8.0](https://github.com/grafctory/tile/compare/v0.7.0...v0.8.0) - 2026-11-19
 
 ### Changed
 
@@ -61,7 +61,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `@metreeca/clay` and `@metreeca/tile`, so that an app installs a single copy of each and every widget reads the
   router, client and store the app sets up; apps declare these packages among their own dependencies
 
-## [0.7.0](https://github.com/metreeca/tile/compare/v0.6.1...v0.7.0) - 2026-11-17
+## [0.7.0](https://github.com/grafctory/tile/compare/v0.6.1...v0.7.0) - 2026-11-17
 
 ### Added
 
@@ -86,11 +86,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `^0.6.0`, and `@metreeca/keep` and `@metreeca/keep-rest` to `^0.13.0`; projects using them alongside these packages
   raise their own ranges to match as well, so that each of them is shared by both as a single copy
 - `@metreeca/tile-data` — **Breaking**: split in two. The app contexts and the `asset`, `board`, `fetch`, `model`,
-  `router` and `storage` hooks move to [@metreeca/clay](https://github.com/metreeca/clay), while the `store` bindings
+  `router` and `storage` hooks move to [@metreeca/clay](https://github.com/grafctory/clay), while the `store` bindings
   become the whole of `@metreeca/tile`, which takes over the name the design system leaves (migration: import `app`
   and those hooks from `@metreeca/clay`, and replace `@metreeca/tile-data/store` with `@metreeca/tile` in imports)
 - `@metreeca/tile-cell`, `@metreeca/tile-hive` and `@metreeca/tile-move` — **Breaking**: moved to
-  [@metreeca/clay](https://github.com/metreeca/clay), the widgets and layouts as `@metreeca/clay-widgets`, the
+  [@metreeca/clay](https://github.com/grafctory/clay), the widgets and layouts as `@metreeca/clay-widgets`, the
   Markdown document with its table of contents as `@metreeca/clay-markdown`, and the movable items as the `transfer`
   and `roving` modules of `@metreeca/clay`, rendering `<clay-*>` elements tuned through `--clay-*` knobs (migration:
   replace the package names in dependencies and import paths, and `tile-` with `clay-` in the selectors and custom
@@ -116,7 +116,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Upgrade the `happy-dom` development dependency to `^21.0.4`, fixing GHSA-834v-8h66-3h79 in the DOM environment the
   test suites run on; published packages are not affected, as `happy-dom` never reaches their consumers
 
-## [0.6.1](https://github.com/metreeca/tile/compare/v0.6.0...v0.6.1) - 2026-10-21
+## [0.6.1](https://github.com/grafctory/tile/compare/v0.6.0...v0.6.1) - 2026-10-21
 
 ### Security
 
@@ -125,7 +125,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Upgrade the `markdown-it` documentation tooling dependency to `14.3.3`, fixing GHSA-gfr2-rv44-r23c and
   GHSA-vfgh-jcmw-g37q in the API reference build; published packages are not affected
 
-## [0.6.0](https://github.com/metreeca/tile/compare/v0.5.1...v0.6.0) - 2026-10-20
+## [0.6.0](https://github.com/grafctory/tile/compare/v0.5.1...v0.6.0) - 2026-10-20
 
 ### Changed
 
@@ -136,14 +136,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Upgrade `@metreeca/keep-rest` to `^0.12.0`
 - Upgrade `@metreeca/qest` to `^0.13.0`
 
-## [0.5.1](https://github.com/metreeca/tile/compare/v0.5.0...v0.5.1) - 2026-10-14
+## [0.5.1](https://github.com/grafctory/tile/compare/v0.5.0...v0.5.1) - 2026-10-14
 
 ### Fixed
 
 - `@metreeca/tile-cell/icon` — glyph sizing kept in production bundles, which dropped the icon stylesheet and left
   glyphs at the oversized Lucide defaults wherever `Icon` was imported, toasts and the shell included
 
-## [0.5.0](https://github.com/metreeca/tile/compare/v0.4.0...v0.5.0) - 2026-10-14
+## [0.5.0](https://github.com/grafctory/tile/compare/v0.4.0...v0.5.0) - 2026-10-14
 
 ### Added
 
@@ -161,7 +161,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   page issue is stated once however many boards are nested, while each board keeps the posts of its own components
 - `@metreeca/tile-cell` — no longer depends on `@metreeca/http`, which none of its modules imports
 
-## [0.4.0](https://github.com/metreeca/tile/compare/v0.3.0...v0.4.0) - 2026-10-14
+## [0.4.0](https://github.com/grafctory/tile/compare/v0.3.0...v0.4.0) - 2026-10-14
 
 ### Added
 
@@ -200,7 +200,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `@metreeca/tile-hive/toast`
 - `@metreeca/tile-lens` — **breaking**: root entry point and the empty placeholder modules removed
 
-## [0.3.0](https://github.com/metreeca/tile/releases/tag/v0.3.0) - 2026-10-02
+## [0.3.0](https://github.com/grafctory/tile/releases/tag/v0.3.0) - 2026-10-02
 
 ### Added
 
@@ -243,7 +243,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `@metreeca/tile-hive/shell` — headers held to the height of a subtle button, focus rings kept whole, columns clipped
   to their width with wide content scrolled across, and the menu kept at the end of a header without a heading
 
-## [0.2.0](https://github.com/metreeca/tile/releases/tag/v0.2.0)
+## [0.2.0](https://github.com/grafctory/tile/releases/tag/v0.2.0)
 
 Initial release of the Metreeca Tile minimalist model-driven UI toolkit, superseding the legacy `@metreeca/tile` 4.x
 line: a design system published as CSS tokens and base rules, with Preact bindings wiring components to headless

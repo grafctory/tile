@@ -1,8 +1,13 @@
 # @grafctory/tile-apis
 
-[![npm](https://img.shields.io/npm/v/@grafctory/tile-apis)](https://www.npmjs.com/package/@grafctory/tile-apis)
+[![npm][npm-badge]][npm] [![Grafctory][grafctory-badge]][grafctory]
 
-Preact API documentation widgets for [@grafctory/tile](https://github.com/grafctory/tile).
+[npm-badge]: https://img.shields.io/npm/v/@grafctory/tile-apis
+[npm]: https://www.npmjs.com/package/@grafctory/tile-apis
+[grafctory-badge]: https://img.shields.io/badge/part%20of-Grafctory-blue
+[grafctory]: https://github.com/grafctory
+
+Preact API documentation widgets for [@grafctory/tile].
 
 API documentation driven by the shapes a linked data API serves: the reader browses the resources it exposes, the
 properties describing them and the links relating them, with no documentation kept in step with the model by hand.
@@ -10,6 +15,8 @@ properties describing them and the links relating them, with no documentation ke
 > [!WARNING]
 >
 > This package is a placeholder laid down ahead of its widgets: it is not published yet and offers no API.
+
+[@grafctory/tile]: https://github.com/grafctory/tile
 
 # Installation
 
@@ -41,3 +48,5 @@ npm install preact               # peer dependency
 
 This project is licensed under the Apache 2.0 License –
 see [LICENSE](https://github.com/grafctory/tile?tab=Apache-2.0-1-ov-file) file for details.
+
+<sub>Grafctory™ is a trademark of Metreeca srl.</sub>

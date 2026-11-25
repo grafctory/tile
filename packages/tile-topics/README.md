@@ -1,8 +1,13 @@
 # @grafctory/tile-topics
 
-[![npm](https://img.shields.io/npm/v/@grafctory/tile-topics)](https://www.npmjs.com/package/@grafctory/tile-topics)
+[![npm][npm-badge]][npm] [![Grafctory][grafctory-badge]][grafctory]
 
-Preact SKOS topic widgets for [@grafctory/tile](https://github.com/grafctory/tile).
+[npm-badge]: https://img.shields.io/npm/v/@grafctory/tile-topics
+[npm]: https://www.npmjs.com/package/@grafctory/tile-topics
+[grafctory-badge]: https://img.shields.io/badge/part%20of-Grafctory-blue
+[grafctory]: https://github.com/grafctory
+
+Preact SKOS topic widgets for [@grafctory/tile].
 
 Topic taxonomies driven by SKOS concept schemes: the reader browses concepts from the broadest to the narrowest,
 and reaches the resources filed under each topic, with no taxonomy code to write by hand for each scheme.
@@ -10,6 +15,8 @@ and reaches the resources filed under each topic, with no taxonomy code to write
 > [!WARNING]
 >
 > This package is a placeholder laid down ahead of its widgets: it is not published yet and offers no API.
+
+[@grafctory/tile]: https://github.com/grafctory/tile
 
 # Installation
 
@@ -41,3 +48,5 @@ npm install preact                 # peer dependency
 
 This project is licensed under the Apache 2.0 License –
 see [LICENSE](https://github.com/grafctory/tile?tab=Apache-2.0-1-ov-file) file for details.
+
+<sub>Grafctory™ is a trademark of Metreeca srl.</sub>

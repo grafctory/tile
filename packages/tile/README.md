@@ -1,14 +1,23 @@
 # @grafctory/tile
 
-[![npm](https://img.shields.io/npm/v/@grafctory/tile)](https://www.npmjs.com/package/@grafctory/tile)
+[![npm][npm-badge]][npm] [![Grafctory][grafctory-badge]][grafctory]
 
-Preact linked data store and shape-driven value types for [@grafctory/tile](https://github.com/grafctory/tile).
+[npm-badge]: https://img.shields.io/npm/v/@grafctory/tile
+[npm]: https://www.npmjs.com/package/@grafctory/tile
+[grafctory-badge]: https://img.shields.io/badge/part%20of-Grafctory-blue
+[grafctory]: https://github.com/grafctory
+
+Preact linked data store and shape-driven value types for [@grafctory/tile].
 
 The store an app shares with its screens, and the hooks that bind components to the resources and collections it holds.
 
-Reads and writes go through a [@grafctory/keep](https://github.com/grafctory/keep) store over the fetch client the app
-shares through its [@grafctory/clay](https://github.com/grafctory/clay) contexts, so components never handle caching,
+Reads and writes go through a [@grafctory/keep] store over the fetch client the app
+shares through its [@grafctory/clay] contexts, so components never handle caching,
 batching or validation themselves, and stay focused on what they present to the reader.
+
+[@grafctory/tile]: https://github.com/grafctory/tile
+[@grafctory/keep]: https://github.com/grafctory/keep
+[@grafctory/clay]: https://github.com/grafctory/clay
 
 # Installation
 
@@ -40,3 +49,5 @@ npm install preact          # peer dependency
 
 This project is licensed under the Apache 2.0 License –
 see [LICENSE](https://github.com/grafctory/tile?tab=Apache-2.0-1-ov-file) file for details.
+
+<sub>Grafctory™ is a trademark of Metreeca srl.</sub>

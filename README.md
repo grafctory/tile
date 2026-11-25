@@ -2,17 +2,22 @@
 
 Linked data UI toolkit for Preact.
 
-Preact lenses, facets and fields for [@grafctory/qest](https://github.com/grafctory/qest) linked data APIs:
+**@grafctory/tile** is the linked data UI module of the [Grafctory][grafctory] model-driven knowledge graph framework.
+It offers Preact lenses, facets and fields for [@grafctory/qest] linked data APIs:
 
 - **Shape-Driven Screens**: the [@grafctory/blue] shapes shared with the server decide what screens show and accept
 - **Accessible Widgets**: labelled controls, keyboard paths and status announcements designed to WCAG 2.2 AA
 - **Store-Backed Resources**: a [@grafctory/keep] store keeps caching, batching and validation out of interface code
 
 Screens are composed in JSX from linked data lenses, facets and fields, running within the contexts and hooks of
-[@grafctory/clay](https://github.com/grafctory/clay), and leave the exchange of resources to the store.
+[@grafctory/clay], and leave the exchange of resources to the store.
 
 Their look comes from the [@grafctory/skin] design tokens alone: components render without the skin stylesheet, and
 follow the platform colour scheme once it is loaded, or whatever theme the app sets there instead.
+
+[@grafctory/qest]: https://github.com/grafctory/qest
+[@grafctory/clay]: https://github.com/grafctory/clay
+[grafctory]: https://github.com/grafctory
 
 # Installation
 
@@ -72,3 +77,5 @@ app brands whatever Tile renders by overriding the [@grafctory/skin] tokens, as 
 
 This project is licensed under the Apache 2.0 License –
 see [LICENSE](https://github.com/grafctory/tile?tab=Apache-2.0-1-ov-file) file for details.
+
+<sub>Grafctory™ is a trademark of Metreeca srl.</sub>

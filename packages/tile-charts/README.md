@@ -1,8 +1,13 @@
 # @grafctory/tile-charts
 
-[![npm](https://img.shields.io/npm/v/@grafctory/tile-charts)](https://www.npmjs.com/package/@grafctory/tile-charts)
+[![npm][npm-badge]][npm] [![Grafctory][grafctory-badge]][grafctory]
 
-Preact linked data charts for [@grafctory/tile](https://github.com/grafctory/tile).
+[npm-badge]: https://img.shields.io/npm/v/@grafctory/tile-charts
+[npm]: https://www.npmjs.com/package/@grafctory/tile-charts
+[grafctory-badge]: https://img.shields.io/badge/part%20of-Grafctory-blue
+[grafctory]: https://github.com/grafctory
+
+Preact linked data charts for [@grafctory/tile].
 
 Charts of collections driven by shapes: the model decides which properties are measured and how values are
 grouped, so a chart follows the collection as the reader narrows it, with no chart code to update by hand.
@@ -10,6 +15,8 @@ grouped, so a chart follows the collection as the reader narrows it, with no cha
 > [!WARNING]
 >
 > This package is a placeholder laid down ahead of its widgets: it is not published yet and offers no API.
+
+[@grafctory/tile]: https://github.com/grafctory/tile
 
 # Installation
 
@@ -41,3 +48,5 @@ npm install preact                 # peer dependency
 
 This project is licensed under the Apache 2.0 License –
 see [LICENSE](https://github.com/grafctory/tile?tab=Apache-2.0-1-ov-file) file for details.
+
+<sub>Grafctory™ is a trademark of Metreeca srl.</sub>

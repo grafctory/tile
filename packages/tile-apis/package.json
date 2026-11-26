@@ -1,6 +1,6 @@
 {
   "name": "@grafctory/tile-apis",
-  "version": "0.10.1",
+  "version": "0.11.0",
   "description": "Preact API documentation widgets for @grafctory/tile.",
   "keywords": [
     "typescript",

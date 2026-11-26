@@ -1,6 +1,6 @@
 {
   "private": true,
-  "version": "0.10.1",
+  "version": "0.11.0",
   "description": "Linked data UI toolkit for Preact.",
   "type": "module",
   "workspaces": [

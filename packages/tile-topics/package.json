@@ -1,6 +1,6 @@
 {
   "name": "@grafctory/tile-topics",
-  "version": "0.10.1",
+  "version": "0.11.0",
   "description": "Preact SKOS topic widgets for @grafctory/tile.",
   "keywords": [
     "typescript",

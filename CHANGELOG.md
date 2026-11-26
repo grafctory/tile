@@ -25,6 +25,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - `Tally` ticks a value when the reader presses its name, rather than leaving the catalogue for the resource it
   names: a linked resource is reached through a separate link following the name ([#11](https://github.com/grafctory/tile/issues/11))
+- `Table` keeps its headers in view while the rows scroll past, now that the design system lets native tables scroll
+  on their own: the page or the area holding the table scrolls it instead ([#15](https://github.com/grafctory/tile/issues/15))
 
 ## [0.10.1](https://github.com/grafctory/tile/compare/v0.10.0...v0.10.1) - 2026-11-24
 

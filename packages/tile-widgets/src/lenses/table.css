@@ -15,21 +15,30 @@
  */
 
 /*
- * A table takes the base rules the design system gives native tables. It sets up no scrolling of its own, which
- * would capture its sticky headers, so the area around it scrolls a table outgrowing it in either direction.
+ * A table takes the base rules the design system gives native tables, save the scrolling they set up on their own. A
+ * table scrolling within itself would trap its sticky headers in a box the reader never scrolls, so the area around
+ * it scrolls a table outgrowing it in either direction instead, and the headers stick to the top of that area.
  */
 
 tile-table {
 
     display: block;
 
-    /*
-     * Once the reader reorders the items, the columns keep the widths they were first shown at, so a new order bringing
-     * longer or shorter values into view never stretches or shrinks them; longer values are clipped to their cells.
-     */
+    & table {
 
-    & table[data-frozen] {
-        table-layout: fixed;
+        display: table;
+        overflow: visible;
+
+        /*
+         * Once the reader reorders the items, the columns keep the widths they were first shown at, so a new order
+         * bringing longer or shorter values into view never stretches or shrinks them. A value longer than the width
+         * its column was frozen at is clipped to its cell, leaving the columns beside it where they stood.
+         */
+
+        &[data-frozen] {
+            table-layout: fixed;
+        }
+
     }
 
     /* Headers stay at the top of the scrolling area while the rows pass under them, naming the columns throughout. */

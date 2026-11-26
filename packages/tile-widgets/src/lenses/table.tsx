@@ -96,6 +96,9 @@ export type Column<I> = {
  * Values hold to one line, clipped with an ellipsis where they outgrow their cells, and texts and numbers are shown
  * whole in a tooltip, so a clipped one is never out of the reader's reach, however narrow its column gets.
  *
+ * The table never scrolls on its own, leaving that to the page or to the area holding it. Its headers stay in view at
+ * the top of whichever scrolls, so the columns stay named however far the reader scrolls down the rows.
+ *
  * In a `hierarchy`, items sharing their first values read as a group: a leading value repeating the one above is shown
  * once, in a cell spanning the rows of its group, and stays in view under the headers while those rows scroll past.
  * Cells are compared by the text or number they render, and a cell rendering anything else never counts as repeating.

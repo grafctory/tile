@@ -162,14 +162,15 @@ tile-tally {
          */
 
         max-block-size: calc(
-            (var(--tile-tally-rows) + 0.6) * 1lh + var(--skin--spacing-050) + var(--skin--border-width)
+            (var(--tile-tally-rows) + 0.6) * var(--skin--scaling-150)
+            + var(--skin--spacing-050) + var(--skin--border-width)
         );
 
         overflow-y: auto;
 
         /*
-         * The options are set tighter than running text, so a dense list fits more rows in the same height. The
-         * scroll bound above follows the tighter leading, since it counts the rows in lines of the section.
+         * The options are set tighter than running text, so a long name wrapping inside a cell stays compact, while
+         * each row keeps the height of a pointer target, which the scroll bound above counts the rows in.
          */
 
         line-height: calc(var(--skin--line-height) * 0.95);
@@ -195,7 +196,7 @@ tile-tally {
          * The options are laid out as one grid of box, name and count columns shared by every row, so the counts line
          * up down the list, and each row seats its box, name and count on the one baseline of the name it holds. The
          * box column takes the measure of the header glyph, its box centred under the glyph, so the names line up
-         * with the search field above them.
+         * with the search field above them, and the list reads as the content of the field it hangs from.
          */
 
         & > ul {
@@ -211,8 +212,9 @@ tile-tally {
             list-style-type: none;
 
             /*
-             * The options are rows of a list, packed line on line rather than spaced out as prose list items are, and
-             * set in the label colour, so they read as the values of a control rather than as part of the content.
+             * The options are rows of a list, packed line on line rather than spaced out as prose list items are. The
+             * names keep the text colour Skin gives labels, the strongest in the row, while what goes with them is set
+             * in the label colour, so each value leads its row and its count and link read as details about it.
              */
 
             & > li {
@@ -221,22 +223,19 @@ tile-tally {
                 grid-column: 1 / -1;
                 grid-template-columns: subgrid;
 
+                position: relative;
+                anchor-scope: --tile-tally-name;
+
                 margin: 0;
-                color: var(--skin--color-label);
 
             }
 
             /*
-             * An option no item lets through under the other criteria sets the name of a linked resource in the label
-             * colour too, keeping its underline. Its 0 count gives way to a centred dot in the place of the digit, so
-             * the column of counts still reads as one of figures, aligned down the list with the counts around it.
+             * The 0 count of an option no item lets through under the other criteria gives way to a centred dot in the
+             * place of the digit, so the column of counts still reads as one of figures, aligned down the list.
              */
 
             & > li.unavailable {
-
-                & a {
-                    color: inherit;
-                }
 
                 & > label > small {
 
@@ -255,8 +254,8 @@ tile-tally {
 
                 /*
                  * Unless ticked, such an option is disabled and takes the disabled colour, as a disabled control does,
-                 * the name of a linked resource included. A ticked one keeps the label colour, since it is still there
-                 * to be unticked, so every option the other criteria rule out without a tick reads as out of reach.
+                 * while its link keeps the label colour, since the resource stays within reach. A ticked one keeps the
+                 * label colour, still there to be unticked, so every option ruled out without a tick reads as such.
                  */
 
                 &:has(input:disabled) > label {
@@ -264,7 +263,7 @@ tile-tally {
                     cursor: default;
                     color: var(--skin--color-disabled);
 
-                    /* The count follows, in place of the colour Skin gives small print. */
+                    /* The count follows, in place of the label colour it takes elsewhere. */
 
                     & > small {
                         color: inherit;
@@ -274,15 +273,19 @@ tile-tally {
 
             }
 
-            /* The name the facet supplies for the items holding no value is set at rest, apart from the names of values. */
+            /*
+             * The name the facet supplies for the items holding no value takes the placeholder colour, reading as the
+             * absence of a value rather than as one of the values in the data, while holding the contrast text owes.
+             */
 
             & > li.blank > label > span {
-                font-weight: var(--skin--font-weight);
+                color: var(--skin--color-placeholder);
             }
 
             /*
-             * The whole row toggles the checkbox, the name clipped with an ellipsis rather than wrapped, so a long
-             * name never widens the box; counts line up at the end, in figures of equal width.
+             * The row but the link toggles the checkbox, the name clipped with an ellipsis rather than wrapped, so a
+             * long name never widens the box; counts line up at the end, in figures of equal width. The row is as tall
+             * as a pointer target, its content centred in it, so neighbouring rows never crowd each other's targets.
              */
 
             & > li > label {
@@ -291,6 +294,13 @@ tile-tally {
                 grid-column: 1 / -1;
                 grid-template-columns: subgrid;
                 align-items: baseline;
+                align-content: center;
+
+                min-block-size: var(--skin--scaling-150);
+
+                /* Options read as values in a list, not as the names Skin sets in the strong weight above a field. */
+
+                font-weight: var(--skin--font-weight);
 
                 cursor: pointer;
 
@@ -310,34 +320,101 @@ tile-tally {
                 }
 
                 /*
-                 * The name is set in the strong weight, so a plain name reads alike beside the name of a linked one. It
-                 * is clipped along the line alone, so the tighter leading never cuts off descenders or underlines, and
-                 * the clip stands clear of the name by the reach of the focus ring of a link, offset and width alike,
-                 * so the ring is drawn whole while the name keeps its place in the column.
+                 * The name is clipped along the line alone, so the tighter leading never cuts off descenders.
                  */
 
                 & > span {
 
+                    justify-self: start;
+                    min-inline-size: 0;
+                    max-inline-size: 100%;
                     overflow-x: clip;
 
-                    padding-inline: calc(3 * var(--skin--border-width));
-                    margin-inline: calc(-3 * var(--skin--border-width));
                     text-overflow: ellipsis;
                     white-space: nowrap;
 
-                    font-weight: var(--skin--font-weight-strong);
+                    anchor-name: --tile-tally-name;
 
                 }
 
                 /*
                  * The counts are sized relative to the name of the option, so they stay smaller than it at whatever
-                 * size the facet is set, and hold the same look whatever an app does to small print elsewhere.
+                 * size the facet is set, and take the label colour in place of the one Skin gives small print, so they
+                 * hold the same look whatever an app does to small print elsewhere.
                  */
 
                 & > small {
                     justify-self: end;
                     font-size: 90%;
                     font-variant-numeric: tabular-nums;
+                    color: var(--skin--color-label);
+                }
+
+            }
+
+            /*
+             * The name of an option linking a resource leaves room at its end for the link, so the link never covers
+             * the name, however long and clipped with its ellipsis, nor the count standing beyond it in the row.
+             */
+
+            & > li:has(> a) > label > span {
+                padding-inline-end: var(--skin--scaling-150);
+            }
+
+            /*
+             * The link to the resource an option names stands over the row at the end of the name, in the room the
+             * name leaves for it, so it reads as belonging to the value rather than to the count. It is a square
+             * target as tall as the row, as easy to hit as the name beside it, marked by a glyph smaller than the box
+             * and set in the label colour, so it stays quiet beside the values until the pointer or the keyboard
+             * reaches it and it takes the link colours, as any other link on the page does at that point.
+             */
+
+            & > li > a {
+
+                --tile-tally-cover: transparent;
+
+                position: absolute;
+                position-anchor: --tile-tally-name;
+                inset-block: 0;
+                right: anchor(right);
+
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+
+                min-inline-size: var(--skin--scaling-150);
+
+                &:not(:hover, :focus-visible) {
+                    color: var(--skin--color-label);
+                }
+
+                /*
+                 * The glyph answers the pointer as a subtle button does, taking the neutral hover and pressed covers
+                 * over a surface spread past its edge by a pair of shadows, shifted up and down so the surface reaches
+                 * further above and below the glyph than beside it, hugging the narrow glyph without crowding the name.
+                 */
+
+                & > .lucide {
+
+                    width: var(--skin--scaling-075);
+                    height: var(--skin--scaling-075);
+
+                    background-color: var(--tile-tally-cover);
+                    --tile-tally-reach: calc(var(--skin--spacing-025) - var(--skin--spacing-010));
+
+                    box-shadow:
+                        0 var(--tile-tally-reach) 0 var(--skin--spacing-010) var(--tile-tally-cover),
+                        0 calc(-1 * var(--tile-tally-reach)) 0 var(--skin--spacing-010) var(--tile-tally-cover);
+                    border-radius: calc(var(--skin--border-radius-025) / 2);
+
+                }
+
+                &:hover {
+                    --tile-tally-cover: var(--skin--background-color-hover-neutral);
+                }
+
+                &:active {
+                    --tile-tally-cover: var(--skin--background-color-pressed-neutral);
                 }
 
             }

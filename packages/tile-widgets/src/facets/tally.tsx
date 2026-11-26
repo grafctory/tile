@@ -28,7 +28,7 @@ import type { Optional } from "@grafctory/core";
 import type { Relay } from "@grafctory/core/relay";
 import { isReference } from "@grafctory/qest/state";
 import type { TallyBucket, TallyCases } from "@grafctory/tile/tally";
-import { SquareCheckBigIcon, XCircleIcon, XIcon } from "lucide-preact";
+import { createLucideIcon, SquareCheckBigIcon, XCircleIcon, XIcon } from "lucide-preact";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId, useState } from "preact/hooks";
 import { createFold, createLatch } from "../index.core.js";
@@ -37,16 +37,24 @@ import "./tally.css";
 
 
 /**
+ * The glyph marking a link to the resource a value names: the head of the Lucide arrow up right alone, without the
+ * outward pointing shaft that reads as a link leaving the site, drawn and sized as any other Lucide glyph.
+ */
+const CornerIcon = createLucideIcon("corner", [["path", { d: "M7 7h10v10", key: "corner" }]]);
+
+
+/**
  * Creates a collection tally facet.
  *
  * Lists the values the tally offers as checkboxes, each labelled by its name and by the number of items holding it,
  * grouping digits as the reader's locale does, so that ticking a value narrows the collection to the items holding
- * any of the values ticked. The name of a linked resource is a link to it, which takes the reader to the resource and
- * leaves its checkbox as it stands. The items holding none of the values are offered as `‹blank›`, a name the facet
- * supplies itself. A value no item lets through under the other criteria stays on offer with a count of `0`, so the
- * list holds still, every value in its place, as other facets narrow the collection; its checkbox is disabled unless
- * ticked, since ticking it would empty the collection, while a ticked one stays enabled to be unticked. The values
- * ticked lead the list, and ticking or unticking one scrolls the list back to its top, bringing them into view.
+ * any of the values ticked. Pressing the name of a value ticks it as its checkbox does. A value naming a linked
+ * resource is followed by a link to it, marked by the corner glyph and named after the value for assistive technology.
+ * The items holding none of the values are offered as `‹blank›`, a name the facet supplies itself. A value no item
+ * lets through under the other criteria stays on offer with a count of `0`, so the list holds still, every value in
+ * its place, as other facets narrow the collection; its checkbox is disabled unless ticked, since ticking it would
+ * empty the collection, while a ticked one stays enabled to be unticked. The values ticked lead the list, and ticking
+ * or unticking one scrolls the list back to its top, bringing them into view however far down the reader was.
  *
  * A search field narrows the values on offer once the reader pauses typing, at once on `Enter`, and `Escape` empties
  * it, as does a button marked by the clear glyph, shown while text is typed. While the field is empty, a button marked
@@ -117,8 +125,8 @@ export function Tally({
 	 * Renders the name of a value; the {@link @grafctory/tile!tally.TallyBucket.label label} of the value if omitted.
 	 *
 	 * The items holding none of the values are always named `‹blank›` by the facet, so the reader can tell that name
-	 * from the values in the data. The name of a linked resource is set within a link to it, so the rendered name must
-	 * hold no control of its own: a link or a button nested inside the link would be invalid markup.
+	 * from the values in the data. The name is set within the label of its checkbox, so the rendered name must hold no
+	 * control of its own: a link or a button nested in the label would take the press meant for the checkbox.
 	 *
 	 * @param bucket The value to be named, never the `‹blank›` option the facet names itself
 	 */
@@ -256,14 +264,16 @@ export function Tally({
 								}}
 							/>
 
-							<span>{isReference(bucket.value)
-								? <a href={bucket.value}>{Name(bucket)}</a>
-								: Name(bucket)
-							}</span>
+							<span>{Name(bucket)}</span>
 							{" "}
 							<small>{bucket.count.toLocaleString()}</small>
 
 						</label>
+
+						{isReference(bucket.value) && <a href={bucket.value} title={`Open ${bucket.label ?? bucket.value}`}>
+							<CornerIcon/>
+						</a>}
+
 					</li>
 				)}</ul>
 

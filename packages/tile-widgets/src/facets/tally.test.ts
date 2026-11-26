@@ -109,10 +109,10 @@ function labels(): readonly (string | null)[] {
 	return [...document.querySelectorAll("tile-tally label")].map(label => label.textContent);
 }
 
-function links(): readonly { readonly href: string | null, readonly text: string | null }[] {
-	return [...document.querySelectorAll("tile-tally label a")].map(anchor => ({
+function links(): readonly { readonly href: string | null, readonly title: string | null }[] {
+	return [...document.querySelectorAll("tile-tally li a")].map(anchor => ({
 		href: anchor.getAttribute("href"),
-		text: anchor.textContent
+		title: anchor.getAttribute("title")
 	}));
 }
 
@@ -851,7 +851,17 @@ describe("Tally", () => {
 
 			await vi.waitFor(() => expect(labels()).toEqual(["Arts 2"]));
 
-			expect(links()).toEqual([{ href: "https://example.com/categories/arts", text: "Arts" }]);
+			expect(links()).toEqual([{ href: "https://example.com/categories/arts", title: "Open Arts" }]);
+
+		});
+
+		it("should keep links out of the labels, so the name of an option ticks it", async () => {
+
+			mount(options([{ value: "https://example.com/categories/arts", label: "Arts", count: 2 }]));
+
+			await vi.waitFor(() => expect(labels()).toEqual(["Arts 2"]));
+
+			expect(document.querySelector("tile-tally label a")).toBeNull();
 
 		});
 
@@ -962,6 +972,20 @@ describe("Tally", () => {
 			act(() => checkboxes()[0]?.click());
 
 			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({ "?category": ["c1"] }));
+
+		});
+
+		it("should narrow the collection as the name of an option naming a resource is pressed", async () => {
+
+			const onChange = vi.fn();
+
+			mount(options([{ value: "https://example.com/categories/arts", label: "Arts", count: 1 }]), { onChange });
+
+			await vi.waitFor(() => expect(checkboxes()).toHaveLength(1));
+
+			act(() => document.querySelector<HTMLElement>("tile-tally label > span")?.click());
+
+			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({ "?category": ["https://example.com/categories/arts"] }));
 
 		});
 

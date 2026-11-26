@@ -10,6 +10,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.11.0](https://github.com/grafctory/tile/compare/v0.10.1...HEAD)
 
+### Added
+
+- `useTally` tells a facet when the values on offer are being retrieved again, so the facet can keep them where they
+  stand until the new values arrive ([#16](https://github.com/grafctory/tile/issues/16))
+
+### Changed
+
+- `Tally` holds its values still while they recompute: a ticked value keeps its place until the new values arrive,
+  and clicks and keys are ignored meanwhile, with a spinner showing from the moment the reader acts, so values ticked
+  in a row never land on another one sliding under the pointer ([#16](https://github.com/grafctory/tile/issues/16))
+
 ### Fixed
 
 - `Tally` ticks a value when the reader presses its name, rather than leaving the catalogue for the resource it

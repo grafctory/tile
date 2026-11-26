@@ -1003,7 +1003,7 @@ describe("Tally", () => {
 
 		});
 
-		it("should scroll the options back to the top as an option is ticked", async () => {
+		it("should leave the options scrolled where they stand as an option is ticked", async () => {
 
 			mount(options([{ value: "c1", label: "Arts", count: 1 }]));
 
@@ -1015,23 +1015,182 @@ describe("Tally", () => {
 
 			act(() => checkboxes()[0]?.click());
 
-			await vi.waitFor(() => expect(section?.scrollTop).toBe(0));
+			await vi.waitFor(() => expect(checkboxes()[0]?.checked).toBe(true));
+
+			expect(section?.scrollTop).toBe(100);
 
 		});
 
-		it("should scroll the options back to the top as an option is unticked", async () => {
+	});
 
-			mount(options([{ value: "c1", label: "Arts", count: 1 }]), { criteria: { "?category": ["c1"] } });
+	describe("updating", () => {
 
-			await vi.waitFor(() => expect(checkboxes()[0]?.checked).toBe(true));
+		const rows: readonly Row[] = [
+			{ value: "c1", label: "Arts", count: 3 },
+			{ value: "c2", label: "Biology", count: 2 },
+			{ value: "c3", label: "Chemistry", count: 1 }
+		];
 
-			const section = facet()?.querySelector("section");
+		/**
+		 * A store answering the options at once until the reader first acts, and holding every later retrieval until
+		 * opened, so that a test catches the facet while its options are retrieved again.
+		 */
+		function gated() {
 
-			section?.scrollTo({ top: 100 });
+			const open = vi.fn<() => void>();
+			const gate = new Promise<void>(resolve => open.mockImplementation(resolve));
 
-			act(() => checkboxes()[0]?.click());
+			const answer = options(rows);
+			const lookup = vi.fn((request: { model: Members }) => answer(request));
 
-			await vi.waitFor(() => expect(section?.scrollTop).toBe(0));
+			return {
+				lookup,
+				hold: () => void lookup.mockImplementation(request => gate.then(() => answer(request))),
+				open: () => act(open)
+			};
+
+		}
+
+		async function tick(index: number): Promise<void> {
+			act(() => checkboxes()[index]?.click());
+			await vi.waitFor(() => expect(facet()?.getAttribute("aria-busy")).toBe("true"));
+		}
+
+		it("should be busy and spinning while the options are retrieved again", async () => {
+
+			const { lookup, hold } = gated();
+
+			mount(lookup);
+
+			await ready();
+
+			hold();
+
+			await tick(2);
+
+			expect(spinner()).not.toBeNull();
+
+		});
+
+		it("should hold the options in place while retrieved again, ticking the option where it stands", async () => {
+
+			const { lookup, hold } = gated();
+
+			mount(lookup);
+
+			await ready();
+
+			hold();
+
+			await tick(2);
+
+			expect(labels()).toEqual(["Arts 3", "Biology 2", "Chemistry 1"]);
+			expect(checkboxes().map(({ checked }) => checked)).toEqual([false, false, true]);
+
+		});
+
+		it("should ignore clicks on the options while retrieved again", async () => {
+
+			const onChange = vi.fn();
+			const { lookup, hold } = gated();
+
+			mount(lookup, { onChange });
+
+			await ready();
+
+			hold();
+
+			await tick(2);
+
+			act(() => checkboxes()[1]?.click());
+
+			await act(async () => {});
+
+			expect(onChange).not.toHaveBeenCalledWith({ "?category": ["c3", "c2"] });
+			expect(checkboxes()[1]?.checked).toBe(false);
+
+		});
+
+		it("should ignore key presses on the options while retrieved again", async () => {
+
+			const { lookup, hold } = gated();
+
+			mount(lookup);
+
+			await ready();
+
+			hold();
+
+			await tick(2);
+
+			const event = new KeyboardEvent("keydown", { key: " ", bubbles: true, cancelable: true });
+
+			act(() => void checkboxes()[1]?.dispatchEvent(event));
+
+			expect(event.defaultPrevented).toBe(true);
+
+		});
+
+		it("should keep the focus on the option ticked while retrieved again", async () => {
+
+			const { lookup, hold } = gated();
+
+			mount(lookup);
+
+			await ready();
+
+			hold();
+
+			act(() => checkboxes()[2]?.focus());
+
+			await tick(2);
+
+			expect(document.activeElement).toBe(checkboxes()[2]);
+
+		});
+
+		it("should leave the search field live while retrieved again", async () => {
+
+			const { lookup, hold } = gated();
+
+			mount(lookup);
+
+			await ready();
+
+			hold();
+
+			await tick(2);
+
+			type("Bio");
+
+			press("Escape");
+
+			expect(field()?.value).toBe("");
+
+		});
+
+		it("should move the ticked options on top and take input again as the options retrieved again arrive", async () => {
+
+			const onChange = vi.fn();
+			const { lookup, hold, open } = gated();
+
+			mount(lookup, { onChange });
+
+			await ready();
+
+			hold();
+
+			await tick(2);
+
+			open();
+
+			await vi.waitFor(() => expect(facet()?.getAttribute("aria-busy")).not.toBe("true"));
+
+			expect(labels()).toEqual(["Chemistry 1", "Arts 3", "Biology 2"]);
+
+			act(() => checkboxes()[1]?.click());
+
+			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({ "?category": ["c3", "c1"] }));
 
 		});
 

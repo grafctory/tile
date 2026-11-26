@@ -48,6 +48,27 @@ globalThis.document?.addEventListener("mouseup", () => { pressing = false; }, { 
  */
 export const AutoDelay = 500;
 
+/**
+ * The handlers a part out of reach takes on, spread onto its element while its content is about to change.
+ *
+ * They cancel every gesture that would act on a control inside the part, from typing and editing to dragging and
+ * pressing, while focus stays where the reader left it, which an inert part would drop instead. They restate the
+ * handlers of the Clay tool shell, until Clay publishes them for every widget to share (grafctory/clay#16).
+ */
+export const Ignored = Object.fromEntries([
+	"onKeyDownCapture",
+	"onBeforeInputCapture",
+	"onPasteCapture",
+	"onCutCapture",
+	"onDropCapture",
+	"onDragStartCapture",
+	"onMouseDownCapture",
+	"onClickCapture",
+	"onAuxClickCapture",
+	"onDblClickCapture",
+	"onContextMenuCapture"
+].map(handler => [handler, ignore]));
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -328,4 +349,18 @@ export function leave(event: FocusEvent, collapse: () => void): void {
 
 	}
 
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Cancels a gesture aimed inside a part out of reach, stopping both its default action and the handlers of the control
+ * it targets, so that the control neither acts on the gesture nor learns that it happened.
+ *
+ * @param event The gesture to cancel
+ */
+function ignore(event: Event): void {
+	event.preventDefault();
+	event.stopPropagation();
 }

@@ -32,7 +32,7 @@ import { createLucideIcon, SquareCheckBigIcon, XCircleIcon, XIcon } from "lucide
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId, useState } from "preact/hooks";
 import { createFold, createLatch } from "../index.core.js";
-import { AutoDelay, cancel, classes, Configure, Failure, keys, leave, More, Settings, Spinner } from "../index.js";
+import { AutoDelay, cancel, classes, Configure, Failure, Ignored, keys, leave, More, Settings, Spinner } from "../index.js";
 import "./tally.css";
 
 
@@ -53,8 +53,13 @@ const CornerIcon = createLucideIcon("corner", [["path", { d: "M7 7h10v10", key: 
  * The items holding none of the values are offered as `‹blank›`, a name the facet supplies itself. A value no item
  * lets through under the other criteria stays on offer with a count of `0`, so the list holds still, every value in
  * its place, as other facets narrow the collection; its checkbox is disabled unless ticked, since ticking it would
- * empty the collection, while a ticked one stays enabled to be unticked. The values ticked lead the list, and ticking
- * or unticking one scrolls the list back to its top, bringing them into view however far down the reader was.
+ * empty the collection, while a ticked one stays enabled to be unticked. The values ticked lead the list.
+ *
+ * While the values are retrieved again, as after a value is ticked or the other criteria change, they hold still:
+ * a value ticked shows its tick where it stands, and moves to the top only as the values retrieved again arrive.
+ * Meanwhile, the list ignores pointer and keyboard input, so a click meant for a value never lands on another one
+ * moving under it, while focus stays where the reader left it and the search field stays live. The facet is marked
+ * busy and shows a spinner in place of the clear and reset buttons from the moment the reader acts.
  *
  * A search field narrows the values on offer once the reader pauses typing, at once on `Enter`, and `Escape` empties
  * it, as does a button marked by the clear glyph, shown while text is typed. While the field is empty, a button marked
@@ -74,7 +79,7 @@ const CornerIcon = createLucideIcon("corner", [["path", { d: "M7 7h10v10", key: 
  * takes no input, and the reset is withheld. The `Collapse` setting, ticked from the start as `collapsed` states,
  * decides whether the facet closes as focus leaves it or stays open with every value on offer shown.
  *
- * The facet is a group named by `name`, marked busy while the values are retrieved for the first time; a failed
+ * The facet is a group named by `name`, marked busy while the values are retrieved, first or again; a failed
  * retrieval is shown as a critical note in place of the values, until a later retrieval brings them back.
  *
  * ```tsx
@@ -145,11 +150,12 @@ export function Tally({
 	const keywords = tally({ ready: ({ keywords }) => keywords }) ?? "";
 
 	const idle = tally({ idle: () => true }) ?? false;
-	const blank = tally({ blank: () => true });
-	const waiting = tripped && (blank ?? false);
+	const blank = tally({ blank: () => true }) ?? false;
+	const waiting = tripped && blank;
 	const failed = tally({ error: () => true }) ?? false;
 	const filled = tally({ ready: ({ state }) => state.length > 0 }) ?? false;
 	const ticked = tally({ ready: ({ state }) => state.some(({ selected }) => selected) }) ?? false;
+	const updating = tally({ ready: ({ updating }) => updating }) ?? false;
 
 	// the binding cannot be asked while rendering, so an open facet asks for its values once drawn open
 
@@ -172,7 +178,7 @@ export function Tally({
 
 		"role": "group",
 		"aria-label": name,
-		"aria-busy": blank,
+		"aria-busy": blank || updating,
 
 		/*
 		 * Safari leaves focus off the checkboxes and buttons a reader presses, so a press within the facet would read
@@ -217,7 +223,7 @@ export function Tally({
 
 				{/* Safari leaves buttons off the keyboard path unless the reader opts in, so each states its place on it */}
 
-				{waiting ? <Spinner/> : text !== "" ? <button type="button" tabIndex={0}
+				{waiting || updating ? <Spinner/> : text !== "" ? <button type="button" tabIndex={0}
 
 					title={"Clear"}
 
@@ -243,7 +249,7 @@ export function Tally({
 
 		{/* the region is rendered from the first render, hidden until there is something to show in it */}
 
-		<section id={id} hidden={!configuring && !failed && !(open ? filled : ticked)}>{configuring ? <Settings collapsing={collapsing} onCollapsing={collapsible}/> : tally({
+		<section id={id} hidden={!configuring && !failed && !(open ? filled : ticked)} {...(updating ? Ignored : {})}>{configuring ? <Settings collapsing={collapsing} onCollapsing={collapsible}/> : tally({
 
 			ready: ({ state, select, load }) => <>
 
@@ -258,10 +264,7 @@ export function Tally({
 
 							<input type="checkbox" checked={bucket.selected}
 								disabled={bucket.count === 0 && !bucket.selected}
-								onChange={event => {
-									document.getElementById(id)?.scrollTo({ top: 0 }); // scroll offset is not rendered state
-									select(bucket.value, event.currentTarget.checked);
-								}}
+								onChange={event => select(bucket.value, event.currentTarget.checked)}
 							/>
 
 							<span>{Name(bucket)}</span>

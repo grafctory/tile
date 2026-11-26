@@ -695,6 +695,191 @@ describe("useTally()", () => {
 
 	});
 
+	describe("updating", () => {
+
+		const rows: readonly Row[] = [{ value: "a", count: 3 }, { value: "b", count: 2 }, { value: "c", count: 1 }];
+
+		/**
+		 * A store answering at once until held, and holding every later retrieval until opened, so that a test can
+		 * catch the binding while its options are retrieved again, and then let them arrive.
+		 */
+		function gated() {
+
+			const open = vi.fn<() => void>();
+			const gate = new Promise<void>(resolve => open.mockImplementation(resolve));
+
+			const answer = options(rows);
+			const lookup = vi.fn((request: { model: Members }) => answer(request));
+
+			return {
+				lookup,
+				hold: () => void lookup.mockImplementation(request => gate.then(() => answer(request))),
+				open: () => act(open)
+			};
+
+		}
+
+		function values(binding: () => Relay<TallyCases>) {
+			return binding()({ ready: ({ state }) => state.map(({ value, selected }) => [value, selected]) });
+		}
+
+		function updating(binding: () => Relay<TallyCases>) {
+			return binding()({ ready: ({ updating }) => updating });
+		}
+
+		it("should not be updating once the options are retrieved", async () => {
+
+			const { options: binding } = mount(backend(options(rows)));
+
+			await ready(binding);
+
+			expect(updating(binding)).toBe(false);
+
+		});
+
+		it("should be updating while the options are retrieved again as a value is selected", async () => {
+
+			const { lookup, hold } = gated();
+			const { options: binding } = mount(backend(lookup));
+
+			await ready(binding);
+
+			hold();
+
+			act(() => binding()({ ready: ({ select }) => select("c", true) }));
+
+			await vi.waitFor(() => expect(updating(binding)).toBe(true));
+
+		});
+
+		it("should be updating while the options are retrieved again under the other criteria", async () => {
+
+			const { lookup, hold } = gated();
+			const { collection, options: binding } = mount(backend(lookup));
+
+			await ready(binding);
+
+			hold();
+
+			act(() => void collection().filter({ "?region": ["r1"] }));
+
+			await vi.waitFor(() => expect(updating(binding)).toBe(true));
+
+		});
+
+		it("should be updating while the options are retrieved again under new keywords", async () => {
+
+			const { lookup, hold } = gated();
+			const { options: binding } = mount(backend(lookup));
+
+			await ready(binding);
+
+			hold();
+
+			act(() => binding()({ ready: ({ search }) => search("a") }));
+
+			await vi.waitFor(() => expect(updating(binding)).toBe(true));
+
+		});
+
+		it("should keep the options in place while updating, ticking the value selected where it stands", async () => {
+
+			const { lookup, hold } = gated();
+			const { options: binding } = mount(backend(lookup));
+
+			await ready(binding);
+
+			hold();
+
+			act(() => binding()({ ready: ({ select }) => select("c", true) }));
+
+			await vi.waitFor(() => expect(updating(binding)).toBe(true));
+
+			expect(values(binding)).toEqual([["a", false], ["b", false], ["c", true]]);
+
+		});
+
+		it("should keep the options in place while updating, unticking the value deselected where it stands", async () => {
+
+			const { lookup, hold } = gated();
+			const { options: binding } = mount(backend(lookup), { criteria: { "?category": ["b", "c"] } });
+
+			await ready(binding);
+
+			hold();
+
+			act(() => binding()({ ready: ({ select }) => select("b", false) }));
+
+			await vi.waitFor(() => expect(updating(binding)).toBe(true));
+
+			expect(values(binding)).toEqual([["b", false], ["c", true], ["a", false]]);
+
+		});
+
+		it("should move the selected options on top as the options retrieved again arrive", async () => {
+
+			const { lookup, hold, open } = gated();
+			const { options: binding } = mount(backend(lookup));
+
+			await ready(binding);
+
+			hold();
+
+			act(() => binding()({ ready: ({ select }) => select("c", true) }));
+
+			await vi.waitFor(() => expect(updating(binding)).toBe(true));
+
+			open();
+
+			await vi.waitFor(() => expect(updating(binding)).toBe(false));
+
+			expect(values(binding)).toEqual([["c", true], ["a", false], ["b", false]]);
+
+		});
+
+		it("should settle on the latest options as overlapping retrievals arrive out of order", async () => {
+
+			const early = vi.fn<() => void>();
+			const late = vi.fn<() => void>();
+
+			const gates: { readonly [keywords: string]: Promise<void> } = {
+				a: new Promise<void>(resolve => early.mockImplementation(resolve)),
+				ab: new Promise<void>(resolve => late.mockImplementation(resolve))
+			};
+
+			const lookup = vi.fn(async ({ model }: { model: Members }) => {
+
+				const keywords = model.members["~category"];
+
+				await (typeof keywords === "string" ? gates[keywords] : undefined);
+
+				return immutable({ id: entry, members: [{ value: keywords ?? "none", count: 1 }] });
+
+			});
+
+			const { options: binding } = mount(backend(lookup));
+
+			await ready(binding);
+
+			await act(async () => binding()({ ready: ({ search }) => search("a") }));
+			await act(async () => binding()({ ready: ({ search }) => search("ab") }));
+
+			act(late);
+
+			await vi.waitFor(() => expect(values(binding)).toEqual([["ab", false]]));
+
+			act(early);
+
+			await vi.waitFor(() => expect(lookup.mock.settledResults.filter(({ type }) => type === "fulfilled")).toHaveLength(lookup.mock.calls.length));
+			await act(async () => {});
+
+			expect(updating(binding)).toBe(false);
+			expect(values(binding)).toEqual([["ab", false]]);
+
+		});
+
+	});
+
 	describe("idle", () => {
 
 		it("should be idle, retrieving nothing and tracking no change, until asked for the options", async () => {

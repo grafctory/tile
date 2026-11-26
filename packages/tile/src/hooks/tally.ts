@@ -40,9 +40,9 @@ import {
 	type Option,
 	type Template
 } from "@grafctory/qest/model";
-import type { Collection, Collections } from "./collection.core.js";
 import { createLatch, useEntry } from "../index.core.js";
 import { useStore } from "../index.js";
+import type { Collection, Collections } from "./collection.core.js";
 import { createTally } from "./tally.core.js";
 
 
@@ -77,8 +77,20 @@ export type TallyCases = {
 		 * The options on show. Selected options come first, then the others. In each set, the values the other
 		 * criteria let through lead by decreasing count, ties ordered by label for resources and by value for
 		 * literals. The values left out follow with no items, in the same order, the option for unvalued items first.
+		 *
+		 * While `updating`, the options keep their current order and only their selection follows the values selected
+		 * since, so that nothing moves under a reader acting on them. Once the options retrieved again arrive, the
+		 * order catches up with the selection and the selected options lead the list again.
 		 */
 		readonly state: readonly TallyBucket[]
+
+		/**
+		 * Whether the options are being retrieved again under criteria or keywords changed since they were retrieved.
+		 *
+		 * It turns true as soon as the change is made, before any option moves, so that a facet can keep the reader
+		 * from acting on options about to move. It turns false once the options retrieved again arrive.
+		 */
+		readonly updating: boolean
 
 		/**
 		 * The keywords the options on show are narrowed by.
@@ -209,7 +221,8 @@ export type TallyBucket = {
  * Retrieves through the store offered by the innermost enclosing {@link "index"!Store Store} context the values the
  * items hold for `expression` and the number of items holding each, twice: under no criteria, so that the list of
  * values stays stable as other facets narrow the collection, and under the collection criteria other than its own,
- * for the counts. Selected values are kept on top of both, whatever the keywords and the page on show.
+ * for the counts. Selected values lead the options, whatever the keywords and the page on show, and the options hold
+ * still while they are retrieved again, so that nothing moves under a reader acting on them.
  *
  * The expression reaches either literals, shown, searched and ordered as they stand, or linked resources, shown,
  * searched and ordered by the label the caller names; choosing a target the shape admits as a facet is the caller's.
@@ -235,10 +248,8 @@ export type TallyBucket = {
  *     resources, or linked resources with `label` omitted; or if `label` reaches anything but exactly one text
  */
 export function useTally<S extends Lazy<ResourceShape>, P extends Collections<S>>(
-
 	collection: Collection<S, P>,
 	expression: Expression,
-
 	{
 
 		label,
@@ -270,7 +281,6 @@ export function useTally<S extends Lazy<ResourceShape>, P extends Collections<S>
 		readonly eager?: boolean
 
 	} = {}
-
 ): Relay<TallyCases> {
 
 	const store = useStore();
@@ -304,25 +314,37 @@ export function useTally<S extends Lazy<ResourceShape>, P extends Collections<S>
 
 	};
 
-	const baseline = useBuckets({ ...scope, ...specs });
-	const matching = useBuckets({ ...others, ...scope, ...specs });
+	const plain = { ...scope, ...specs };
+	const narrowed = { ...others, ...scope, ...specs };
+
+	const baseline = useBuckets(plain);
+	const matching = useBuckets(narrowed);
+
+	const unsettled = {
+		blank: (): Outcome<TallyCases> => ({ blank: undefined }),
+		error: ({ state }: { readonly state: Problem }): Outcome<TallyCases> => ({ error: { state, reload } })
+	};
 
 	return createRelay<TallyCases>(idle ? immutable({ idle: { load: () => void latch.trip() } })
 		: baseline<Outcome<TallyCases>>({
 
-		blank: () => ({ blank: undefined }),
-		error: ({ state }) => ({ error: { state, reload } }),
+			...unsettled,
 
-		ready: ({ state: base }) => matching<Outcome<TallyCases>>({
+			ready: ({ state: base }) => matching<Outcome<TallyCases>>({
 
-			blank: () => ({ blank: undefined }),
-			error: ({ state }) => ({ error: { state, reload } }),
+				...unsettled,
 
-			ready: ({ state: match }) => ready(merge(base, match))
+				ready: ({ state: match }) => {
 
-		})
+					const updating = !equals(base.slot, plain) || !equals(match.slot, narrowed);
 
-	}));
+					return ready(merge(base.rows, match.rows, updating ? match.selected : selected), updating);
+
+				}
+
+			})
+
+		}));
 
 
 	/**
@@ -339,8 +361,9 @@ export function useTally<S extends Lazy<ResourceShape>, P extends Collections<S>
 			model: { [field]: { ...slot, "@": options.offset, "#": options.limit } }, // the options on show
 			idle,
 
-			lookup: () => Promise.all(batches().map(batch => retrieve({ ...slot, ...batch })))
-				.then(rows => rows.every(rows => rows !== undefined) ? rows.flat() : undefined),
+			lookup: () => Promise
+				.all(batches().map(batch => retrieve({ ...slot, ...batch })))
+				.then(rows => rows.every(rows => rows !== undefined) ? { slot, selected, rows: rows.flat() } : undefined),
 
 			modify: () => ({})
 
@@ -372,7 +395,7 @@ export function useTally<S extends Lazy<ResourceShape>, P extends Collections<S>
 	 *
 	 * @param slot The criteria and the bindings the options are retrieved under, a batch of them included
 	 */
-	function retrieve(slot: object): Promise<Optional<readonly Row[]>> {
+	function retrieve(slot: object): Promise<Optional<readonly TallyBucket[]>> {
 
 		const holder: Lazy<ResourceShape> = shape;
 		const model: Template = { [field]: slot };
@@ -392,17 +415,30 @@ export function useTally<S extends Lazy<ResourceShape>, P extends Collections<S>
 	}
 
 	/**
-	 * Lists the options on show, in the order {@link TallyCases} `ready` states for them. The options the other
-	 * criteria leave out are taken from the retrieval under no criteria, and count no items.
+	 * Lists the options on show, in the order {@link TallyCases} `ready` states for them, selected as the values
+	 * currently selected. The options the other criteria leave out are taken from the retrieval under no criteria, and
+	 * count no items.
+	 *
+	 * @param base The options retrieved under no criteria
+	 * @param match The options retrieved under the collection criteria other than the tally's own
+	 * @param leading The values whose options lead the list: the selected ones, or while the options are retrieved
+	 *     again, the ones that were selected when the options on show were retrieved
+	 *
+	 * @returns Every option in that order, before the list is cut to the number of options on show
 	 */
-	function merge(base: readonly Row[], match: readonly Row[]): readonly TallyBucket[] {
+	function merge(
+		base: readonly TallyBucket[],
+		match: readonly TallyBucket[],
+		leading: readonly Option[]
+	): readonly TallyBucket[] {
 
-		const tagged = (row: Row): TallyBucket => ({
+		const tagged = (row: TallyBucket): TallyBucket => ({
 			...row,
 			selected: selected.some(value => equals(value, row.value))
 		});
 
-		const ranked = by(({ value, label }: Row) => naming ? label : value, ascending);
+		const leads = ({ value }: TallyBucket) => leading.some(lead => equals(lead, value));
+		const ranked = by(({ value, label }: TallyBucket) => naming ? label : value, ascending);
 
 		const matched = match.map(tagged);
 		const missing = base
@@ -411,30 +447,33 @@ export function useTally<S extends Lazy<ResourceShape>, P extends Collections<S>
 			.map(row => tagged({ ...row, count: 0 }));
 
 		return [
-			...matched.filter(({ selected }) => selected),
-			...missing.filter(({ selected }) => selected),
-			...matched.filter(({ selected }) => !selected),
-			...missing.filter(({ selected }) => !selected)
+			...matched.filter(leads),
+			...missing.filter(leads),
+			...matched.filter(bucket => !leads(bucket)),
+			...missing.filter(bucket => !leads(bucket))
 		];
 
 	}
 
-	function ready(buckets: readonly TallyBucket[]): Outcome<TallyCases> {
+	function ready(buckets: readonly TallyBucket[], updating: boolean): Outcome<TallyCases> {
+		const more = options.limit > 0 && buckets.length > options.limit;
+
 		return immutable({
 			ready: {
 
 				state: options.limit > 0 ? buckets.slice(0, options.limit) : buckets,
+				updating,
 
 				keywords: options.keywords,
 				offset: options.offset,
 				limit: options.limit,
-				more: options.limit > 0 && buckets.length > options.limit,
+				more,
 
 				search: (keywords: string) => void options.search(keywords),
 				seek: (offset: number) => void options.seek(offset),
 				resize: (limit: number) => void options.resize(limit),
 
-				...(options.limit > 0 && buckets.length > options.limit ? { load: () => void options.load() } : {}),
+				...(more ? { load: () => void options.load() } : {}),
 
 				select: (value: Option, selected: boolean) => void select(value, selected),
 
@@ -472,16 +511,11 @@ export function useTally<S extends Lazy<ResourceShape>, P extends Collections<S>
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Collection option as retrieved, before it is checked against the selected values.
- */
-type Row = Omit<TallyBucket, "selected">
-
-/**
- * Reads the selected values off the criterion stating them.
+ * Reads the values a criterion selects.
  *
- * @param options The criterion stating the selected values, if any
+ * @param options The criterion selecting values, if any
  *
- * @returns The selected values, a single one included, and none for a localised option set
+ * @returns The selected values, whether the criterion states one or many, and none for a localised option set
  */
 function values(options: unknown): readonly Option[] {
 	return isArray(options) ? options.filter(isOption) : isOption(options) ? [options] : [];
@@ -490,17 +524,18 @@ function values(options: unknown): readonly Option[] {
 /**
  * Reads an option off a row retrieved for it.
  *
- * A row stating no value at all stands for the items holding none, as a store hands that group over.
+ * A row stating no value stands for the items holding none, since that is how a store hands over the group.
  *
  * @param item The row retrieved for an option
  *
- * @returns The option the row states, with a non-negative count, or nothing if the row states no option
+ * @returns The option the row states, unselected and with a non-negative count; empty if the row states no option
  */
-function row(item: unknown): readonly Row[] {
+function row(item: unknown): readonly TallyBucket[] {
 
 	const value = isObject(item) ? item.value ?? null : undefined;
 
 	return isObject(item) && isOption(value) ? [{
+		selected: false,
 		value,
 		...(value === null ? {} : { label: isString(item.label) ? item.label : String(value) }),
 		count: isNumber(item.count) && item.count >= 0 ? item.count : 0
@@ -511,12 +546,14 @@ function row(item: unknown): readonly Row[] {
 /**
  * Resolves the expression naming resource options.
  *
+ * Literal options need no such expression, as they are named by their own value.
+ *
  * @param shape The shape describing the resource holding the collection
  * @param field The property of the resource collecting the items
  * @param expression The expression the options are values of, relative to the items
  * @param label The expression naming resource options, relative to the resources
  *
- * @returns The expression naming resource options relative to the items, or nothing for literals, named as they stand
+ * @returns The expression naming resource options relative to the items, or nothing where the options are literals
  *
  * @throws {@link !Error Error} If `expression` or `label` is malformed
  * @throws {@link !RangeError RangeError} If `expression` or `label` reaches no value a facet admits
@@ -546,7 +583,13 @@ function resolveNaming(
 /**
  * Checks that a label names each resource with exactly one text.
  *
+ * @param range The range of the resources named
+ * @param label The expression naming the resources, relative to the resources themselves
+ *
  * @returns `label`, once checked
+ *
+ * @throws {@link !Error Error} If `label` is malformed
+ * @throws {@link !RangeError RangeError} If `label` reaches no value, more or less than one value, or no text
  */
 function checkLabel(range: Range, label: Expression): Expression {
 
@@ -566,7 +609,12 @@ function checkLabel(range: Range, label: Expression): Expression {
 /**
  * Rebases an expression relative to the values of another one.
  *
- * @returns `inner`, its path following the path of `outer` and its pipe applied to the combined path
+ * Only the path of `outer` is kept, its transforms being dropped.
+ *
+ * @param outer The expression reaching the values `inner` is relative to
+ * @param inner The expression to rebase
+ *
+ * @returns `inner`, reaching the same values from where `outer` starts
  */
 function nest(outer: Expression, inner: Expression): Expression {
 
@@ -577,6 +625,19 @@ function nest(outer: Expression, inner: Expression): Expression {
 
 }
 
+/**
+ * Rejects an argument a tally cannot be built on.
+ *
+ * @typeParam T The type expected in place of the argument, so that the rejection fits any expression
+ *
+ * @param argument The name of the argument rejected
+ * @param value The argument rejected
+ * @param issue The reason for the rejection
+ *
+ * @returns Never, as it always throws
+ *
+ * @throws {@link !RangeError RangeError} Always, stating `argument`, `value` and `issue`
+ */
 function illegal<T>(argument: string, value: string, issue: string): T {
 	return error(new RangeError(`illegal tally ${argument} <${value}>: ${issue}`));
 }

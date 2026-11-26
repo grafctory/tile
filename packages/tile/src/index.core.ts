@@ -203,10 +203,11 @@ export function resolveTarget<Q extends object>({
  * @param options The store and the resource whose changes are tracked, the model narrowing the value, how the value
  *     is retrieved, and the modifications offered while it is `ready`. A modification settles its exchange through the
  *     function it is handed, so that a failure moves the binding to `error`. The value is retrieved again whenever the
- *     store, the resource or the model change, and the retrieval is then handed the `ready` state on show, so that it
- *     may extend that state rather than retrieve it all again. The whole value is retrieved instead as the store
- *     signals a change or the binding is reloaded, so that no part of the value on show is left out of date. While
- *     `idle`, the binding stays `blank`, neither retrieving the value nor tracking its changes
+ *     store, the resource or the model change, and an earlier retrieval answering late never replaces the value a later
+ *     one returned. The retrieval is handed the `ready` state on show, so that it may extend that state rather than
+ *     retrieve it all again. The whole value is retrieved instead as the store signals a change or the binding is
+ *     reloaded, so that no part of the value on show is left out of date. While `idle`, the binding stays `blank`,
+ *     neither retrieving the value nor tracking its changes until `idle` is lifted
  *
  * @returns The current state of the binding
  */
@@ -259,9 +260,16 @@ export function useEntry<V, W extends object>({
 
 		} else {
 
-			void track(option.ready);
+			const retrieval = new AbortController();
 
-			return store.observe(() => void track(), entry);
+			void track(retrieval.signal, option.ready);
+
+			const forget = store.observe(() => void track(retrieval.signal), entry);
+
+			return () => {
+				retrieval.abort();
+				forget();
+			};
 
 		}
 
@@ -278,10 +286,17 @@ export function useEntry<V, W extends object>({
 	/**
 	 * Retrieves the value for no caller, leaving failures to `error` and only unforeseen ones to the page.
 	 *
+	 * @param signal Aborted as the store, the resource or the model change, so that a superseded retrieval settling
+	 *     late never replaces the value that a later retrieval of the same binding has already returned
 	 * @param shown The `ready` state the retrieval may extend
 	 */
-	function track(shown?: { readonly state: V } & W): Promise<void> {
-		return settle(lookup(shown)).then(ready, () => {});
+	function track(signal: AbortSignal, shown?: { readonly state: V } & W): Promise<void> {
+
+		const outcome = lookup(shown);
+		const apply = () => signal.aborted ? undefined : settle(outcome).then(ready, () => {});
+
+		return outcome.then(apply, apply);
+
 	}
 
 	function ready(state: V): void {

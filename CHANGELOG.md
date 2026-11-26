@@ -8,7 +8,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 > [!NOTE]
 > Packages published under the `@grafctory` scope from version 0.10.1; earlier versions were published under `@metreeca`.
 
-## [0.11.0](https://github.com/grafctory/tile/compare/v0.10.1...HEAD)
+## [Unreleased](https://github.com/grafctory/tile/compare/v0.11.0...HEAD)
+
+## [0.11.0](https://github.com/grafctory/tile/compare/v0.10.1...v0.11.0) - 2026-11-26
 
 ### Added
 
@@ -17,6 +19,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Breaking**: Upgrade `@grafctory/blue` to `^0.16.0`, `@grafctory/keep` and `@grafctory/keep-rest` to `^0.15.0`,
+  and `@grafctory/clay` to `^0.5.0`; projects using Blue, Keep or Clay alongside these packages raise their own ranges
+  to the same lines, so that each is shared by both as a single copy. Required localised members stated as `{}` or
+  `{ en: [] }` now fail validation: submit text under at least one language tag, or declare the member `optional()`
+  in the shape where an empty value is legitimate
+- READMEs introduce the packages as part of the Grafctory framework, and email bug reports go to `info@grafctory.dev`
 - `Tally` holds its values still while they recompute: a ticked value keeps its place until the new values arrive,
   and clicks and keys are ignored meanwhile, with a spinner showing from the moment the reader acts, so values ticked
   in a row never land on another one sliding under the pointer ([#16](https://github.com/grafctory/tile/issues/16))

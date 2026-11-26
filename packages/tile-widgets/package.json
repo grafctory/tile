@@ -119,14 +119,14 @@
     "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests --environment happy-dom run"
   },
   "dependencies": {
-    "@grafctory/blue": "^0.15.0",
+    "@grafctory/blue": "^0.16.0",
     "@grafctory/core": "^0.14.0",
     "@grafctory/qest": "^0.15.0",
     "@grafctory/skin": "^0.3.0"
   },
   "devDependencies": {
-    "@grafctory/clay": "^0.4.0",
-    "@grafctory/keep": "^0.14.1",
+    "@grafctory/clay": "^0.5.0",
+    "@grafctory/keep": "^0.15.0",
     "@grafctory/tile": "^0.11.0",
     "happy-dom": "^21.0.4",
     "lucide-preact": "^1.47.0",
@@ -136,7 +136,7 @@
     "vitest": "^5.0.5"
   },
   "peerDependencies": {
-    "@grafctory/clay": "^0.4.0",
+    "@grafctory/clay": "^0.5.0",
     "@grafctory/tile": "^0.11.0",
     "lucide-preact": "^1.47.0",
     "preact": "^10.27.2"

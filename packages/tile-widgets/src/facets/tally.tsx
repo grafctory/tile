@@ -28,7 +28,7 @@ import type { Optional } from "@grafctory/core";
 import type { Relay } from "@grafctory/core/relay";
 import { isReference } from "@grafctory/qest/state";
 import type { TallyBucket, TallyCases } from "@grafctory/tile/tally";
-import { createLucideIcon, SquareCheckBigIcon, XCircleIcon, XIcon } from "lucide-preact";
+import { ArrowUpRightIcon, SquareCheckBigIcon, XCircleIcon, XIcon } from "lucide-preact";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId, useState } from "preact/hooks";
 import { createFold, createLatch } from "../index.core.js";
@@ -37,19 +37,12 @@ import "./tally.css";
 
 
 /**
- * The glyph marking a link to the resource a value names: the head of the Lucide arrow up right alone, without the
- * outward pointing shaft that reads as a link leaving the site, drawn and sized as any other Lucide glyph.
- */
-const CornerIcon = createLucideIcon("corner", [["path", { d: "M7 7h10v10", key: "corner" }]]);
-
-
-/**
  * Creates a collection tally facet.
  *
  * Lists the values the tally offers as checkboxes, each labelled by its name and by the number of items holding it,
  * grouping digits as the reader's locale does, so that ticking a value narrows the collection to the items holding
  * any of the values ticked. Pressing the name of a value ticks it as its checkbox does. A value naming a linked
- * resource is followed by a link to it, marked by the corner glyph and named after the value for assistive technology.
+ * resource is followed by a link to it, marked by an arrow and named after the value for assistive technology.
  * The items holding none of the values are offered as `‹blank›`, a name the facet supplies itself. A value no item
  * lets through under the other criteria stays on offer with a count of `0`, so the list holds still, every value in
  * its place, as other facets narrow the collection; its checkbox is disabled unless ticked, since ticking it would
@@ -274,7 +267,7 @@ export function Tally({
 						</label>
 
 						{isReference(bucket.value) && <a href={bucket.value} title={`Open ${bucket.label ?? bucket.value}`}>
-							<CornerIcon/>
+							<ArrowUpRightIcon/>
 						</a>}
 
 					</li>

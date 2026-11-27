@@ -10,6 +10,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/grafctory/tile/compare/v0.11.0...HEAD)
 
+### Fixed
+
+- `Tally` marks the link following a value that names a resource with an arrow set a short space past the name, so
+  the link reads as part of the value without crowding its last letter
+
 ## [0.11.0](https://github.com/grafctory/tile/compare/v0.10.1...v0.11.0) - 2026-11-26
 
 ### Added

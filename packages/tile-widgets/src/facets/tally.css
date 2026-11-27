@@ -363,7 +363,7 @@ tile-tally {
 
             /*
              * The link to the resource an option names stands over the row at the end of the name, in the room the
-             * name leaves for it, so it reads as belonging to the value rather than to the count. It is a square
+             * name leaves for it, its glyph a word space past the text, reading as part of the value. It is a square
              * target as tall as the row, as easy to hit as the name beside it, marked by a glyph smaller than the box
              * and set in the label colour, so it stays quiet beside the values until the pointer or the keyboard
              * reaches it and it takes the link colours, as any other link on the page does at that point.
@@ -380,9 +380,10 @@ tile-tally {
 
                 display: inline-flex;
                 align-items: center;
-                justify-content: center;
+                justify-content: start;
 
                 min-inline-size: var(--skin--scaling-150);
+                padding-inline-start: var(--skin--spacing-025);
 
                 &:not(:hover, :focus-visible) {
                     color: var(--skin--color-label);
@@ -390,8 +391,8 @@ tile-tally {
 
                 /*
                  * The glyph answers the pointer as a subtle button does, taking the neutral hover and pressed covers
-                 * over a surface spread past its edge by a pair of shadows, shifted up and down so the surface reaches
-                 * further above and below the glyph than beside it, hugging the narrow glyph without crowding the name.
+                 * over a square surface spread evenly past its edge, so the glyph reads as a small button of its own,
+                 * held narrow enough to leave a sliver of space before the end of the name it follows.
                  */
 
                 & > .lucide {
@@ -400,11 +401,7 @@ tile-tally {
                     height: var(--skin--scaling-075);
 
                     background-color: var(--tile-tally-cover);
-                    --tile-tally-reach: calc(var(--skin--spacing-025) - var(--skin--spacing-010));
-
-                    box-shadow:
-                        0 var(--tile-tally-reach) 0 var(--skin--spacing-010) var(--tile-tally-cover),
-                        0 calc(-1 * var(--tile-tally-reach)) 0 var(--skin--spacing-010) var(--tile-tally-cover);
+                    box-shadow: 0 0 0 var(--skin--spacing-010) var(--tile-tally-cover);
                     border-radius: calc(var(--skin--border-radius-025) / 2);
 
                 }

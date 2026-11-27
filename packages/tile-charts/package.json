@@ -1,6 +1,6 @@
 {
   "name": "@grafctory/tile-charts",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "description": "Preact linked data charts for @grafctory/tile.",
   "keywords": [
     "typescript",

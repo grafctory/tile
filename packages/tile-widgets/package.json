@@ -1,6 +1,6 @@
 {
   "name": "@grafctory/tile-widgets",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "description": "Preact linked data widgets for @grafctory/tile.",
   "keywords": [
     "typescript",
@@ -127,7 +127,7 @@
   "devDependencies": {
     "@grafctory/clay": "^0.5.0",
     "@grafctory/keep": "^0.15.0",
-    "@grafctory/tile": "^0.11.0",
+    "@grafctory/tile": "^0.11.1",
     "happy-dom": "^21.0.4",
     "lucide-preact": "^1.47.0",
     "preact": "^10.29.8",
@@ -137,7 +137,7 @@
   },
   "peerDependencies": {
     "@grafctory/clay": "^0.5.0",
-    "@grafctory/tile": "^0.11.0",
+    "@grafctory/tile": "^0.11.1",
     "lucide-preact": "^1.47.0",
     "preact": "^10.27.2"
   }

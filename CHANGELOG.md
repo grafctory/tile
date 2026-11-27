@@ -8,12 +8,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 > [!NOTE]
 > Packages published under the `@grafctory` scope from version 0.10.1; earlier versions were published under `@metreeca`.
 
-## [Unreleased](https://github.com/grafctory/tile/compare/v0.11.0...HEAD)
+## [Unreleased](https://github.com/grafctory/tile/compare/v0.11.1...HEAD)
+
+## [0.11.1](https://github.com/grafctory/tile/compare/v0.11.0...v0.11.1) - 2026-11-27
 
 ### Fixed
 
 - `Tally` marks the link following a value that names a resource with an arrow set a short space past the name, so
-  the link reads as part of the value without crowding its last letter
+  the link reads as part of the value while the last letter of the name stays clear of the arrow beside it
 
 ## [0.11.0](https://github.com/grafctory/tile/compare/v0.10.1...v0.11.0) - 2026-11-26
 

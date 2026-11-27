@@ -1,6 +1,6 @@
 {
   "name": "@grafctory/tile",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "description": "Preact linked data store and shape-driven value types for @grafctory/tile.",
   "keywords": [
     "typescript",
